@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude plugin *)",
+      "Bash(where claude *)",
+      "PowerShell(Get-Command claude -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-ChildItem \"$env:LOCALAPPDATA\\\\@anthropic\\\\claude-code\" -Recurse -Filter \"claude.exe\" -ErrorAction SilentlyContinue | Select-Object FullName)",
+      "PowerShell(npm list -g @anthropic-ai/claude-code 2>$null)",
+      "PowerShell(npx claude --version 2>$null)",
+      "Bash(npm --version)",
+      "Bash(npx --version)"
+    ]
+  }
+}
