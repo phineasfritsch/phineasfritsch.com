@@ -75,6 +75,29 @@ if (bodyIdx !== -1) {
 const results = [];
 for (const p of PATHS) results.push(await probe(APEX + p));
 
+// ── things that are only broken in production ──────────────────────────────
+// Every local check can pass while the edge rewrites the page underneath you.
+// This one is real and was live: Cloudflare's Email Address Obfuscation (Scrape
+// Shield) rewrites mailto: links to /cdn-cgi/l/email-protection#<hex> and replaces
+// the visible address with a span that only JavaScript decodes. Without JS the
+// footer reads "[email protected]" — on a site built because its owner disliked
+// email domains that go nowhere. Turn it off under the zone's Scrape Shield.
+const edgeIssues = [];
+for (const r of results) {
+	if (!r.body || r.cfError) continue;
+	if (r.body.includes('__cf_email__') || r.body.includes('/cdn-cgi/l/email-protection')) {
+		edgeIssues.push(
+			`${r.url.replace(APEX, '') || '/'}: contact address obfuscated by Cloudflare Scrape Shield`
+		);
+	}
+	const noJs = r.body.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]+>/g, ' ');
+	if (noJs.includes('[email' + ' protected]')) {
+		edgeIssues.push(
+			`${r.url.replace(APEX, '') || '/'}: renders "[email protected]" without JavaScript`
+		);
+	}
+}
+
 const root = results[0];
 const serving = root.status >= 200 && root.status < 400 && !root.cfError;
 
@@ -103,9 +126,15 @@ if (asJson) {
 	if (root.final && !root.final.startsWith(APEX)) {
 		console.log(`  REDIRECT  apex redirects off-domain to ${root.final}`);
 	}
+	if (edgeIssues.length) {
+		console.log('  EDGE      the CDN is rewriting the page on the way out:');
+		for (const e of [...new Set(edgeIssues)]) console.log(`            \u00b7 ${e}`);
+	}
 	console.log(
 		serving ? '  VERDICT   serving' : '  VERDICT   NOT SERVING — visitors see an error page'
 	);
 }
 
-process.exit(serving ? 0 : 1);
+// Exit 2 means production answers, but the edge has broken something on the way out.
+// Distinct from 1 (not serving at all) so a loop can tell the two apart.
+process.exit(serving ? (edgeIssues.length ? 2 : 0) : 1);

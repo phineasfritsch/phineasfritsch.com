@@ -100,7 +100,14 @@ them privately. Each is small and none of them are in this repository.
       `/version.json` returns commit 3264229, built 2026-08-31T20:03:20Z, and
       `/work/`, `/answers/`, `/resume/`, `/blog/` and `/work/shelfmark/` all serve
       the new site with real content.
-- [ ] **B3, and it is now the ONLY thing left: delete the redirect rule.** Measured
+- [ ] **B6. Turn OFF Email Address Obfuscation.** Cloudflare → the phineasfritsch.com
+      zone → Scrape Shield → Email Address Obfuscation → off. The edge is rewriting
+      every mailto: into /cdn-cgi/l/email-protection#<hex> and replacing the visible
+      address with a span only JavaScript decodes, so without JS the footer reads
+      "[email protected]" on all four live pages. Found by `node ops/read-prod.mjs`,
+      which now reports it and exits 2. Every local check passed; the property broke
+      at the edge, which is the whole argument for checking production separately.
+- [ ] **B3: delete the redirect rule.** Measured
       after deploying, the rule matches `/` and nothing else, which is why every
       other path already works. Cloudflare → the phineasfritsch.com zone → Rules →
       Redirect Rules (also check Page Rules and Bulk Redirects) → delete the rule
