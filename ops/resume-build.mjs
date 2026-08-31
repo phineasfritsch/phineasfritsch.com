@@ -15,6 +15,7 @@
  */
 import { chromium } from '@playwright/test';
 import { readFileSync, writeFileSync, mkdirSync, statSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import { join } from 'node:path';
 import { REPO } from './lib.mjs';
@@ -104,7 +105,7 @@ ${css}
 	</head>
 	<body>
 		<h1>${esc(data.contact.name)}</h1>
-		<div class="contact">${data.contact.line.map((x) => `<span>${esc(x)}</span>`).join('')}</div>
+		<div class="contact">${data.contact.line.map((x) => (x.href ? `<span><a href="${x.href}">${esc(x.text)}</a></span>` : `<span>${esc(x.text)}</span>`)).join('')}</div>
 		<p class="lede">${esc(data.ledes[track])}</p>
 
 		<h2>Education</h2>
@@ -170,14 +171,36 @@ for (const track of tracks) {
 	});
 	await p.close();
 
+	// Verify the PDF the way a machine reads it. Rendering correctly and extracting
+	// correctly are different properties, and only one of them is visible to a person.
+	let verify = { problems: ['verifier did not run'] };
+	try {
+		verify = JSON.parse(
+			execFileSync('python3', [join(REPO, 'ops/resume-verify.py'), pdfPath], { encoding: 'utf8' })
+		);
+	} catch (e) {
+		try {
+			verify = JSON.parse(String(e.stdout || '{}'));
+		} catch {
+			verify = { problems: ['verifier failed to run'] };
+		}
+	}
+
 	const pages = (
 		readFileSync(pdfPath)
 			.toString('latin1')
 			.match(/\/Type\s*\/Page[^s]/g) || []
 	).length;
 	const over = Math.round(height - 960);
-	const ok = pages === 1;
+	const ok = pages === 1 && (verify.problems || []).length === 0;
 	if (!ok) failed++;
+	for (const prob of verify.problems || []) console.log(`        · ${prob}`);
+	// A page that fits with almost nothing to spare spills on the next edit.
+	if (pages === 1 && height > 960 * 0.985) {
+		console.log(
+			`        · only ${Math.round(960 - height)}px of headroom; the next edit will spill`
+		);
+	}
 	console.log(
 		`  ${ok ? 'ok  ' : 'OVER'}  ${track.padEnd(10)} ${pages} page${pages === 1 ? ' ' : 's'}  ${String(Math.round(height)).padStart(4)}px${over > 0 ? ` (over by ${over})` : ''}  ${(statSync(pdfPath).size / 1024).toFixed(0)}KB`
 	);
