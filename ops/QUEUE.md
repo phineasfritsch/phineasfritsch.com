@@ -18,26 +18,20 @@ than starting it a third time. A smaller honest result beats a larger claimed on
       and any "what I'm looking for" copy on the site.
 - [x] **B2. RESOLVED. `CLOUDFLARE_API_TOKEN` is reaching sessions.** Present in the
       environment on 2026-08-31 and used for a real deploy. No longer blocks anything.
-- [ ] **B3. Delete the apex redirect.** phineasfritsch.com 301s to phinster.net,
-      which is a dead Cloudflare tunnel (error 1033). **This is now the ONLY thing
-      standing between the domain and a working site, and it does not need an agent** —
-      removing that redirect rule in the Cloudflare dashboard (Redirect Rules / Page
-      Rules / Bulk Redirects) is worth more than everything else here, because the
-      domain is in his email signature and his resume header, and a dead link there
-      discredits every claim under it.
+- [x] **B3. RESOLVED 2026-08-31. The apex redirect is gone and the site is live.**
+      `https://phineasfritsch.com/` returned 301 -> phinster.net -> 530/1033 for the
+      life of this project. Phineas deleted the rule; the apex now returns **200** and
+      serves commit 3264229. Verified four ways: raw headers on `/`, `/version.json`
+      reporting the deployed commit, `ops/read-prod.mjs` green on all five paths
+      (VERDICT serving), and the full gate at **6/6 with no override** — sanity went
+      8/8, `prod.serving` flipping red to green for the first time. The homepage
+      renders 5,780 characters of text with JS disabled.
 
-      MEASURED 2026-08-31, after the deploy, and it narrows the problem considerably:
-      the redirect matches **only the root path**. `https://phineasfritsch.com/` 301s
-      to phinster.net and dies at 530/1033, but `/resume/`, `/blog/`, `/work/`,
-      `/answers/`, `/planet/`, `/favicon.ico` and `/version.json` all return 200 and
-      serve commit 3264229 right now. So the custom domain is attached and healthy at
-      the edge; one rule on `/` is eating the homepage. Deleting that rule should be
-      the whole fix — nothing needs to be re-attached or re-deployed afterwards.
-
-      Corollary worth knowing: the custom domain **is** already bound to the
-      `personalsite` Pages project (`wrangler pages project list` shows
-      `personalsite-ezt.pages.dev, phineasfritsch.com`). Earlier notes assumed it
-      still had to be added. It does not. Attaching `www` is still open.
+      Two notes for whoever reads this next. The rule only ever matched the root path,
+      so the deeper pages were already reachable before it was deleted; the diagnosis
+      "the domain is dead" was true of the homepage and only the homepage. And the
+      custom domain never needed re-attaching — it was bound to `personalsite` the
+      whole time.
 
 - [x] **B4. RESOLVED. UCLA Sailing title is "Team Captain".** He held both titles
       technically. Captain matches LinkedIn, so a recruiter cross-checking the two
@@ -80,6 +74,13 @@ than starting it a third time. A smaller honest result beats a larger claimed on
       public Alma SRU endpoint, not only a call-number-to-shelf tool, and the current
       copy undersells it. Do not write the comparison from imagination — it must come
       from observed behaviour of both systems.
+- [ ] R10. **Attach `www.phineasfritsch.com` as a Custom Domain**, or decide not to.
+      Only the apex is attached to `personalsite`. This could not be tested from the
+      container — egress policy denied CONNECT to `www.phineasfritsch.com:443`, which
+      is a proxy refusal and NOT evidence about the record either way. Someone on an
+      ordinary network should type `www.phineasfritsch.com` and see what happens before
+      any work is done here. Low stakes now that the apex serves.
+
 - [ ] R6. Consider adding the headcount page and the iOS shelf-reading/ILL routing app.
       Both were described by him and neither is currently on the site. Needs evidence
       in EVIDENCE.md first.
@@ -155,6 +156,10 @@ them privately. Each is small and none of them are in this repository.
       important strategic finding: FM this fall is the highest-leverage thing he can do.
 - [x] D16. Real README, replacing the sv scaffold.
 - [x] D17. Redirect map for the 2023 site's paths, and strict security headers.
+- [x] D19. **The domain works.** With B3 cleared, phineasfritsch.com serves the built
+      site at every path including `/`, and the gate passes 6/6 clean — no overridden
+      checks, nothing structurally unsatisfiable left. The URL can go back in the
+      resume header and the email signature.
 - [x] D18. **Deployed to production, 2026-08-31, commit 3264229.** Gate green on
       everything real — 56 tests, 40 browser checks, format/typecheck/build/sanity —
       with only `prod.serving` overridden, which is unsatisfiable before a deploy by
