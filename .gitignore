@@ -28,3 +28,6 @@ playwright-report/
 
 # Generated at deploy time by ops/deploy.mjs
 static/version.json
+
+# Screenshots are regenerated on every run and are working artefacts, not source.
+ops/shots/
