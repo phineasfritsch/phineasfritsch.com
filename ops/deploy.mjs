@@ -35,8 +35,22 @@ if (!dry) {
 }
 
 // 2. Working tree must be clean, or the artefact does not match the commit.
-if (sh('git', ['status', '--porcelain']))
-	die('working tree is dirty; the deployed artefact would not match any commit.');
+// Generated paths are excluded, and the reason matters: the gate in step 1 rewrites
+// ops/baseline.json (the drift record) on every run, so a naive check is dirty by the
+// time it runs and deploy could NEVER succeed. What this check actually defends is
+// that the SOURCE producing build/ matches a commit, and neither the drift record nor
+// a screenshot affects the artefact.
+const GENERATED = [/^ops\/baseline\.json$/, /^ops\/shots\//, /^static\/version\.json$/];
+const dirty = sh('git', ['status', '--porcelain'])
+	.split('\n')
+	.filter(Boolean)
+	.map((l) => l.replace(/^..\s+/, '').trim())
+	.filter((f) => !GENERATED.some((re) => re.test(f)));
+if (dirty.length) {
+	die(
+		`working tree is dirty; the deployed artefact would not match any commit:\n    ${dirty.slice(0, 8).join('\n    ')}`
+	);
+}
 
 // 3. Push FIRST.
 console.log('  · pushing');
