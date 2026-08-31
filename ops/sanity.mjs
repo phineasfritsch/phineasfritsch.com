@@ -204,18 +204,38 @@ add(
 	leaks.slice(0, 6)
 );
 
-// ── 8. Production is serving ────────────────────────────────────────────────
+// ── 8. Production is serving, and 9. the edge is not rewriting it ───────────
+// read-prod.mjs exits 0 = clean, 2 = answering but the CDN altered the page,
+// anything else = not serving. Collapsing 2 into the failure branch reported
+// "apex is not serving" about a site that was serving fine, and buried the
+// real finding. Two checks, because they have two different owners.
 if (!skipProd) {
-	let prodOk = false;
-	let prodDetail = '';
+	let code = 0;
+	let out = '';
 	try {
-		execFileSync('node', [join(REPO, 'ops/read-prod.mjs')], { stdio: 'pipe' });
-		prodOk = true;
-		prodDetail = 'apex serves a page';
+		out = execFileSync('node', [join(REPO, 'ops/read-prod.mjs')], { encoding: 'utf8' });
 	} catch (e) {
-		prodDetail = 'apex is not serving — run: node ops/read-prod.mjs';
+		code = typeof e.status === 'number' ? e.status : 1;
+		out = (e.stdout || '') + (e.stderr || '');
 	}
-	add('prod.serving', prodOk, prodDetail);
+	const serving = code === 0 || code === 2;
+	add(
+		'prod.serving',
+		serving,
+		serving ? 'apex serves a page' : 'apex is not serving — run: node ops/read-prod.mjs'
+	);
+	const edgeLines = out
+		.split('\n')
+		.filter((l) => l.includes('·') && l.toLowerCase().includes('cloudflare'))
+		.map((l) => l.trim());
+	add(
+		'prod.edge-intact',
+		code !== 2,
+		code === 2
+			? `${edgeLines.length} page(s) rewritten by the CDN — turn off Scrape Shield email obfuscation`
+			: 'the CDN serves the page as built',
+		edgeLines.slice(0, 6)
+	);
 }
 
 const failed = checks.filter((c) => !c.ok);
