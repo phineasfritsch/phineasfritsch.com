@@ -19,10 +19,20 @@ than starting it a third time. A smaller honest result beats a larger claimed on
 - [ ] **B2. `CLOUDFLARE_API_TOKEN`.** `wrangler login` needs a browser this container
       does not have. Token template "Cloudflare Pages — Edit" at
       https://dash.cloudflare.com/profile/api-tokens. Blocks: every deploy.
-- [ ] **B3. Decide the apex.** phineasfritsch.com currently 301s to phinster.net,
-      which is a dead Cloudflare tunnel (error 1033). Someone has to decide whether
-      phinster.net keeps the redirect, and the rule must be removed either way before
-      the new site can serve at the apex. Blocks: the site being reachable at all.
+- [ ] **B3. Delete the apex redirect.** phineasfritsch.com 301s to phinster.net,
+      which is a dead Cloudflare tunnel (error 1033). **This is the highest-value item
+      on the whole list and it does not need an agent** — removing that redirect rule
+      in the Cloudflare dashboard is worth more than everything else here, because
+      the domain is in his email signature and his resume header, and a dead link
+      there discredits every claim under it. Blocks: the site being reachable at all,
+      and putting the URL back in the resume header.
+- [ ] **B4. Confirm the UCLA Sailing title.** LinkedIn says Team Captain; he said
+      "president of the sailing team" in conversation. The resume and the site both
+      currently say Team Captain, following LinkedIn. One word, and only he knows it.
+- [ ] **B5. Confirm the dental-practice cut.** Vera A. Fritsch DMD (Jun–Oct 2023) was
+      removed from the one-page resume: four months, three years ago, and it shares
+      his surname, which the panel flagged as a liability rather than an asset. Easy
+      to restore if he disagrees; the space it costs is real.
 
 ## READY — unblocked, in priority order
 
@@ -33,11 +43,14 @@ than starting it a third time. A smaller honest result beats a larger claimed on
 - [ ] R3. Flip the pending pins in ops/pins.json to active in the same commit that
       writes the property each one guards. Never in a later commit.
 - [ ] R4. Fix `build.page-metadata`: blog/hello-world renders two h1 elements.
-- [ ] R5. Ask Phineas the two open facts: his current job title wording (he says
-      "Student Assistant II", promoted from I, and a Student Supervisor promotion is
-      under discussion but is NOT a fact yet), and whether "Team Captain" or
-      "President" is the correct UCLA Sailing title — LinkedIn says Captain, he said
-      President in conversation.
+- [ ] R5. Expand the Shelfmark description once the comparison against UCLA's own
+      catalogue search lands. He says it is a full replacement search built on UCLA's
+      public Alma SRU endpoint, not only a call-number-to-shelf tool, and the current
+      copy undersells it. Do not write the comparison from imagination — it must come
+      from observed behaviour of both systems.
+- [ ] R6. Consider adding the headcount page and the iOS shelf-reading/ILL routing app.
+      Both were described by him and neither is currently on the site. Needs evidence
+      in EVIDENCE.md first.
 
 ## PROFILE CLEANUP — cheap, high return, safe to do in any order
 
@@ -89,6 +102,13 @@ section of ops/panel/EVIDENCE.md for why each one matters.
 - [x] D13. Two cloud routines, surviving this session: a tester every 4 hours that is
       forbidden from fixing anything, and a daily fixer that works one queue item and
       pushes to an isolated branch, never deploying.
+- [x] D15. Resume: one page, built only from EVIDENCE.md, rendered by
+      ops/resume-pdf.mjs which refuses if a GPA, a revenue projection, a passed-exam
+      claim or yikyak_archive appears. Six-persona panel reviewed it; the actuarial
+      hiring manager would NOT advance it, on exams alone, which is the single most
+      important strategic finding: FM this fall is the highest-leverage thing he can do.
+- [x] D16. Real README, replacing the sv scaffold.
+- [x] D17. Redirect map for the 2023 site's paths, and strict security headers.
 - [x] D14. Real bugs the gate found: the blog rendered its own filename as a headline
       (mdsvex frontmatter is on `metadata`, both loaders read the module root); twelve
       MeshToonMaterial constructors set `flatShading`, which that material ignores while
