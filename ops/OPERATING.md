@@ -119,6 +119,26 @@ The dividing line is shared mutable state, not task size.
 Port agents never run the suite. One serial verifier runs after the wave. **Never let
 a worker grade its own work**, and treat a missing verification exactly as a failed one.
 
+## Cost
+
+Fan out reading and judging. Do the writing. Research and review parallelise well and
+a wrong answer is cheap to spot; code fans out badly, because wrong looks exactly like
+right until something reads the page.
+
+Put the facts in the brief. The panels here were handed `ops/panel/FACTS.md` and told
+not to explore, and they did not.
+
+**Batch a verification pass; do not spawn one agent per finding.** The resume panel
+first ran one defender per proposed cut — 36 agents, each reloading the same resume and
+the same evidence file to rule on a single line. Three defenders, each ruling on every
+cut, replaced it. The independence that matters is independence from the PROPOSERS, not
+from each other, and three gives that at a twelfth of the cost. It is also strictly
+better: a defender that sees all the cuts at once can notice when two of them together
+remove the only support for a third claim, which a defender holding one line cannot.
+
+Never convene a panel for something already in context. That is the most expensive
+possible way to think out loud.
+
 ## When you cannot finish
 
 Revert per page, not per wave — one bad page should not cost three good ones.

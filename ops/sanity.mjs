@@ -174,7 +174,28 @@ add(
 	noJsBad.slice(0, 8)
 );
 
-// ── 7. Production is serving ────────────────────────────────────────────────
+// ── 7. Nothing private reaches the built site ──────────────────────────────
+// The resume source lives in ops/ and carries his phone number. ops/ is never
+// copied into the build, but "never" is a claim, and a claim about a file layout
+// is exactly the kind that stops being true after a refactor nobody connected to
+// this risk. A browser test covers the rendered pages; this covers the artefact,
+// runs without a browser, and is therefore the one that will still be running in
+// a year.
+const PRIVATE_PATTERNS = [
+	[/\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}/, 'a phone number'],
+	[/\b3\.\d{2,3}\s*(gpa|cumulative)|gpa[:\s]+\d\.\d/i, 'a GPA'],
+	[/yikyak/i, 'the yikyak_archive project']
+];
+const leaks = [];
+for (const f of html) {
+	const src = readFileSync(f, 'utf8');
+	for (const [re, what] of PRIVATE_PATTERNS) {
+		if (re.test(src)) leaks.push(`${f.replace(REPO + '/', '')} contains ${what}`);
+	}
+}
+add('build.no-private-data', leaks.length === 0, `${leaks.length} private-data leaks in built html`, leaks.slice(0, 6));
+
+// ── 8. Production is serving ────────────────────────────────────────────────
 if (!skipProd) {
 	let prodOk = false;
 	let prodDetail = '';
