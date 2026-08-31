@@ -145,7 +145,7 @@ them privately. Each is small and none of them are in this repository.
       forbidden from fixing anything, and a daily fixer that works one queue item and
       pushes to an isolated branch, never deploying.
 - [x] D15. Resume: one page, built only from EVIDENCE.md, rendered by
-      ops/resume-pdf.mjs which refuses if a GPA, a revenue projection, a passed-exam
+      ops/resume-build.mjs which refuses if a GPA, a revenue projection, a passed-exam
       claim, or the excluded project appears. Six-persona panel reviewed it; the actuarial
       hiring manager would NOT advance it, on exams alone, which is the single most
       important strategic finding: FM this fall is the highest-leverage thing he can do.

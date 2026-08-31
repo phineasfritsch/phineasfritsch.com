@@ -180,6 +180,37 @@ Real-browser testing in this repo runs against the local production build via
 artefact that will be deployed. Testing the live domain in a browser has to happen from
 a machine with ordinary network access — which, for now, means Phineas opening it.
 
+## The resume
+
+    CHROMIUM_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome node ops/resume-build.mjs
+
+One fact base, three documents. `ops/private/resume/resume.data.mjs` holds every fact,
+each item optionally tagged with the tracks it belongs to; the builder renders one PDF
+per track into `ops/private/resume/build/`. All of it is under `ops/private/`, which is
+gitignored, because the resume carries a phone number and this repository is public.
+
+**Edit the data, never a rendered file.** The board's ruling was one document per
+target, and its warning was that three hand-edited copies of a one-page file with two
+pixels of headroom diverge inside a month and he stops knowing which one he sent.
+
+The tracks and how they differ:
+
+| Track       | Lede names                                                                    | Includes                                                                                   | Emphasis                                                                  |
+| ----------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| `product`   | product roles                                                                 | The Cut Card                                                                               | 174E leads, the exam blank follows                                        |
+| `rcm`       | revenue cycle roles, and states he has never worked a claim or touched an EHR | the dental practice, family connection first, Dentrix named; Dibs led by the records audit | 174E leads                                                                |
+| `actuarial` | no track; states the exam position outright                                   | The Cut Card                                                                               | **the blank leads** — hiding it from this reader is worse than stating it |
+
+The builder refuses to render, in any variant, a GPA, the Collab Hub claim, an excluded
+project, the accounting minor he dropped, a revenue projection, or any claim that an
+exam was passed. It also fails when a variant runs to two pages, and it measures at the
+true print width of 710px rather than the default viewport, because measuring at 1280px
+reports a two-page document as fitting.
+
+**If a rendered PDF is suddenly much smaller than ~100KB, the fonts 404'd.** They fall
+back to system metrics silently, which reflows the page taller and turns one page into
+two. That has happened twice; the font URLs are absolute for this reason.
+
 ## Cost
 
 Fan out reading and judging. Do the writing. Research and review parallelise well and
