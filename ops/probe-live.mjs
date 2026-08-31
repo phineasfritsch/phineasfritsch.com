@@ -21,7 +21,9 @@ const TARGETS = [
 	{ slug: 'dibs', url: 'https://dibs.ge/' },
 	{ slug: 'shelfmark', url: 'https://shelfmark.phineasfritsch.com/' },
 	{ slug: 'biomed-schedule', url: 'https://better-bio-schedule.phineas-fritsch.workers.dev/' },
-	{ slug: 'the-cut-card', url: 'https://thecutcard.com/' }
+	{ slug: 'the-cut-card', url: 'https://thecutcard.com/' },
+	{ slug: 'jellyfin-matcher', url: 'https://jellymatch.phinster.net/' },
+	{ slug: 'bruinthetachi', url: 'https://preview.bruinthetachi.pages.dev/' }
 ];
 
 const results = {};

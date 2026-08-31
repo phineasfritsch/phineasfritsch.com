@@ -95,8 +95,9 @@ export const projects: Project[] = [
 		slug: 'jellyfin-matcher',
 		name: 'Jellyfin Matcher',
 		what: 'Everyone swipes the same deck of films on their own phone and the first one you all like wins. No stalemates — that is the whole point.',
+		url: 'https://jellymatch.phinster.net',
 		repo: 'https://github.com/phineasfritsch/jellyfin-matcher',
-		live: false,
+		live: true,
 		year: '2026',
 		stack: ['Next.js', 'socket.io', 'Docker', 'GHCR'],
 		decision:
@@ -109,14 +110,15 @@ export const projects: Project[] = [
 	{
 		slug: 'bruinthetachi',
 		name: 'bruinthetachi.com',
-		what: 'Moved my fraternity chapter off WordPress onto a static site the next webmaster can edit without knowing what a build is.',
-		live: false,
+		what: "A replacement for my fraternity chapter's WordPress site: a static build the next webmaster can edit without knowing what a build is. It runs, and the domain has not been cut over to it yet.",
+		url: 'https://preview.bruinthetachi.pages.dev',
+		live: true,
 		year: '2026',
 		stack: ['Astro', 'Sveltia CMS', 'Cloudflare Pages'],
 		decision:
 			'Every old WordPress URL still resolves, because a chapter site is linked from alumni emails going back years and breaking those is the actual cost of a migration. The member family tree is laid out at build time and shipped as plain SVG, so no visitor downloads a graph library to look at a static picture.',
 		limit:
-			'One chapter. Not a product, and not something anyone else should adopt without reading the photo policy first.',
+			'The live chapter domain still serves the old WordPress site; this one is running at a preview URL and the cutover is mine to schedule. One chapter, not a product, and not something anyone else should adopt without reading the photo policy first.',
 		assisted:
 			'Claude wrote most of the code. The migration plan, the redirect map and the content policy are mine.'
 	},
