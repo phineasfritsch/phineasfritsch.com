@@ -27,7 +27,8 @@ for (const dev of [
 			.goto('http://127.0.0.1:4173' + r, { waitUntil: 'networkidle', timeout: 30000 })
 			.catch((e) => errs.push(r + ' NAV ' + e.message.slice(0, 120)));
 		await p.waitForTimeout(2500);
-		const name = 'ops/shots/new-' + dev.n + (r === '/' ? '-home' : '-' + r.replace(/\//g, '')) + '.png';
+		const name =
+			'ops/shots/new-' + dev.n + (r === '/' ? '-home' : '-' + r.replace(/\//g, '')) + '.png';
 		await p.screenshot({ path: name, fullPage: dev.n === 'desktop' });
 		const text = await p.evaluate(() => document.body.innerText.replace(/\s+/g, ' ').trim());
 		console.log(
