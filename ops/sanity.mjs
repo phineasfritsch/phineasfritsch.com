@@ -193,7 +193,12 @@ for (const f of html) {
 		if (re.test(src)) leaks.push(`${f.replace(REPO + '/', '')} contains ${what}`);
 	}
 }
-add('build.no-private-data', leaks.length === 0, `${leaks.length} private-data leaks in built html`, leaks.slice(0, 6));
+add(
+	'build.no-private-data',
+	leaks.length === 0,
+	`${leaks.length} private-data leaks in built html`,
+	leaks.slice(0, 6)
+);
 
 // ── 8. Production is serving ────────────────────────────────────────────────
 if (!skipProd) {
