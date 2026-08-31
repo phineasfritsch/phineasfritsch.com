@@ -96,31 +96,57 @@ if (!dry) {
 	if (d.status !== 0) die('wrangler deploy failed.');
 }
 
-// 6. Read production back. Parity is now a fact.
+// 6. Read production back. Parity is a fact or it is a hope, and a hope gets
+//    reported as a fact.
+//
+//    The apex is checked FIRST because that is what a visitor types. But while the
+//    301 to phinster.net is in place the apex cannot serve this build no matter how
+//    well the deploy went, so a failure there is not evidence the deploy failed —
+//    and reporting it as one would be exactly the confident wrong answer this file
+//    exists to prevent. So the pages.dev URL is checked as well, and the two are
+//    reported separately.
 console.log('  · confirming what is actually live');
 if (!dry) {
-	let live = null;
-	for (let i = 0; i < 10; i++) {
-		try {
-			live = JSON.parse(
-				execFileSync(
+	const fetchVersion = (base) => {
+		for (let i = 0; i < 8; i++) {
+			try {
+				const out = execFileSync(
 					'curl',
-					['-sS', '--max-time', '15', 'https://phineasfritsch.com/version.json'],
+					['-sS', '-L', '--max-time', '15', `${base}/version.json`],
 					{ encoding: 'utf8' }
-				)
-			);
-			if (live.commit === sha) break;
-		} catch {
-			/* edge not warm yet */
+				);
+				const parsed = JSON.parse(out);
+				if (parsed.commit) return parsed;
+			} catch {
+				/* edge not warm yet, or unreachable from here */
+			}
+			execFileSync('sleep', ['6']);
 		}
-		execFileSync('sleep', ['6']);
-	}
-	if (!live)
-		die(
-			'deployed, but production did not serve version.json. Verify by hand before claiming this shipped.'
+		return null;
+	};
+
+	const apex = fetchVersion('https://phineasfritsch.com');
+	const pages = fetchVersion(`https://${PROJECT}.pages.dev`);
+
+	console.log(`\n  apex      ${apex ? apex.commit : 'not serving this build'}`);
+	console.log(`  pages.dev ${pages ? pages.commit : 'not reachable from here'}`);
+
+	if (apex && apex.commit === sha) {
+		console.log(`\n  LIVE at the apex: ${sha}\n`);
+	} else if (pages && pages.commit === sha) {
+		console.log(
+			`\n  DEPLOYED (${sha}) and serving at ${PROJECT}.pages.dev, but the apex is NOT.\n` +
+				'  This is not finished. phineasfritsch.com still 301s to phinster.net, a\n' +
+				'  Cloudflare tunnel with no origin. Remove that redirect rule in the dashboard\n' +
+				'  and attach the custom domain to the Pages project. Do not describe this as\n' +
+				'  shipped until a visitor typing the domain reaches the site.\n'
 		);
-	console.log(`\n  LIVE: ${live.commit} (built ${live.builtAt})`);
-	if (live.commit !== sha)
-		die(`production is serving ${live.commit}, not ${sha}. Do not report this as deployed.`);
+		process.exit(3);
+	} else {
+		die(
+			`deployed, but neither the apex nor ${PROJECT}.pages.dev served version.json with ${sha}.\n` +
+				'  Verify by hand before claiming this shipped. Note that some networks block\n' +
+				'  *.pages.dev, so an unreachable pages.dev is not proof the deploy failed.'
+		);
+	}
 }
-console.log(`\n  deployed ${sha}\n`);
