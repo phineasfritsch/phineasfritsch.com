@@ -179,13 +179,51 @@ if (!dry) {
 			// to read `branch === 'main' ? 'main' : branch`, where both arms are
 			// `branch` — a no-op wearing the costume of a deliberate mapping.
 			// PAGES_PRODUCTION_BRANCH overrides it when the project's production
-			// branch is not what this checkout is called.
+			// branch is not what this checkout is called; when it is unset the
+			// project itself is asked, because guessing here costs a whole deploy
+			// cycle that reports success and changes nothing a visitor can see.
 			'--branch',
-			process.env.PAGES_PRODUCTION_BRANCH || branch
+			process.env.PAGES_PRODUCTION_BRANCH || productionBranch() || branch
 		],
 		{ cwd: REPO, stdio: 'inherit' }
 	);
 	if (d.status !== 0) die('wrangler deploy failed.');
+}
+
+/**
+ * The Pages project's own production branch. Deploying under any other name
+ * uploads a PREVIEW: wrangler prints "Deployment complete", the URL works, and
+ * the custom domain keeps serving the old build. That is a success report on a
+ * no-op, so it is worth one API call to not guess. Null if we cannot ask.
+ * @returns {string|null}
+ */
+function productionBranch() {
+	const token = process.env.CLOUDFLARE_API_TOKEN;
+	if (!token) return null;
+	const api = (path) => {
+		const out = execFileSync(
+			'curl',
+			[
+				'-sS',
+				'--max-time',
+				'15',
+				'-H',
+				`Authorization: Bearer ${token}`,
+				`https://api.cloudflare.com/client/v4${path}`
+			],
+			{ encoding: 'utf8' }
+		);
+		const d = JSON.parse(out);
+		return d.success ? d.result : null;
+	};
+	try {
+		const accounts = api('/accounts');
+		if (!accounts || !accounts.length) return null;
+		const project = api(`/accounts/${accounts[0].id}/pages/projects/${PROJECT}`);
+		return (project && project.production_branch) || null;
+	} catch {
+		return null;
+	}
 }
 
 // 6. Read production back. Parity is a fact or it is a hope, and a hope gets
@@ -199,22 +237,33 @@ if (!dry) {
 //    reported separately.
 console.log('  · confirming what is actually live');
 if (!dry) {
+	// The retry loop used to stop at the first parseable response, which meant it
+	// retried for REACHABILITY and not for PROPAGATION: seconds after a deploy the
+	// edge answers instantly with the version.json it already has, so the very
+	// first read returned the OLD commit and the deploy reported itself failed
+	// while the new build was on its way out. Wait for the commit we shipped, and
+	// only then give up and report whatever was actually last seen. The query
+	// string defeats an intermediate cache without touching the file.
 	const fetchVersion = (base) => {
+		let last = null;
 		for (let i = 0; i < 8; i++) {
 			try {
 				const out = execFileSync(
 					'curl',
-					['-sS', '-L', '--max-time', '15', `${base}/version.json`],
+					['-sS', '-L', '--max-time', '15', `${base}/version.json?d=${Date.now()}`],
 					{ encoding: 'utf8' }
 				);
 				const parsed = JSON.parse(out);
-				if (parsed.commit) return parsed;
+				if (parsed.commit) {
+					last = parsed;
+					if (parsed.commit === sha) return parsed;
+				}
 			} catch {
 				/* edge not warm yet, or unreachable from here */
 			}
 			execFileSync('sleep', ['6']);
 		}
-		return null;
+		return last;
 	};
 
 	const apex = fetchVersion('https://phineasfritsch.com');

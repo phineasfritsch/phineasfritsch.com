@@ -131,6 +131,22 @@ custom domain is worse than a slow deploy. Override with `PAGES_PROJECT=` (or
 `CF_PAGES_PROJECT=`, both are accepted because the runbook and the code once disagreed
 and the mismatch surfaced mid-deploy).
 
+**The project's production branch is `main`, and this checkout is not on it.**
+`wrangler pages deploy --branch <anything else>` uploads a PREVIEW: it prints
+"Deployment complete", hands back a working URL, and the custom domain keeps
+serving the old build. That is a success report on a change no visitor can see,
+and it cost one full cycle before deploy.mjs learned to ask the project which
+branch is production rather than assume the checkout's name. `PAGES_PRODUCTION_BRANCH=`
+still overrides if the API cannot be reached.
+
+**The edge can serve something other than what you built.** Cloudflare Scrape
+Shield rewrites the contact address into a `/cdn-cgi/l/email-protection` stub
+that only resolves with JavaScript, on a site whose whole argument is that it
+reads without it. `prod.edge-intact` in the sanity check catches it. It is not
+fixable from here — the API token in these sessions cannot patch zone settings —
+so it stays red until the dashboard toggle is flipped, and deploys name it in
+`--override-gate=` rather than pretending it is clean.
+
 **1. From here, with a token.** `npm run deploy` runs the gate, refuses on a dirty tree,
 pushes before deploying, then reads production back and compares the commit. It needs
 `CLOUDFLARE_API_TOKEN` in the environment. Note that environment variables are injected
