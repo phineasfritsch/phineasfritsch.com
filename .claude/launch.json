@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "dev",
-      "runtimeExecutable": "C:/Users/phineas/AppData/Roaming/fnm/node-versions/v24.15.0/installation/node.exe",
-      "runtimeArgs": ["node_modules/vite/bin/vite.js", "dev"],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
       "port": 5173
     }
   ]

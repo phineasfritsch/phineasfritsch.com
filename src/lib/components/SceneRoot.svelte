@@ -5,6 +5,7 @@
 	import Globe from './Globe.svelte';
 	import Land from './Land.svelte';
 	import Space from './Space.svelte';
+	import Clouds from './Clouds.svelte';
 	import Sailboat from './Sailboat.svelte';
 	import RoyceHall from './RoyceHall.svelte';
 	import FratHouse from './FratHouse.svelte';
@@ -12,10 +13,13 @@
 
 	interactivity();
 
+	const reducedMotion =
+		typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 	let globeGroup = $state<THREE.Group>();
 
 	useTask((delta) => {
-		if (globeGroup) globeGroup.rotation.y += delta * 0.025;
+		if (!reducedMotion && globeGroup) globeGroup.rotation.y += delta * 0.025;
 	});
 
 	function surfPos(lat: number, lon: number, r = 3.36) {
@@ -77,6 +81,9 @@
 <T.AmbientLight color="#182048" intensity={2.5} />
 
 <Space />
+
+<!-- Cloud band — drifts independently of globe spin for parallax -->
+<Clouds animate={!reducedMotion} />
 
 <T.Group bind:ref={globeGroup}>
 	<Globe />

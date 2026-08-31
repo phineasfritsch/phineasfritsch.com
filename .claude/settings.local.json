@@ -8,7 +8,8 @@
       "PowerShell(npm list -g @anthropic-ai/claude-code 2>$null)",
       "PowerShell(npx claude --version 2>$null)",
       "Bash(npm --version)",
-      "Bash(npx --version)"
+      "Bash(npx --version)",
+      "PowerShell(python \"C:\\\\Users\\\\phineasf\\\\.claude\\\\plugins\\\\cache\\\\ui-ux-pro-max-skill\\\\ui-ux-pro-max\\\\2.6.2\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"personal portfolio playful 3D interactive whimsical night\" --design-system -p \"phineasfritsch.com\")"
     ]
   }
 }
