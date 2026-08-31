@@ -23,7 +23,7 @@
 	<h1
 		style="font-size:clamp(1.75rem,4.2vw,2.6rem);line-height:1.15;letter-spacing:-0.022em;font-weight:600;max-width:22ch"
 	>
-		I build tools for problems I actually have.
+		I build tools for problems I have.
 	</h1>
 	<div class="prose" style="margin-top:1.1rem">
 		<p>
@@ -32,10 +32,7 @@
 			progress. Sitting Exam FM in fall 2026. <strong>No exams passed yet</strong>. Most of what is
 			below came out of a job, a fraternity house, or a course I was annoyed by.
 		</p>
-		<p>
-			Every project on this page names what it does not do, and says what an AI wrote. Both of those
-			are there so that the rest is worth believing.
-		</p>
+		<p>Every project below names what it does not do, and says what an AI wrote.</p>
 	</div>
 </section>
 
@@ -106,8 +103,7 @@
 			The decisions worth asking me about are on each project's page: why Dibs runs Postgres at
 			sixty connections and not thirty, why call numbers sort as decimals, why a weather condition
 			gets three values instead of two, why a blackjack app is forbidden from mentioning money.
-			Those are mine. The typing largely was not, and pretending otherwise would be the one thing
-			here you could catch me on.
+			Those are mine. The typing largely was not.
 		</p>
 	</div>
 </section>

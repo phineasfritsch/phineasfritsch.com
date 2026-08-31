@@ -106,11 +106,23 @@ html {
 	-webkit-text-size-adjust: 100%;
 }
 
+/* A long URL in a paragraph pushed /answers to 396px on a 320px phone, which forces a
+   horizontal scroll on the whole page. Breaking anywhere is ugly on one word and
+   correct for every reader who would otherwise have to pan sideways to read. */
+p,
+dd,
+li,
+h1,
+h2,
+h3 {
+	overflow-wrap: anywhere;
+}
+
 body {
 	background: var(--paper);
 	color: var(--ink);
 	font-family: var(--font-sans);
-	font-size: 16px;
+	font-size: 1rem;
 	line-height: 1.55;
 	-webkit-font-smoothing: antialiased;
 	font-variant-numeric: tabular-nums;

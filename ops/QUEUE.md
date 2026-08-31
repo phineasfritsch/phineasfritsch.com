@@ -1,5 +1,17 @@
 # Work queue
 
+## DEADLINE: before UCLA fall quarter starts
+
+Fall Quarter 2026 begins **Monday 22 September 2026**; instruction begins Thursday 24
+September. Source: a web search summary citing the UCLA registrar's 26-27 academic
+calendar — **registrar.ucla.edu is blocked by this environment's egress policy, so the
+date is NOT confirmed from the primary source.** He is a UCLA student and should
+confirm it. Treat 21 September as the working deadline; roughly three weeks from
+2026-08-31.
+
+The bar is not "we ran out of items". It is that a ship-review board unanimously agrees
+the site is ready. Until every reviewer says ship, the work continues.
+
 The queue lives here, in the repo, not in a session and not in anyone's head.
 Sessions die mid-task, limits hit, agents crash. Whatever is not written down is gone.
 

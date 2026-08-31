@@ -14,8 +14,8 @@
 	<h1 style="font-size:clamp(1.6rem,3.6vw,2.2rem);letter-spacing:-0.02em;font-weight:600">Work</h1>
 	<div class="prose" style="margin-top:0.9rem">
 		<p>
-			Each of these has a page naming the one decision worth an interview question, the thing it
-			refuses to do, and what an AI wrote. Source is linked where it is public.
+			Each has a page naming the decision behind it, what it refuses to do, and what an AI wrote.
+			Source is linked where it is public.
 		</p>
 	</div>
 </section>

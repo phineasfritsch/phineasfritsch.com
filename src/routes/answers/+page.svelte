@@ -84,10 +84,7 @@
 		Questions
 	</h1>
 	<div class="prose" style="margin-top:0.9rem">
-		<p>
-			These are the questions people ask, phrased the way they ask them. The awkward one is in here
-			in its normal place, not at the bottom.
-		</p>
+		<p>These are the questions people ask, phrased the way they ask them.</p>
 	</div>
 </section>
 
