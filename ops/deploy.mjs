@@ -15,6 +15,19 @@ import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { REPO } from './lib.mjs';
 
+// The Pages project that actually serves this domain. `personalsite` is the one
+// holding phineasfritsch.com as a custom domain; there is no `phineasfritsch-com`
+// project, and deploying to a name that does not exist would create an orphan that
+// no visitor ever reaches. Overridable so a dry run can target a scratch project.
+const PROJECT = process.env.PAGES_PROJECT || 'personalsite';
+
+// The pages.dev hostname is NOT always `${PROJECT}.pages.dev`. When the bare
+// subdomain is already taken Cloudflare appends a suffix, and this project's is
+// `personalsite-ezt`. `personalsite.pages.dev` also answers 200 — with somebody
+// else's site — so deriving the host from the project name would read a stranger's
+// page, never find our commit, and report a good deploy as a failure.
+const PAGES_HOST = process.env.PAGES_HOST || 'personalsite-ezt.pages.dev';
+
 const dry = process.argv.includes('--dry-run');
 const sh = (c, a, o = {}) => execFileSync(c, a, { cwd: REPO, encoding: 'utf8', ...o }).trim();
 const die = (msg) => {
@@ -87,7 +100,7 @@ if (!dry) {
 			'deploy',
 			'build',
 			'--project-name',
-			'phineasfritsch-com',
+			PROJECT,
 			'--branch',
 			branch === 'main' ? 'main' : branch
 		],
@@ -126,7 +139,7 @@ if (!dry) {
 	};
 
 	const apex = fetchVersion('https://phineasfritsch.com');
-	const pages = fetchVersion(`https://${PROJECT}.pages.dev`);
+	const pages = fetchVersion(`https://${PAGES_HOST}`);
 
 	console.log(`\n  apex      ${apex ? apex.commit : 'not serving this build'}`);
 	console.log(`  pages.dev ${pages ? pages.commit : 'not reachable from here'}`);
@@ -135,7 +148,7 @@ if (!dry) {
 		console.log(`\n  LIVE at the apex: ${sha}\n`);
 	} else if (pages && pages.commit === sha) {
 		console.log(
-			`\n  DEPLOYED (${sha}) and serving at ${PROJECT}.pages.dev, but the apex is NOT.\n` +
+			`\n  DEPLOYED (${sha}) and serving at ${PAGES_HOST}, but the apex is NOT.\n` +
 				'  This is not finished. phineasfritsch.com still 301s to phinster.net, a\n' +
 				'  Cloudflare tunnel with no origin. Remove that redirect rule in the dashboard\n' +
 				'  and attach the custom domain to the Pages project. Do not describe this as\n' +
@@ -144,7 +157,7 @@ if (!dry) {
 		process.exit(3);
 	} else {
 		die(
-			`deployed, but neither the apex nor ${PROJECT}.pages.dev served version.json with ${sha}.\n` +
+			`deployed, but neither the apex nor ${PAGES_HOST} served version.json with ${sha}.\n` +
 				'  Verify by hand before claiming this shipped. Note that some networks block\n' +
 				'  *.pages.dev, so an unreachable pages.dev is not proof the deploy failed.'
 		);
