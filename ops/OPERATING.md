@@ -121,6 +121,41 @@ The dividing line is shared mutable state, not task size.
 Port agents never run the suite. One serial verifier runs after the wave. **Never let
 a worker grade its own work**, and treat a missing verification exactly as a failed one.
 
+## Deploying
+
+There are two routes, and **the second one is better**.
+
+**1. From here, with a token.** `npm run deploy` runs the gate, refuses on a dirty tree,
+pushes before deploying, then reads production back and compares the commit. It needs
+`CLOUDFLARE_API_TOKEN` in the environment. Note that environment variables are injected
+when a container STARTS, so a session that began before the variable was added will
+never see it however many times it is asked — check with
+
+    node -e "console.log(process.env.CLOUDFLARE_API_TOKEN ? 'present' : 'MISSING')"
+
+before concluding anything about wrangler.
+
+**2. From GitHub, with no token at all.** The repository is public, so Cloudflare Pages
+can build it directly on every push. This is the better answer: nothing to leak, nothing
+to rotate, no session needs a credential, and the nightly fixer's pushes deploy
+themselves. Set it up once in the dashboard — Workers & Pages → Create → Pages → Connect
+to Git — with:
+
+| Setting                | Value                                                        |
+| ---------------------- | ------------------------------------------------------------ |
+| Framework preset       | SvelteKit                                                    |
+| Build command          | `npm run build`                                              |
+| Build output directory | `build`                                                      |
+| Root directory         | `/`                                                          |
+| Node version           | 22 (pinned by `.node-version` and `engines` in package.json) |
+
+**Neither route opens the front door on its own.** phineasfritsch.com 301s to
+phinster.net, a Cloudflare tunnel with no origin (error 1033). That rule is in the
+dashboard — a Redirect Rule, Page Rule, or Bulk Redirect — and it has to be deleted, and
+the custom domain attached to the Pages project, before a visitor typing the domain
+reaches anything. Deploying while it exists changes nothing a visitor can see, so do not
+report a deploy as shipped until `node ops/read-prod.mjs` exits 0.
+
 ## Testing production as a real user
 
 `node ops/read-prod.mjs` is the source of truth for what production is serving. It uses
