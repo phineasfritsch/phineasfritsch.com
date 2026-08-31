@@ -119,6 +119,24 @@ The dividing line is shared mutable state, not task size.
 Port agents never run the suite. One serial verifier runs after the wave. **Never let
 a worker grade its own work**, and treat a missing verification exactly as a failed one.
 
+## Testing production as a real user
+
+`node ops/read-prod.mjs` is the source of truth for what production is serving. It uses
+curl, deliberately.
+
+**Do not build a headless-browser check against the live domain from this environment.**
+It was tried. Chromium cannot reach phineasfritsch.com through the agent proxy and fails
+with `ERR_CONNECTION_RESET`, while curl through the same proxy reaches it fine and
+returns the real answer (HTTP 530, Cloudflare error 1033). A browser check here would
+therefore report "the site is down" for a reason that has nothing to do with the site,
+which is worse than no check at all: it is a confident wrong answer, and it would fire
+every four hours.
+
+Real-browser testing in this repo runs against the local production build via
+`ops/shot.mjs` and the playwright suite. That is a genuine real-user test of the
+artefact that will be deployed. Testing the live domain in a browser has to happen from
+a machine with ordinary network access — which, for now, means Phineas opening it.
+
 ## Cost
 
 Fan out reading and judging. Do the writing. Research and review parallelise well and
