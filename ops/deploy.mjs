@@ -19,7 +19,10 @@ import { REPO } from './lib.mjs';
 // holding phineasfritsch.com as a custom domain; there is no `phineasfritsch-com`
 // project, and deploying to a name that does not exist would create an orphan that
 // no visitor ever reaches. Overridable so a dry run can target a scratch project.
-const PROJECT = process.env.PAGES_PROJECT || 'personalsite';
+// Both spellings are accepted deliberately: the runbook said CF_PAGES_PROJECT and
+// the code said PAGES_PROJECT, and that mismatch only surfaced mid-deploy. Default
+// is the project that actually holds the phineasfritsch.com custom domain.
+const PROJECT = process.env.PAGES_PROJECT || process.env.CF_PAGES_PROJECT || 'personalsite';
 
 // The pages.dev hostname is NOT always `${PROJECT}.pages.dev`. When the bare
 // subdomain is already taken Cloudflare appends a suffix, and this project's is
@@ -171,8 +174,14 @@ if (!dry) {
 			'build',
 			'--project-name',
 			PROJECT,
+			// The Pages project serves its PRODUCTION branch on the custom domain;
+			// anything else uploads as a preview that no visitor ever sees. This used
+			// to read `branch === 'main' ? 'main' : branch`, where both arms are
+			// `branch` — a no-op wearing the costume of a deliberate mapping.
+			// PAGES_PRODUCTION_BRANCH overrides it when the project's production
+			// branch is not what this checkout is called.
 			'--branch',
-			branch === 'main' ? 'main' : branch
+			process.env.PAGES_PRODUCTION_BRANCH || branch
 		],
 		{ cwd: REPO, stdio: 'inherit' }
 	);

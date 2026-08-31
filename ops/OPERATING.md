@@ -125,6 +125,12 @@ a worker grade its own work**, and treat a missing verification exactly as a fai
 
 There are two routes, and **the second one is better**.
 
+**The Pages project is `personalsite`**, and it already holds the phineasfritsch.com
+custom domain. Do not create a second project; a duplicate competing for the same
+custom domain is worse than a slow deploy. Override with `PAGES_PROJECT=` (or
+`CF_PAGES_PROJECT=`, both are accepted because the runbook and the code once disagreed
+and the mismatch surfaced mid-deploy).
+
 **1. From here, with a token.** `npm run deploy` runs the gate, refuses on a dirty tree,
 pushes before deploying, then reads production back and compares the commit. It needs
 `CLOUDFLARE_API_TOKEN` in the environment. Note that environment variables are injected

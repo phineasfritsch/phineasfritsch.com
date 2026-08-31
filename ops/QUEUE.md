@@ -94,6 +94,23 @@ They are listed in `ops/private/EVIDENCE.md` rather than here, because naming an
 person's repositories and their faults in a public file is a different act from noting
 them privately. Each is small and none of them are in this repository.
 
+## DONE — the deploy, and what it cost to get there
+
+- [x] **The site is LIVE on phineasfritsch.com**, verified independently:
+      `/version.json` returns commit 3264229, built 2026-08-31T20:03:20Z, and
+      `/work/`, `/answers/`, `/resume/`, `/blog/` and `/work/shelfmark/` all serve
+      the new site with real content.
+- [ ] **B3, and it is now the ONLY thing left: delete the redirect rule.** Measured
+      after deploying, the rule matches `/` and nothing else, which is why every
+      other path already works. Cloudflare → the phineasfritsch.com zone → Rules →
+      Redirect Rules (also check Page Rules and Bulk Redirects) → delete the rule
+      sending the apex to phinster.net. The custom domain is already bound. Nothing
+      else needs configuring, and no agent can do this one.
+- [x] R8/R9 fixed: the `--branch` argument was `branch === 'main' ? 'main' : branch`,
+      both arms identical — a no-op wearing the costume of a deliberate mapping, which
+      uploaded previews no visitor sees. And PAGES_PROJECT vs CF_PAGES_PROJECT
+      disagreed between the runbook and the code; both are accepted now.
+
 ## DONE
 
 - [x] D1. Read production safely, one command — `ops/read-prod.mjs`. Found the
