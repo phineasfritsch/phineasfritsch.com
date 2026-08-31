@@ -112,8 +112,8 @@
 			<span class="row-n" aria-hidden="true">01</span>
 			<div>
 				<div class="row-title">
-					<h3>UCLA Sailing Team — Team Captain, then Treasurer</h3>
-					<span class="stack">Captain 2025–26 · Treasurer 2024–25</span>
+					<h3>UCLA Sailing Team — Treasurer, then Team Captain</h3>
+					<span class="stack">Treasurer 2024–25 · Captain 2025–26</span>
 				</div>
 				<p>
 					Ran the executive board and weekly meetings, coordinated travel and housing for biweekly
@@ -126,8 +126,8 @@
 			<span class="row-n" aria-hidden="true">02</span>
 			<div>
 				<div class="row-title">
-					<h3>Theta Chi, Beta Alpha Chapter — Network Manager, then House Manager</h3>
-					<span class="stack">Network Manager since 2026 · House Manager 2025–26</span>
+					<h3>Theta Chi, Beta Alpha Chapter — House Manager, then Network Manager</h3>
+					<span class="stack">House Manager 2025–26 · Network Manager since 2026</span>
 				</div>
 				<p>
 					Managed a $10,000 annual operating budget and daily property operations with alumni.

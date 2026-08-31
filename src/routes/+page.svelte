@@ -121,8 +121,8 @@
 			<div>
 				<div class="row-title"><h3>UCLA Sailing Team</h3></div>
 				<p>
-					Team Captain 2025–26, Treasurer 2024–25. Ran the exec board, and moved a team to regattas
-					every other week on a budget that did not stretch.
+					Treasurer 2024–25, then Team Captain 2025–26. Ran the exec board, and moved a team to
+					regattas every other week on a budget that did not stretch.
 				</p>
 			</div>
 		</li>
@@ -131,9 +131,10 @@
 			<div>
 				<div class="row-title"><h3>Theta Chi, Beta Alpha Chapter</h3></div>
 				<p>
-					Network Manager since 2026; House Manager 2025–26. Ran a $10,000 annual operating budget
-					and directed a summer of renovations — plumbing, structural repairs, a new game room —
-					then used them in recruitment for the second-largest pledge class in chapter history.
+					House Manager 2025–26, then Network Manager since 2026. Ran a $10,000 annual operating
+					budget and directed a summer of renovations — plumbing, structural repairs, a new game
+					room — then used them in recruitment for the second-largest pledge class in chapter
+					history.
 				</p>
 			</div>
 		</li>

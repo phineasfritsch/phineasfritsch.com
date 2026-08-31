@@ -57,10 +57,10 @@ Real-time group film selection over websockets. Its build gate fails when a test
 
 ## LEADERSHIP
 
-**UCLA Sailing Team** — Team Captain (2025–26), Treasurer (2024–25)
+**UCLA Sailing Team** — Treasurer (2024–25), then Team Captain (2025–26)
 Ran the executive board and weekly meetings; coordinated travel, housing and rosters for biweekly regattas against a constrained budget.
 
-**Theta Chi, Beta Alpha Chapter** — Network Manager (2026–present), House Manager (2025–26)
+**Theta Chi, Beta Alpha Chapter** — House Manager (2025–26), then Network Manager (2026–present)
 Managed a $10,000 annual operating budget and daily property operations with alumni. Directed summer renovations — plumbing, structural repairs, a new game room — and used them in recruitment, contributing to the second-largest pledge class in chapter history.
 
 ## ACTUARIAL CASE COMPETITION
