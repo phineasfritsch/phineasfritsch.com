@@ -36,6 +36,20 @@ than starting it a third time. A smaller honest result beats a larger claimed on
 - [x] **B4. RESOLVED. UCLA Sailing title is "Team Captain".** He held both titles
       technically. Captain matches LinkedIn, so a recruiter cross-checking the two
       documents finds the same word. Already correct on the site and the resume.
+- [ ] **B6. Turn OFF Email Address Obfuscation. Top remaining owner item.** Cloudflare → the phineasfritsch.com
+      zone → Scrape Shield → Email Address Obfuscation → off. The edge is rewriting
+      every mailto: into /cdn-cgi/l/email-protection#<hex> and replacing the visible
+      address with a span only JavaScript decodes, so without JS the footer reads
+      "[email protected]" on every live page. Found by `node ops/read-prod.mjs`,
+      which now reports it and exits 2. Every local check passed; the property broke
+      at the edge, which is the whole argument for checking production separately.
+
+      RE-MEASURED after the apex redirect was deleted: still live, and now on all
+      FIVE paths rather than four — the homepage joined the list the moment it became
+      reachable, so deleting the redirect slightly widened this one's blast radius.
+      `contact@phineasfritsch.com` appears zero times in the production HTML of any
+      page; the local build contains it twice. `node ops/read-prod.mjs` exits 2.
+
 - [ ] **B5. Confirm the dental-practice cut.** Vera A. Fritsch DMD (Jun–Oct 2023) was
       removed from the one-page resume: four months, three years ago, and it shares
       his surname, which the panel flagged as a liability rather than an asset. Easy
@@ -43,21 +57,12 @@ than starting it a third time. A smaller honest result beats a larger claimed on
 
 ## READY — unblocked, in priority order
 
-- [ ] R8. **Fix the `--branch` bug in `ops/deploy.mjs`.** Line reads
-      `'--branch', branch === 'main' ? 'main' : branch` — both arms are `branch`, so it
-      is a no-op that always deploys the CURRENT branch. On any branch but `main` that
-      makes a **preview** deployment, which never becomes what `personalsite-ezt.pages.dev`
-      or the apex serves. This is why the deploy on 2026-08-31 uploaded cleanly and then
-      correctly refused: it had genuinely not changed production. The read-back was right
-      and the deploy was wrong, which is the good way round. Fix is to send `main` for the
-      production deploy regardless of the local branch name, or to take the target branch
-      as an explicit flag. Until then, the second `wrangler pages deploy ... --branch main`
-      step is mandatory and must not be described as redundant.
+- [x] R8/R9. DONE — fixed in 38e6332, filed from the failed deploy that exposed them.
+      `--branch` now takes `PAGES_PRODUCTION_BRANCH || branch` instead of a ternary
+      whose arms were identical, and `deploy.mjs` accepts both `PAGES_PROJECT` and
+      `CF_PAGES_PROJECT`. Until that landed the second `wrangler pages deploy
+    --branch main` was mandatory; it is not any more.
 
-- [ ] R9. **`PAGES_PROJECT`, not `CF_PAGES_PROJECT`.** `ops/deploy.mjs` reads
-      `process.env.PAGES_PROJECT`. Any runbook or routine passing `CF_PAGES_PROJECT` is
-      silently ignored and falls through to the `personalsite` default. Harmless today
-      because the default is correct; a trap the day it is not. Pick one name.
 - [ ] R2. Resume, built only from ops/private/EVIDENCE.md. Blocked in part by B1 for
       the employment section; everything else can be written now.
 - [ ] R3. Flip the pending pins in ops/pins.json to active in the same commit that
@@ -100,20 +105,10 @@ them privately. Each is small and none of them are in this repository.
 - [x] **The site is LIVE on phineasfritsch.com**, verified independently:
       `/version.json` returns commit 3264229, built 2026-08-31T20:03:20Z, and
       `/work/`, `/answers/`, `/resume/`, `/blog/` and `/work/shelfmark/` all serve
-      the new site with real content.
-- [ ] **B6. Turn OFF Email Address Obfuscation.** Cloudflare → the phineasfritsch.com
-      zone → Scrape Shield → Email Address Obfuscation → off. The edge is rewriting
-      every mailto: into /cdn-cgi/l/email-protection#<hex> and replacing the visible
-      address with a span only JavaScript decodes, so without JS the footer reads
-      "[email protected]" on all four live pages. Found by `node ops/read-prod.mjs`,
-      which now reports it and exits 2. Every local check passed; the property broke
-      at the edge, which is the whole argument for checking production separately.
-- [ ] **B3: delete the redirect rule.** Measured
-      after deploying, the rule matches `/` and nothing else, which is why every
-      other path already works. Cloudflare → the phineasfritsch.com zone → Rules →
-      Redirect Rules (also check Page Rules and Bulk Redirects) → delete the rule
-      sending the apex to phinster.net. The custom domain is already bound. Nothing
-      else needs configuring, and no agent can do this one.
+      the new site with real content. Written while `/` itself still 301'd; as of
+      the redirect deletion it is true of the homepage as well, so the sentence now
+      means what it says. `ops/read-prod.mjs` returns VERDICT serving on all five
+      paths.
 - [x] R8/R9 fixed: the `--branch` argument was `branch === 'main' ? 'main' : branch`,
       both arms identical — a no-op wearing the costume of a deliberate mapping, which
       uploaded previews no visitor sees. And PAGES_PROJECT vs CF_PAGES_PROJECT
