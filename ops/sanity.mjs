@@ -184,7 +184,7 @@ add(
 const PRIVATE_PATTERNS = [
 	[/\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}/, 'a phone number'],
 	[/\b3\.\d{2,3}\s*(gpa|cumulative)|gpa[:\s]+\d\.\d/i, 'a GPA'],
-	[/yikyak/i, 'the yikyak_archive project']
+	[/yikyak/i, 'a project that is excluded by name; see ops/private/EVIDENCE.md']
 ];
 const leaks = [];
 for (const f of html) {

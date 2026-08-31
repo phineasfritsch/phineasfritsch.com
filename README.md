@@ -44,10 +44,11 @@ the very test protecting it. Read the `_doc` block in that file before touching 
 
 ## Facts
 
-Nothing reaches the site or the resume that is not in
-[`ops/panel/EVIDENCE.md`](ops/panel/EVIDENCE.md), which separates what was
-independently verified from what the subject stated himself. That rule is enforced by
-review rather than by code, and it has already caught two claims that had reached the
+Nothing reaches the site or the resume that is not in `ops/private/EVIDENCE.md`, which
+separates what was independently verified from what the subject stated himself. That
+file is **not in this repository** — see [`ops/panel/README.md`](ops/panel/README.md) —
+because this repository is public and it holds personal details. The rule is enforced
+by review rather than by code, and it has already caught two claims that reached the
 site without being recorded.
 
 ## Notes

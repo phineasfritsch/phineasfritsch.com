@@ -38,7 +38,7 @@ than starting it a third time. A smaller honest result beats a larger claimed on
 
 - [ ] R1. Deploy, once B2 and B3 clear. `node ops/deploy.mjs` is written and refuses
       correctly on a dirty tree, a red gate, or a missing token.
-- [ ] R2. Resume, built only from ops/panel/EVIDENCE.md. Blocked in part by B1 for
+- [ ] R2. Resume, built only from ops/private/EVIDENCE.md. Blocked in part by B1 for
       the employment section; everything else can be written now.
 - [ ] R3. Flip the pending pins in ops/pins.json to active in the same commit that
       writes the property each one guards. Never in a later commit.
@@ -58,25 +58,15 @@ than starting it a third time. A smaller honest result beats a larger claimed on
       Both were described by him and neither is currently on the site. Needs evidence
       in EVIDENCE.md first.
 
-## PROFILE CLEANUP — cheap, high return, safe to do in any order
+## PROFILE CLEANUP
 
-Each of these is something a skeptic finds in about four clicks. See the liabilities
-section of ops/panel/EVIDENCE.md for why each one matters.
+Six items covering things a skeptical reader finds in about four clicks across his
+other repositories: an empty public repo, unmerged default branches, a scaffold README
+on a live product, and a repository whose name promises one thing and contains another.
 
-- [ ] P1. `PIC16A` — public repo named for a UCLA course, contains eight Minecraft
-      mod zips and no Python. Delete it or rename it to what it actually is.
-- [ ] P2. Merge the real branches to `main` on `blackjack_coach`,
-      `better_bio_schedule`, `yikyak_archive`. Their landing pages currently show
-      nothing while the work sits one click away on an unmerged branch.
-- [ ] P3. `ge_snipe` — replace the untouched Rails scaffold README; rename the
-      default branch from `phase-1-data-model-and-grade-import` to `main`; rename
-      `docs/RESUME.md`, which is a 43KB agent log that a recruiter will click.
-- [ ] P4. `uclalibhours` — add a README. Its 5,100 lines are public with no
-      explanation and 20 of 31 commit messages are keyboard mash.
-- [ ] P5. Delete `prdfg` (public, zero commits) and `portflio` (public, misspelled,
-      41 lines, stock clipart). Both are superseded and neither adds anything.
-- [ ] P6. `biomed_callnumber_finder` — the ~1GB of committed HEIC/JPG photos.
-      Migrating to LFS rewrites history; decide deliberately rather than by default.
+They are listed in `ops/private/EVIDENCE.md` rather than here, because naming another
+person's repositories and their faults in a public file is a different act from noting
+them privately. Each is small and none of them are in this repository.
 
 ## DONE
 
@@ -93,7 +83,7 @@ section of ops/panel/EVIDENCE.md for why each one matters.
 - [x] D6. Deploy that pushes before deploying and reads production back —
       `ops/deploy.mjs`. Correctly refuses on a dirty tree.
 - [x] D7. This queue.
-- [x] D8. Verified evidence base — `ops/panel/EVIDENCE.md`.
+- [x] D8. Verified evidence base — `ops/private/EVIDENCE.md`.
 - [x] D9. Six-persona panel audited the live site as real users. Median time before
       closing the tab: 16 seconds. All six flagged the dead apex first.
 - [x] D10. Sixteen-direction knockout bracket. Winner "Plain Answers", unanimous, no
@@ -110,7 +100,7 @@ section of ops/panel/EVIDENCE.md for why each one matters.
       pushes to an isolated branch, never deploying.
 - [x] D15. Resume: one page, built only from EVIDENCE.md, rendered by
       ops/resume-pdf.mjs which refuses if a GPA, a revenue projection, a passed-exam
-      claim or yikyak_archive appears. Six-persona panel reviewed it; the actuarial
+      claim, or the excluded project appears. Six-persona panel reviewed it; the actuarial
       hiring manager would NOT advance it, on exams alone, which is the single most
       important strategic finding: FM this fall is the highest-leverage thing he can do.
 - [x] D16. Real README, replacing the sv scaffold.

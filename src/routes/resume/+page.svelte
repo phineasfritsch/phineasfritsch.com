@@ -3,9 +3,9 @@
 	// Dates follow LinkedIn where LinkedIn and the older .docx disagree, because he
 	// confirmed LinkedIn is the current one.
 	//
-	// GPA is deliberately absent. Cumulative is 3.486 and upper-division major is
-	// 2.933; the older resume said 3.7, which is wrong and would be caught against a
-	// transcript at offer stage. Omitting a GPA is unremarkable. See EVIDENCE.md.
+	// GPA is deliberately absent, and the figures are deliberately not repeated here:
+	// this repository is public. The reasoning is in ops/private/EVIDENCE.md, which is
+	// not. Omitting a GPA is unremarkable; publishing one nobody asked for is not.
 </script>
 
 <svelte:head>

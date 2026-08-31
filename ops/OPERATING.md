@@ -82,12 +82,14 @@ Stated as prohibitions, because that is the only form that survives a fresh cont
 - **Never `git add -A`.** Stage explicit paths. Something else is usually mid-flight,
   and a commit that sweeps unrelated half-finished files into history carries a
   message describing work it does not contain.
-- **Never put a fact on the site or the resume that is not in `ops/panel/EVIDENCE.md`.**
+- **Never put a fact on the site or the resume that is not in `ops/private/EVIDENCE.md`.**
   His major, his graduation year, and his employment history are NOT established.
   A pre-med signal exists in his code; it is a feature he built, not a fact about him.
   He has completed zero actuarial exams — Exam FM is an intention, never a credential.
-- **Never include `yikyak_archive`.** The reason is in EVIDENCE.md so that nobody
-  re-adds it later believing it was an oversight.
+- **One repository is excluded from the site and the resume by name.** It is named,
+  with the reason, in `ops/private/EVIDENCE.md`, so that nobody re-adds it later
+  believing the omission was an oversight. `ops/sanity.mjs` fails the build if it
+  appears in any page.
 - **Never weaken an assertion to something that would pass on an empty page.** When a
   check legitimately changes, leave a comment saying what the new form is and why the
   property is intact, and count the changes. A large count means the work is drifting,

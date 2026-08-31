@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 /**
- * Render ops/resume/resume.html to a PDF.
+ * Render ops/private/resume/resume.html to a PDF.
  *
- * This file lives in ops/ and NOT in static/, deliberately. The resume carries his
- * phone number, and anything under static/ is published. A browser check
- * (tests/e2e, "no page publishes the phone number") enforces the web side; keeping
- * the source out of the build directory is the other half.
+ * The source lives under ops/private/, which is gitignored, because this repository
+ * is public and the resume carries a phone number. It is also outside static/, so it
+ * can never be swept into the build. Three separate guards, because the cost of
+ * getting this wrong is not recoverable once it is pushed:
+ *   - untracked, so it is not in the repository;
+ *   - outside static/, so it is not in the build;
+ *   - ops/sanity.mjs fails if a phone number appears in any built page anyway.
  *
  *   CHROMIUM_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome node ops/resume-pdf.mjs
  */
@@ -15,8 +18,8 @@ import { pathToFileURL } from 'node:url';
 import { join } from 'node:path';
 import { REPO } from './lib.mjs';
 
-const src = join(REPO, 'ops/resume/resume.html');
-const out = join(REPO, 'ops/resume/Phineas-Fritsch-resume.pdf');
+const src = join(REPO, 'ops/private/resume/resume.html');
+const out = join(REPO, 'ops/private/resume/Phineas-Fritsch-resume.pdf');
 
 if (!existsSync(src)) {
 	console.error(`\n  REFUSING: ${src} does not exist.\n`);
@@ -24,23 +27,20 @@ if (!existsSync(src)) {
 }
 
 // Guard the things that must never reach a resume, checked against the source
-// rather than trusted. See ops/panel/EVIDENCE.md for why each one is here.
+// rather than trusted. See ops/private/EVIDENCE.md for why each one is here.
 const html = readFileSync(src, 'utf8');
 const text = html
 	.replace(/<style[\s\S]*?<\/style>/gi, ' ')
 	.replace(/<[^>]+>/g, ' ')
 	.replace(/\s+/g, ' ');
 const forbidden = [
-	[
-		/\bGPA\b/i,
-		'a GPA appears. It is deliberately omitted; the old resume claimed 3.7 and the real figure is 3.486.'
-	],
+	[/\bGPA\b/i, 'a GPA appears. It is deliberately omitted; see ops/private/EVIDENCE.md.'],
 	[
 		/projected to (make|earn)|\$\d+\s*k?\s*(over|in)\s+\d/i,
 		'a revenue projection appears. There is no revenue.'
 	],
 	[/passed exam|exam .{0,4}passed/i, 'it implies an exam has been passed. None has.'],
-	[/yikyak/i, 'yikyak_archive appears. It must never be listed.']
+	[/yikyak/i, 'an excluded project appears; see ops/private/EVIDENCE.md.']
 ];
 const hits = forbidden.filter(([re]) => re.test(text));
 if (hits.length) {
