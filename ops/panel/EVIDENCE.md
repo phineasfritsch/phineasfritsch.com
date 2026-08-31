@@ -17,8 +17,59 @@ is not in this file.** If a page wants a fact, it comes from here or it is cut.
 | https://better-bio-schedule.phineas-fritsch.workers.dev/ | 200     | Biomed library staff schedule, Cloudflare Worker      |
 | https://phineasfritsch.com/                              | **530** | **His own name. Cloudflare error 1033, dead tunnel.** |
 
-Three of his projects serve traffic. The one that does not is the one with his
+Four of his projects serve traffic. The one that does not is the one with his
 name on it. That is the shape of the whole problem.
+
+**A dead link on a resume is worse than no link.** Until the apex serves, the resume
+header must NOT print phineasfritsch.com. A recruiter clicks the top line first, and
+a Cloudflare error there discredits everything under it. Restore the URL to the resume
+in the same change that makes the apex serve, and not before.
+
+## Stated by Phineas directly, in conversation — his own account, not independently verified
+
+Recorded here because the rule is that nothing reaches the site or the resume unless
+it is in this file, and the resume panel correctly rejected these when they were not.
+They are first-hand claims from the subject about his own job and his own projects,
+which is ordinary resume provenance; they are simply not third-party verified, and the
+distinction is kept visible so nobody later cites them as measured facts.
+
+- **He is STILL employed at the UCLA Biomedical Library** as a **Student Assistant II**,
+  hired as a Student Assistant I and promoted. LinkedIn shows this role ending Jul 2026;
+  LinkedIn is stale on this point and he corrected it. A promotion to Student Supervisor
+  has been raised with him by his manager but **has not happened and is not a fact**.
+- **Collab Hub.** Getting the Collab Hub briefing required signing into an admin portal,
+  which required messaging a supervisor on Slack for a 2FA code on every access. He
+  published the briefing where no account is needed, and colleagues in his unit now use
+  his version. This is the strongest single claim he has: unprompted work with real
+  adoption against a real operational friction. It ships as part of better_bio_schedule.
+- **Nobody assigned any of the library tools.** His words: he built them because he
+  wanted to be lazy. Unprompted is a stronger story than assigned and should be said
+  plainly rather than dressed up as an initiative narrative.
+- **The four library tools**: the Collab Hub briefing, Shelfmark (built after the library
+  retired LibMaps), a redesigned headcount page, and better_bio_schedule (the daily
+  schedule arrived as an Excel file). Plus an iOS app routing shelf-reading, shelving and
+  ILL pulls. The official UCLA Student Assistant I job spec he supplied independently
+  corroborates the underlying duties: "Compiles statistics of Loan Desk activity",
+  "Shelf reading", "Searching for requested and missing materials", and "shelves
+  catalogued material according to the Library of Congress [LC]".
+- **The Cut Card** (thecutcard.com), verified serving 200 by direct request. Its
+  self-imposed constraint, from its README: "No claim about money, anywhere. Not in the
+  app, not on the paywall, not in a notification."
+
+## Revenue — there is none
+
+He described dibs.ge and thecutcard.com as _projected_ to earn money and said plainly:
+"No money yet so this is nothing but projected money with nothing proven." **No revenue
+figure, projected or actual, may appear on the site or the resume.** A projection stated
+as an achievement is the single fastest way to make a reader re-price every other claim
+on the page.
+
+## How he works, in his words
+
+He runs two Claude Max accounts and orchestrates them — his phrasing: he "essentially
+pretends to be a product manager in a company and tells different departments to run
+things." This is the most distinctive true thing about him and it is the direct answer
+to his interest in product roles: the daily practice already is product management.
 
 ## Verified by reading the file
 
