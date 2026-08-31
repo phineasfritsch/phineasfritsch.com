@@ -118,7 +118,7 @@
 				<p>
 					Ran the executive board and weekly meetings, coordinated travel and housing for biweekly
 					regattas against a budget that did not stretch, and set rosters balancing competitiveness
-					against who could actually spend a weekend in a van together.
+					against who could spend a weekend in a van together.
 				</p>
 			</div>
 		</li>

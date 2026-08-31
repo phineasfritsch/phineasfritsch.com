@@ -15,7 +15,7 @@
 	<title>Phineas Fritsch — actuarial mathematics at UCLA, and things that are running</title>
 	<meta
 		name="description"
-		content="Financial actuarial mathematics senior at UCLA. I build tools for problems I actually have — course grade data, library shelf routing, staff schedules — and three of them are serving traffic right now."
+		content="Financial actuarial mathematics senior at UCLA. I build tools for problems I have: course grade data, library shelf routing, staff schedules — and three of them are serving traffic right now."
 	/>
 </svelte:head>
 
@@ -28,7 +28,7 @@
 	<div class="prose" style="margin-top:1.1rem">
 		<p>
 			Financial actuarial mathematics at UCLA, graduating June 2027, minor in accounting. Sitting
-			Exam FM this fall — <strong>no exams passed yet</strong>. Most of what is below came out of a
+			Exam FM this fall. <strong>No exams passed yet</strong>. Most of what is below came out of a
 			job, a fraternity house, or a course I was annoyed by.
 		</p>
 		<p>
@@ -89,17 +89,17 @@
 		<p>
 			<strong>An AI wrote most of the code in every project on this page.</strong> I am not an engineer
 			by training. I am an actuarial mathematics student who wanted these things to exist, and what I
-			actually do looks much more like running a product team than writing software: I decide what gets
-			built, split the work across several agents at once, review what comes back, reject the parts that
-			are wrong, and own whether the thing works when a real person opens it.
+			do looks much more like running a product team than writing software: I decide what gets built,
+			split the work across several agents at once, review what comes back, reject the parts that are
+			wrong, and own whether the thing works when a real person opens it.
 		</p>
 		<p>
-			That last part is the whole job. Agents report success on broken work — confidently, with a
+			That last part is the whole job. Agents report success on broken work, confidently, with a
 			detailed account of what they checked. So the useful skill is not prompting, it is building
 			the thing that can contradict them and then actually reading the result. This site runs a gate
 			before it deploys, pins the sentences that matter so a later rewrite cannot quietly delete
 			them, and reads production back after shipping to confirm what is live. The status figures
-			above were measured, not asserted.
+			above were measured rather than asserted.
 		</p>
 		<p>
 			The decisions worth asking me about are on each project's page: why Dibs runs Postgres at
@@ -132,8 +132,8 @@
 				<div class="row-title"><h3>Theta Chi, Beta Alpha Chapter</h3></div>
 				<p>
 					House Manager 2025–26, then Network Manager since 2026. Ran a $10,000 annual operating
-					budget and directed a summer of renovations — plumbing, structural repairs, a new game
-					room — then used them in recruitment for the second-largest pledge class in chapter
+					budget and directed a summer of renovations (plumbing, structural repairs, a new game
+					room) then used them in recruitment for the second-largest pledge class in chapter
 					history.
 				</p>
 			</div>

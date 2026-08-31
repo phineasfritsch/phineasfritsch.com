@@ -22,7 +22,7 @@
 			a: `Product, or actuarial work, and I am genuinely still deciding. The thing both have in common is the part I like: work out what the answer should be, then be responsible for whether it holds up. I would rather join a team where shipping something and being wrong about it in public is normal.`
 		},
 		{
-			q: 'What have you actually built?',
+			q: 'What have you built?',
 			a: `Four things that are running right now. A course-ranking and seat-alert service for UCLA students, a call-number-to-shelf finder for the library I work in, a phone version of my unit's staff schedule, and a blackjack practice app. There are a few more that only exist as source.`
 		},
 		{
@@ -55,7 +55,7 @@
 		},
 		{
 			q: 'How do you know when the AI is wrong?',
-			a: `Because I assume it is, and I build the thing that can contradict it before I build volume. Agents report success on broken work confidently and in detail — that is the normal case, not the exception. So this site runs a gate before it deploys, pins the sentences that matter so a later rewrite cannot quietly delete them, and reads production back afterwards to check what is actually live. The status numbers on the front page were measured, not asserted.`
+			a: `Because I assume it is, and I build the thing that can contradict it before I build volume. Agents report success on broken work confidently and in detail, and that is the normal case rather than the exception. So this site runs a gate before it deploys, pins the sentences that matter so a later rewrite cannot quietly delete them, and reads production back afterwards to check what is live. The status numbers on the front page were measured rather than asserted.`
 		},
 		{
 			q: 'How do I get in touch?',
@@ -68,7 +68,7 @@
 	<title>Questions — Phineas Fritsch</title>
 	<meta
 		name="description"
-		content="The questions people actually ask me, in their words, answered straight: what I study, what I have built, who uses it, and how much of the code an AI wrote."
+		content="The questions people ask me, in their words, answered straight: what I study, what I have built, who uses it, and how much of the code an AI wrote."
 	/>
 </svelte:head>
 
@@ -78,8 +78,8 @@
 	</h1>
 	<div class="prose" style="margin-top:0.9rem">
 		<p>
-			These are the things people actually ask, phrased the way they ask them. The awkward one is in
-			here in its normal place, not at the bottom.
+			These are the questions people ask, phrased the way they ask them. The awkward one is in here
+			in its normal place, not at the bottom.
 		</p>
 	</div>
 </section>

@@ -43,7 +43,7 @@ export const projects: Project[] = [
 		decision:
 			'It runs on one 2.5 GB VPS, so the whole configuration is shaped by that ceiling. Postgres is set to 60 connections rather than the obvious 30, because Rails multi-database means a single thread holds four connections at once, and Kamal overlaps the old and new containers during a rollout — so the limit is breached exactly when deploying, and the symptom is the website failing rather than the jobs. That one is written down in config/deploy.yml so the next person does not have to rediscover it at 2am.',
 		limit:
-			'UCLA only, and it cannot enrol you — it watches and it emails. The grade data ends at Spring 2025, because that is the last term the public-records responses cover.',
+			'UCLA only, and it cannot enrol you. It watches and it emails. The grade data ends at Spring 2025, because that is the last term the public-records responses cover.',
 		assisted:
 			'Claude wrote most of the code. The data model, the scraping budget, and the deployment sizing were decisions I made and can defend line by line.'
 	},
@@ -56,16 +56,16 @@ export const projects: Project[] = [
 		year: '2026',
 		stack: ['Vanilla JS', 'Cloudflare Workers', 'Tesseract.js'],
 		decision:
-			'The library stopped using LibMaps and the catalogue will tell you a call number but not where to stand, so the dataset simply did not exist. I made it: I photographed the range labels on the end of every shelf across nine levels and transcribed them into one validated file. The sorting is the subtle part — the digits after a Cutter letter are a decimal fraction, so AM4733 shelves before AM477, which is the opposite of what plain string comparison gives you, and getting it backwards sends you to the wrong end of a floor.',
+			'The library stopped using LibMaps and the catalogue will tell you a call number but not where to stand, so the dataset simply did not exist. I made it: I photographed the range labels on the end of every shelf across nine levels and transcribed them into one validated file. The sorting is the subtle part. The digits after a Cutter letter are a decimal fraction, so AM4733 shelves before AM477, which is the opposite of what plain string comparison gives you, and getting it backwards sends you to the wrong end of a floor.',
 		limit:
 			'One building. The route planner assumes you are on foot and refuses to plan stairs for more than five books, because at that point it is a truck trip.',
 		assisted:
-			'Claude wrote most of the code. The shelf survey, the call-number rules and the routing constraints came from actually working the desk. Nobody asked for this one either.'
+			'Claude wrote most of the code. The shelf survey, the call-number rules and the routing constraints came from working the desk. Nobody asked for this one either.'
 	},
 	{
 		slug: 'biomed-schedule',
 		name: 'Better Bio Schedule',
-		what: 'One link for every daily staff schedule at the biomedical library, laid out for a phone, with a notification when you are put on something other than the desk. It also carries the Collab Hub briefing, which is the part my coworkers actually use.',
+		what: 'One link for every daily staff schedule at the biomedical library, laid out for a phone, with a notification when you are put on something other than the desk. It also carries the Collab Hub briefing, which is the part my coworkers use.',
 		url: 'https://better-bio-schedule.phineas-fritsch.workers.dev',
 		live: true,
 		year: '2026',
@@ -79,7 +79,7 @@ export const projects: Project[] = [
 	{
 		slug: 'the-cut-card',
 		name: 'The Cut Card',
-		what: 'Blackjack practice that drills you to correct first and fast second — basic strategy, counting, and the arithmetic of how much you can actually put at risk.',
+		what: 'Blackjack practice that drills you to correct first and fast second: basic strategy, counting, and the arithmetic of how much you can put at risk.',
 		url: 'https://thecutcard.com',
 		live: true,
 		year: '2026',

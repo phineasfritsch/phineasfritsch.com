@@ -44,7 +44,7 @@
 			}
 			.contact {
 				font-family: 'PlexMono', monospace;
-				font-size: 7.6pt;
+				font-size: 7.1pt;
 				color: #4a463c;
 				margin-top: 4pt;
 			}
@@ -69,7 +69,7 @@
 				margin: 6.5pt 0 3.5pt;
 			}
 			.row {
-				margin-bottom: 4pt;
+				margin-bottom: 3.6pt;
 			}
 			.row:last-child {
 				margin-bottom: 0;
@@ -98,7 +98,7 @@
 				padding-left: 8pt;
 				position: relative;
 				color: #2c2921;
-				margin-bottom: 0.5pt;
+				margin-bottom: 0.2pt;
 			}
 			li::before {
 				content: '';
@@ -139,6 +139,12 @@
 			<span>Los Angeles, CA</span><span>(510) 882-4915</span><span>contact@phineasfritsch.com</span
 			><span>linkedin.com/in/phineasfritsch</span><span>github.com/phineasfritsch</span>
 		</div>
+		<p class="lede">
+			Financial actuarial mathematics senior applying to product and actuarial roles. The software
+			below is AI-assisted: I run several agents the way a company runs departments and do the
+			product manager's job on top, deciding what gets built and operating the result.
+		</p>
+
 		<h2>Education</h2>
 		<div class="rowhead">
 			<strong>University of California, Los Angeles</strong>
@@ -149,13 +155,19 @@
 			<dd>B.S. Financial Actuarial Mathematics · Minor in Accounting</dd>
 			<dt>Actuarial</dt>
 			<dd>
-				Mathematics of Finance (174E); Actuarial Models (178A, 179) in progress.
-				<b>Sitting Exam FM, Fall 2026 — no exams completed to date.</b>
+				<b>No exams passed. Sitting Exam FM, Fall 2026</b>; MATH 174E, Mathematics of Finance, is
+				the FM syllabus and is already behind me. Actuarial Models (178A, 179) in progress.
+			</dd>
+			<dt>Case comp</dt>
+			<dd>
+				13th Annual Actuarial Case Competition (BAS), Winter 2025. Priced three commercial property
+				insurance structures for a simulated Fortune 500 client against tail risk, fitting
+				Lognormal, Gamma and Pareto to historical losses and running 10,000-iteration Monte Carlo
+				simulations to compare TCOR and Risk-Adjusted TCOR.
 			</dd>
 			<dt>Also</dt>
 			<dd>
-				Probability (170E/170S), Real Analysis, Linear Algebra; Accounting (MGMT 1A/1B), MGMT
-				105/109, ECON 1/11
+				Probability (170E/170S), Real Analysis, Linear Algebra; MGMT 1A/1B, 105, 109; ECON 1/11
 			</dd>
 		</dl>
 
@@ -167,18 +179,24 @@
 			</div>
 			<ul>
 				<li>
-					Hired as Student Assistant I and promoted. Circulation, interlibrary-loan pull lists,
-					shelf reading, headcounts, opening and closing.
+					Nobody assigned any of this. I built four tools for the unit, plus an iOS app routing
+					shelf-reading, shelving and ILL pulls, because I wanted to be lazy about the parts that
+					repeat daily.
 				</li>
 				<li>
-					Built four tools now used in the unit's daily workflow, none of them assigned. One
-					replaced the Collab Hub access path, which previously required an admin-portal login and a
-					Slack request to a supervisor for a 2FA code every time; colleagues use mine instead.
+					Reading the Collab Hub briefing meant signing into an admin portal and asking a supervisor
+					on Slack for a two-factor code, every time. I put it where the unit can just read it, and
+					that is the version my colleagues use now.
 				</li>
 				<li>
-					Surveyed ~1,100 shelf-end range labels across nine stack levels after the library retired
-					LibMaps, and built a call-number-to-shelf lookup and route planner on the dataset
+					After the library retired LibMaps, photographed and transcribed the shelf-end range labels
+					across nine stack levels myself (1,123 photographs), validated them into one dataset, and
+					built a call-number-to-shelf lookup and pull-list route planner on it
 					(shelfmark.phineasfritsch.com).
+				</li>
+				<li>
+					Circulation, interlibrary-loan pull lists, shelf reading, headcounts, opening and closing.
+					Promoted from Student Assistant I.
 				</li>
 			</ul>
 		</div>
@@ -195,7 +213,7 @@
 			</ul>
 		</div>
 
-		<h2>Projects — all AI-assisted; I direct the work and operate the result</h2>
+		<h2>Projects</h2>
 		<div class="row">
 			<div class="rowhead">
 				<strong>Dibs — dibs.ge</strong>
@@ -203,11 +221,15 @@
 			</div>
 			<ul>
 				<li>
-					Ranks UCLA general-education courses on grade history obtained through four public-records
-					requests — 176,290 rows, deduplicated to 1,544,628 grades after correcting an instructor
-					fan-out — and alerts students when a watched section opens a seat.
+					Ranks UCLA general-education courses on grade history I obtained by filing four California
+					Public Records Act requests: 176,290 rows, expanded to 1,544,628 individual grades after
+					correcting an instructor fan-out that would have added 81,559 phantom ones.
 				</li>
-				<li>Runs on one 2.5 GB server I sized, deploy to and operate.</li>
+				<li>
+					Rewrote the crawler from 657 + 480 requests an hour into a single ~700-request pass with a
+					hard budget and a concurrency-1 lock: less load on UCLA's servers, and catalog staleness
+					fell from 2,085 minutes to 3. Runs on a 2.5 GB server I budgeted by hand.
+				</li>
 			</ul>
 		</div>
 		<div class="row">
@@ -217,8 +239,8 @@
 			</div>
 			<ul>
 				<li>
-					Blackjack strategy and counting practice, built under a self-imposed rule of no claim
-					about money anywhere in it — not in the app, not on the paywall, not in a notification.
+					Blackjack strategy and counting practice, built under one rule I set first: no claim about
+					money anywhere in it, not in the app, not on the paywall, not in a notification.
 				</li>
 			</ul>
 		</div>
@@ -232,7 +254,7 @@
 			<ul>
 				<li>
 					Ran the executive board and weekly meetings; coordinated travel, housing and rosters for
-					biweekly regattas against a constrained budget.
+					biweekly regattas on a constrained budget.
 				</li>
 			</ul>
 		</div>
@@ -244,28 +266,11 @@
 			<ul>
 				<li>
 					Managed a $10,000 annual operating budget and daily property operations with alumni.
-				</li>
-				<li>
-					Directed summer renovations — plumbing, structural repairs, a new game room — and used
-					them in recruitment, contributing to the second-largest pledge class in chapter history.
+					Directed summer renovations (plumbing, structural repairs, a new game room) and used them
+					in recruitment, contributing to the second-largest pledge class in chapter history.
 				</li>
 			</ul>
 		</div>
-
-		<h2>Actuarial Case Competition</h2>
-		<div class="rowhead">
-			<strong>13th Annual Actuarial Case Competition (BAS)</strong>
-			<span class="when">Winter 2025</span>
-		</div>
-		<ul>
-			<li>
-				Priced three commercial property insurance structures for a simulated Fortune 500 real
-				estate client, analysing how retentions, aggregate limits and co-insurance shifted tail
-				risk. Computed TCOR and Risk-Adjusted TCOR against the CFO's premium constraint, using
-				10,000-iteration Monte Carlo simulations of annual aggregate losses fitted to Lognormal,
-				Gamma and Pareto.
-			</li>
-		</ul>
 
 		<h2>Skills</h2>
 		<dl class="kv">

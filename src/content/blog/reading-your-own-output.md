@@ -6,7 +6,7 @@ excerpt: Everything I have shipped this year was mostly written by an AI. The ha
 
 Everything on this site was mostly written by an AI. I want to be direct about that,
 because the interesting part is not the admission, it is what the admission implies
-about where the work actually is.
+about where the work now sits.
 
 Getting code out of a model is easy now. It is so easy that it stops being the
 constraint. Ask for a feature and you get a feature, with a confident summary of what
@@ -65,7 +65,7 @@ is, and that when it broke at two in the morning I was the one who fixed it.
 When a check fails, it is one of two things and from the outside they look identical.
 Either the work broke something, or the work deliberately changed something and the
 check is now stale. Getting that wrong in the second direction — deciding a failing
-check is obsolete when it is actually correct — is how a test suite becomes decorative,
+check is obsolete when it is correct — is how a test suite becomes decorative,
 one reasonable accommodation at a time. It is also the one step where being wrong
 leaves no trace.
 
