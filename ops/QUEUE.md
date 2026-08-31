@@ -61,7 +61,7 @@ than starting it a third time. A smaller honest result beats a larger claimed on
       `--branch` now takes `PAGES_PRODUCTION_BRANCH || branch` instead of a ternary
       whose arms were identical, and `deploy.mjs` accepts both `PAGES_PROJECT` and
       `CF_PAGES_PROJECT`. Until that landed the second `wrangler pages deploy
-  --branch main` was mandatory; it is not any more.
+--branch main` was mandatory; it is not any more.
 
 - [ ] R2. Resume, built only from ops/private/EVIDENCE.md. Blocked in part by B1 for
       the employment section; everything else can be written now.
