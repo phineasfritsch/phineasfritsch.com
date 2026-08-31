@@ -39,8 +39,8 @@
 
 		<div class="contact">
 			<p>Want to talk?</p>
-			<a href="mailto:accounts@phineasfritsch.com" class="email-link">
-				accounts@phineasfritsch.com
+			<a href="mailto:contact@phineasfritsch.com" class="email-link">
+				contact@phineasfritsch.com
 			</a>
 		</div>
 	</div>

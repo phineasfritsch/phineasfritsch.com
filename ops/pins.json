@@ -1,0 +1,79 @@
+{
+  "_doc": [
+    "Pinned claims: properties that are load-bearing and invisible to ordinary tests.",
+    "",
+    "RULES, learned the hard way and not negotiable:",
+    "1. Pin by SIGNATURE, not by literal. Assert the smallest fragment that carries",
+    "   the meaning, so a legitimate rewrite passes and a deletion fails. Pin a whole",
+    "   sentence and every honest edit goes red, you get tired of it, and you start",
+    "   editing the guard instead of the code. A guard people learn to edit is worse",
+    "   than no guard, because it still looks like one.",
+    "2. Comments are stripped before searching. Otherwise a deleted sentence, quoted",
+    "   in the comment explaining its deletion, satisfies the test protecting it.",
+    "3. Search the WHOLE app, never one file. A port legitimately moves copy into a",
+    "   shared component. A guard that only looks at the original page reports every",
+    "   relocation as a loss and is noise within a day.",
+    "4. A pin must be green the moment it is written. A pin that is red before the",
+    "   work starts is a bad pin: fixing it afterwards is indistinguishable from",
+    "   covering up a deletion, including to yourself.",
+    "",
+    "active:false means the property does not exist yet and the pin is a SPEC, not a",
+    "guard. The gate reports pending pins separately and never counts them as passing.",
+    "Flip to active:true in the same commit that writes the property."
+  ],
+  "pins": [
+    {
+      "id": "contact.email",
+      "active": true,
+      "why": "The entire point of owning the domain - he built the first site in 2023 because he disliked an email domain that went nowhere. He has two addresses in circulation and named this one canonical; the old accounts@ address must never reappear.",
+      "any": [
+        "contact@phineasfritsch.com"
+      ]
+    },
+    {
+      "id": "identity.name",
+      "active": true,
+      "why": "A portfolio that does not say whose it is, in text a crawler can read, has failed at its only job.",
+      "any": [
+        "phineas fritsch"
+      ]
+    },
+    {
+      "id": "honesty.ai-disclosure",
+      "active": false,
+      "why": "These projects are AI-assisted and the site says so. This is the first line a later polish pass deletes, because it reads as self-deprecating ornament rather than the thing that makes every other claim believable. It is the single most load-bearing sentence on the site.",
+      "any": [
+        "ai-assisted",
+        "ai assistance",
+        "built with claude",
+        "assisted by claude",
+        "vibe coded",
+        "vibe-coded",
+        "written with an llm"
+      ]
+    },
+    {
+      "id": "honesty.scope-caveat",
+      "active": false,
+      "why": "Every project claim names its own limit in the same breath as the claim. A recruiter who finds one overstatement discounts the entire page, so the caveats are what make the rest believable. Enforced structurally in ops/sanity.mjs (every project must carry a limit field); this pin holds the phrases that must never all vanish at once.",
+      "any": [
+        "does not",
+        "doesn't",
+        "cannot",
+        "only works",
+        "no tests",
+        "not production",
+        "rather than"
+      ]
+    },
+    {
+      "id": "a11y.skip-link",
+      "active": false,
+      "why": "Keyboard and screen-reader users hit the nav on every page without one. Invisible to sighted testing, so nothing else will ever catch its removal.",
+      "any": [
+        "skip to content",
+        "skip to main"
+      ]
+    }
+  ]
+}
