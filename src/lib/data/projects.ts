@@ -50,15 +50,15 @@ export const projects: Project[] = [
 	{
 		slug: 'shelfmark',
 		name: 'Shelfmark',
-		what: 'Turns a call number into a physical shelf in the UCLA biomedical library, and a photo of a pull list into a walking route through the building.',
+		what: 'A replacement for UCLA library search, built on the catalogue endpoint the university already publishes. It finds the book, then tells you which shelf face to stand at — which the official search cannot do at all.',
 		url: 'https://shelfmark.phineasfritsch.com',
 		live: true,
 		year: '2026',
-		stack: ['Vanilla JS', 'Cloudflare Workers', 'Tesseract.js'],
+		stack: ['Vanilla JS', 'Alma SRU', 'Cloudflare Workers', 'Tesseract.js'],
 		decision:
-			'The library stopped using LibMaps and the catalogue will tell you a call number but not where to stand, so the dataset simply did not exist. I made it: I photographed the range labels on the end of every shelf across nine levels and transcribed them into one validated file. The sorting is the subtle part. The digits after a Cutter letter are a decimal fraction, so AM4733 shelves before AM477, which is the opposite of what plain string comparison gives you, and getting it backwards sends you to the wrong end of a floor.',
+			"UCLA's search will give you a call number and then abandon you: there is no floor, row or side field anywhere in its records. Ours came from walking the building. I photographed and transcribed 453 shelf faces across ten levels into a 26KB file that ships with the page, so a call-number lookup makes zero network requests. The endpoint it searches also returns results in filing-title order with no spelling correction, so ranking, edition grouping and typo recovery are all done in the browser afterwards.",
 		limit:
-			'One building. The route planner assumes you are on foot and refuses to plan stairs for more than five books, because at that point it is a truck trip.',
+			'The shelf map is the biomedical library only, and a bare call number is currently assumed to be a Biomed one, so a call number that lives in another building can still return a confident shelf face here. Level 4 has not been surveyed. It has no accounts, holds or renewals, and it links out to the official record rather than replacing it.',
 		assisted:
 			'Claude wrote most of the code. The shelf survey, the call-number rules and the routing constraints came from working the desk. Nobody asked for this one either.'
 	},

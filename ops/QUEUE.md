@@ -43,7 +43,13 @@ than starting it a third time. A smaller honest result beats a larger claimed on
 - [ ] R3. Flip the pending pins in ops/pins.json to active in the same commit that
       writes the property each one guards. Never in a later commit.
 - [ ] R4. Fix `build.page-metadata`: blog/hello-world renders two h1 elements.
-- [ ] R5. Expand the Shelfmark description once the comparison against UCLA's own
+- [ ] R7. **Tell Phineas about the Shelfmark building bug** (also in EVIDENCE.md).
+      A bare call number is always mapped onto Biomed, so `PS3535.A547 A94 2005`, a
+      YRL call number, returns a confident Biomed shelf face with no warning. Not a
+      parsing fault — the Biomed range genuinely contains PS3535 — but someone could
+      walk to the wrong building. Level 4 is also unsurveyed. Fix lives in the
+      shelfmark repo, not this one.
+- [x] R5. DONE. Expanded the Shelfmark description once the comparison against UCLA's own
       catalogue search lands. He says it is a full replacement search built on UCLA's
       public Alma SRU endpoint, not only a call-number-to-shelf tool, and the current
       copy undersells it. Do not write the comparison from imagination — it must come

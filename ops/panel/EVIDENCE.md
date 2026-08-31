@@ -56,6 +56,59 @@ distinction is kept visible so nobody later cites them as measured facts.
   self-imposed constraint, from its README: "No claim about money, anywhere. Not in the
   app, not on the paywall, not in a notification."
 
+## Shelfmark vs UCLA's own search — measured against live endpoints
+
+An agent exercised both against live UCLA services. Method caveat kept visible: it
+could not render UCLA's Primo **user interface** (Chromium cannot reach the public
+internet through this proxy), so every UCLA finding below comes from Primo's JSON API
+or the Alma SRU endpoint, never from clicking. **No click-count or step-count claim
+about UCLA's UI may be made from this work.** Nor may any latency number for
+Shelfmark — its requests were proxied through a curl-per-call shim and the timings
+are meaningless.
+
+VERIFIED, and each is defensible if a reader tries it:
+
+- `W1 BI700`, an NLM shelving number: **UCLA's search returns 0 results**, confirmed
+  across `MyInst_and_CI` and `MyInstitution`, quoted and unquoted. Shelfmark returns
+  Level 6, top row, index 3, left side.
+- `QL737.C22`: UCLA returns **239 results**, the top hit carrying no location and no
+  call number. **No floor, level, row, aisle or side field exists anywhere in a Primo
+  record** — the full response was searched for them.
+- A call-number lookup in Shelfmark makes **zero network requests**, verified by
+  request interception. The survey is **453 shelf faces across ten levels**, shipping
+  as a 26KB static file.
+- Cutter-decimal ordering is not hypothetical: the adjacent pair `W1 AM4733 →
+W1 AM477` exists in the real survey, and naive string sorting reverses it.
+- Alma SRU returns **no spelling correction** (0 records, no diagnostic) and orders
+  results by **filing title, not relevance**. Shelfmark adds correction, ranking and
+  edition grouping in the browser. On "atlas srugged" the vendor suggestion endpoint
+  returns "drugged"; the shipped app still reaches "shrugged".
+- Undocumented Alma tenant behaviour, found by probing and written down in his own
+  methodology page, all three reproduced: `maximumRecords=100` silently returns 50;
+  `sortBy` inside the CQL reorders while the equivalent request parameter is accepted
+  and ignored; `maximumRecords=0` returns a count-only response.
+- No cookies and no analytics (0 `Set-Cookie` versus 2 on UCLA's search).
+- Its databases page claims 1,360 total and 340 best bets; the live feed returns
+  exactly 1,360 and 340.
+
+CORRECTIONS this forced, and they matter because the site was overclaiming:
+
+- **"No server of its own" is false as a whole-site claim.** Three of seven services
+  (`/api/articles`, `/api/suggest`, `/api/databases`) go through a Cloudflare Worker.
+  It is true of the catalogue search only. His own methodology page states the split
+  plainly; the earlier copy on this site did not.
+- **Coverage is narrower than UCLA's by design.** For `crispr`, Primo Central reports
+  148,864 article hits and Shelfmark reports 116,354, because it filters to what UCLA
+  can actually supply. A good default, and a real difference.
+
+KNOWN BUG, worth telling him rather than shipping copy around:
+
+- A bare call number is **always mapped onto the biomedical library**. `PS3535.A547
+A94 2005` is a YRL call number and returns a confident Biomed shelf face with no
+  warning. The range genuinely contains PS3535, so it is not a parsing fault, but a
+  reader could walk to the wrong building. Level 4 is also absent from the shipped
+  survey data.
+
 ## Revenue — there is none
 
 He described dibs.ge and thecutcard.com as _projected_ to earn money and said plainly:
