@@ -16,6 +16,11 @@ import { join } from 'node:path';
 import { REPO } from './lib.mjs';
 
 const fast = process.argv.includes('--fast');
+// Pre-deploy: skip the production check. It asks "is the apex serving THIS build",
+// which cannot be true before the build is deployed. Including it made the deploy
+// gate unsatisfiable — deploy required a green gate, the gate required a completed
+// deploy, and neither could ever happen first.
+const preDeploy = process.argv.includes('--pre-deploy');
 const asJson = process.argv.includes('--json');
 const BASELINE = join(REPO, 'ops/baseline.json');
 
@@ -55,7 +60,10 @@ gate(4, 'tests', () => {
 });
 
 gate(5, 'sanity', () => {
-	const r = run('node', [join(REPO, 'ops/sanity.mjs')]);
+	const r = run(
+		'node',
+		preDeploy ? [join(REPO, 'ops/sanity.mjs'), '--skip-prod'] : [join(REPO, 'ops/sanity.mjs')]
+	);
 	const m = r.out.match(/(\d+)\/(\d+) sanity checks passed/);
 	return { ...r, count: m ? Number(m[1]) : null, unit: `of ${m ? m[2] : '?'} checks` };
 });
@@ -121,7 +129,7 @@ if (asJson) {
 }
 
 // Record counts so the next run can report drift. Only ever written on a full run.
-if (!fast) {
+if (!fast && !preDeploy) {
 	const next = {};
 	for (const r of results) next[r.name] = { count: r.count, at: new Date().toISOString() };
 	writeFileSync(BASELINE, JSON.stringify(next, null, 2) + '\n');
