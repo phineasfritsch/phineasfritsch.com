@@ -184,7 +184,11 @@ add(
 const PRIVATE_PATTERNS = [
 	[/\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}/, 'a phone number'],
 	[/\b3\.\d{2,3}\s*(gpa|cumulative)|gpa[:\s]+\d\.\d/i, 'a GPA'],
-	[/yikyak/i, 'a project that is excluded by name; see ops/private/EVIDENCE.md']
+	[/yikyak/i, 'a project that is excluded by name; see ops/private/EVIDENCE.md'],
+	// He confirmed he never asked permission to publish this outside the admin portal.
+	// It was removed once and came back in three files, because the only thing holding
+	// it out was a paragraph. A paragraph does not fail a build.
+	[/collab\s*hub/i, 'the Collab Hub claim, which he asked to keep off permanently']
 ];
 const leaks = [];
 for (const f of html) {

@@ -15,11 +15,11 @@
 		},
 		{
 			q: 'Have you passed any actuarial exams?',
-			a: `No. None. FM is booked for this fall, and until I pass it that is a plan and not a qualification. The coursework behind it is real: 174E, Mathematics of Finance, which is FM material, and the models sequence I am in now.`
+			a: `No. None. FM is in fall 2026, and until I pass it that is a plan and not a qualification. The coursework behind it is real: 174E, Mathematics of Finance, which is FM material, and the models sequence I am in now.`
 		},
 		{
 			q: 'What do you want to do?',
-			a: `Product, actuarial work, or revenue cycle management, which is the finance side of healthcare. I am still deciding. What the three have in common is the part I like, which is working out what a number should be and then being the one who answers for it when somebody checks.`
+			a: `Product, actuarial work, or revenue cycle management, which is the finance side of healthcare. What the three have in common is the part I like, which is working out what a number should be and then being the one who answers for it when somebody checks.`
 		},
 		{
 			q: 'What have you built?',

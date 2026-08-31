@@ -66,13 +66,11 @@
 					interlibrary-loan pull lists, shelf reading, headcounts, opening and closing.
 				</p>
 				<p>
-					Built four tools for the unit on my own initiative, none of them assigned. The one that
-					stuck replaced a workflow where reading the Collab Hub briefing meant signing into an
-					admin portal, which meant messaging a supervisor on Slack for a two-factor code every
-					single time — colleagues now use mine instead. The others map the stacks to a shelf so you
-					can find a call number after the library stopped using LibMaps, turn the daily Excel
-					schedule into a phone page that notifies you when you are assigned something new, and give
-					shelf-reading and ILL pulls an efficient route through the building.
+					Built four tools for the unit on my own initiative, none of them assigned. The daily staff
+					schedule used to arrive as a spreadsheet every morning, so I put it on a phone screen;
+					people at my desk open mine now instead of the file. The others map the stacks to a shelf
+					so you can find a call number after the library retired LibMaps, and give shelf-reading
+					and ILL pulls an efficient route through the building.
 				</p>
 			</div>
 		</li>
@@ -97,8 +95,8 @@
 					<span class="stack">San Leandro, CA · Jun–Oct 2023</span>
 				</div>
 				<p>
-					Front-office operations, data entry and financial records. Ran minor server operations and
-					trained staff on Dentrix.
+					My family's dental practice. Front-office clinic operations, patient data entry and
+					financial record accuracy, on Dentrix.
 				</p>
 			</div>
 		</li>

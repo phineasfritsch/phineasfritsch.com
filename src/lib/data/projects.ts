@@ -65,7 +65,7 @@ export const projects: Project[] = [
 	{
 		slug: 'biomed-schedule',
 		name: 'Better Bio Schedule',
-		what: 'One link for every daily staff schedule at the biomedical library, laid out for a phone, with a notification when you are put on something other than the desk. It also carries the Collab Hub briefing, which is the part my coworkers use.',
+		what: 'One link for every daily staff schedule at the biomedical library, laid out for a phone, with a notification when you are put on something other than the desk.',
 		url: 'https://better-bio-schedule.phineas-fritsch.workers.dev',
 		live: true,
 		year: '2026',

@@ -40,7 +40,8 @@ const forbidden = [
 		'a revenue projection appears. There is no revenue.'
 	],
 	[/passed exam|exam .{0,4}passed/i, 'it implies an exam has been passed. None has.'],
-	[/yikyak/i, 'an excluded project appears; see ops/private/EVIDENCE.md.']
+	[/yikyak/i, 'an excluded project appears; see ops/private/EVIDENCE.md.'],
+	[/collab\s*hub/i, 'the Collab Hub claim appears. He asked for it off permanently.']
 ];
 const hits = forbidden.filter(([re]) => re.test(text));
 if (hits.length) {
