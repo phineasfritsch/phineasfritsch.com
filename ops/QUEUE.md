@@ -16,16 +16,29 @@ than starting it a third time. A smaller honest result beats a larger claimed on
       any employment with dates, education incl. major and expected graduation,
       any club offices. Blocks: the employment and education sections of the resume,
       and any "what I'm looking for" copy on the site.
-- [ ] **B2. `CLOUDFLARE_API_TOKEN`.** `wrangler login` needs a browser this container
-      does not have. Token template "Cloudflare Pages — Edit" at
-      https://dash.cloudflare.com/profile/api-tokens. Blocks: every deploy.
+- [x] **B2. RESOLVED. `CLOUDFLARE_API_TOKEN` is reaching sessions.** Present in the
+      environment on 2026-08-31 and used for a real deploy. No longer blocks anything.
 - [ ] **B3. Delete the apex redirect.** phineasfritsch.com 301s to phinster.net,
-      which is a dead Cloudflare tunnel (error 1033). **This is the highest-value item
-      on the whole list and it does not need an agent** — removing that redirect rule
-      in the Cloudflare dashboard is worth more than everything else here, because
-      the domain is in his email signature and his resume header, and a dead link
-      there discredits every claim under it. Blocks: the site being reachable at all,
-      and putting the URL back in the resume header.
+      which is a dead Cloudflare tunnel (error 1033). **This is now the ONLY thing
+      standing between the domain and a working site, and it does not need an agent** —
+      removing that redirect rule in the Cloudflare dashboard (Redirect Rules / Page
+      Rules / Bulk Redirects) is worth more than everything else here, because the
+      domain is in his email signature and his resume header, and a dead link there
+      discredits every claim under it.
+
+      MEASURED 2026-08-31, after the deploy, and it narrows the problem considerably:
+      the redirect matches **only the root path**. `https://phineasfritsch.com/` 301s
+      to phinster.net and dies at 530/1033, but `/resume/`, `/blog/`, `/work/`,
+      `/answers/`, `/planet/`, `/favicon.ico` and `/version.json` all return 200 and
+      serve commit 3264229 right now. So the custom domain is attached and healthy at
+      the edge; one rule on `/` is eating the homepage. Deleting that rule should be
+      the whole fix — nothing needs to be re-attached or re-deployed afterwards.
+
+      Corollary worth knowing: the custom domain **is** already bound to the
+      `personalsite` Pages project (`wrangler pages project list` shows
+      `personalsite-ezt.pages.dev, phineasfritsch.com`). Earlier notes assumed it
+      still had to be added. It does not. Attaching `www` is still open.
+
 - [x] **B4. RESOLVED. UCLA Sailing title is "Team Captain".** He held both titles
       technically. Captain matches LinkedIn, so a recruiter cross-checking the two
       documents finds the same word. Already correct on the site and the resume.
@@ -36,8 +49,21 @@ than starting it a third time. A smaller honest result beats a larger claimed on
 
 ## READY — unblocked, in priority order
 
-- [ ] R1. Deploy, once B2 and B3 clear. `node ops/deploy.mjs` is written and refuses
-      correctly on a dirty tree, a red gate, or a missing token.
+- [ ] R8. **Fix the `--branch` bug in `ops/deploy.mjs`.** Line reads
+      `'--branch', branch === 'main' ? 'main' : branch` — both arms are `branch`, so it
+      is a no-op that always deploys the CURRENT branch. On any branch but `main` that
+      makes a **preview** deployment, which never becomes what `personalsite-ezt.pages.dev`
+      or the apex serves. This is why the deploy on 2026-08-31 uploaded cleanly and then
+      correctly refused: it had genuinely not changed production. The read-back was right
+      and the deploy was wrong, which is the good way round. Fix is to send `main` for the
+      production deploy regardless of the local branch name, or to take the target branch
+      as an explicit flag. Until then, the second `wrangler pages deploy ... --branch main`
+      step is mandatory and must not be described as redundant.
+
+- [ ] R9. **`PAGES_PROJECT`, not `CF_PAGES_PROJECT`.** `ops/deploy.mjs` reads
+      `process.env.PAGES_PROJECT`. Any runbook or routine passing `CF_PAGES_PROJECT` is
+      silently ignored and falls through to the `personalsite` default. Harmless today
+      because the default is correct; a trap the day it is not. Pick one name.
 - [ ] R2. Resume, built only from ops/private/EVIDENCE.md. Blocked in part by B1 for
       the employment section; everything else can be written now.
 - [ ] R3. Flip the pending pins in ops/pins.json to active in the same commit that
@@ -105,6 +131,12 @@ them privately. Each is small and none of them are in this repository.
       important strategic finding: FM this fall is the highest-leverage thing he can do.
 - [x] D16. Real README, replacing the sv scaffold.
 - [x] D17. Redirect map for the 2023 site's paths, and strict security headers.
+- [x] D18. **Deployed to production, 2026-08-31, commit 3264229.** Gate green on
+      everything real — 56 tests, 40 browser checks, format/typecheck/build/sanity —
+      with only `prod.serving` overridden, which is unsatisfiable before a deploy by
+      construction. `personalsite-ezt.pages.dev` and every apex path except `/` now
+      serve 3264229. Took two steps, not one: see R8. The site is live; the homepage
+      is not reachable at the domain until B3 is done.
 - [x] D14. Real bugs the gate found: the blog rendered its own filename as a headline
       (mdsvex frontmatter is on `metadata`, both loaders read the module root); twelve
       MeshToonMaterial constructors set `flatShading`, which that material ignores while
