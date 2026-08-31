@@ -31,10 +31,23 @@ silently moves backwards has cost real days elsewhere.
     npm run gate               # everything, numbered, with counts
     npm run gate:fast          # skips the browser gate
 
-Expected numbers as of the last recorded run are in `ops/baseline.json`, and the gate
-prints drift against them. **Green and red are not enough.** A gate can stay green
-while its count falls, and that is exactly the case nobody notices. If a count drops,
-that is the finding — investigate before doing anything else.
+Expected, as of this writing: format pass, typecheck pass, build pass, **15 tests**,
+**6 of 7 sanity checks**, **40 browser checks**. The seventh sanity check is
+`prod.serving`, red until the apex is deployed.
+
+`ops/baseline.json` holds the previous run's numbers and the gate prints drift against
+them. **Green and red are not enough.** A gate can stay green while its count falls,
+and that is exactly the case nobody notices. When a count drops, that is the finding —
+investigate it before doing anything else. Do not adjust a baseline to make a number
+match; the baseline records what happened, it does not decide it.
+
+Two traps, both already hit here:
+
+- **A browser stage that reports no count at all** usually means something is already
+  listening on port 4173. Playwright deliberately refuses to reuse a server it did not
+  start, because a reused one may be serving an older build — a green suite over a
+  stale artefact is precisely what this project exists to prevent.
+- **`npx playwright install` does not work in this image.** Use the CHROMIUM_PATH above.
 
 Individually:
 
@@ -81,6 +94,14 @@ Stated as prohibitions, because that is the only form that survives a fresh cont
   not the checks.
 - **Always pipe verbose output.** `| tail`. One test failure elsewhere dumped 745KB
   into a context window. `ops/gate.mjs` keeps 40 lines and discards the rest.
+- **Never start a preview server by hand.** `ops/shot.mjs` starts and stops its own,
+  and signals the process group when it does — killing `npx` alone leaves the vite
+  child holding the port, which then fails the next gate run with no count at all.
+- **Read the rendered page, not the diff.** Two reversed job chronologies on the
+  resume page — both reading as demotions — were invisible in the diff and obvious on
+  the page. `ops/shot.mjs` exists for this, and it exits non-zero if any page renders
+  under 200 characters, because an earlier version cheerfully screenshotted Chrome's
+  "This site can't be reached" page for every route and exited zero.
 
 ## Parallelism
 
