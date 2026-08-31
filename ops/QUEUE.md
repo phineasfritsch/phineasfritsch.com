@@ -62,10 +62,52 @@ than starting it a third time. A smaller honest result beats a larger claimed on
       `contact@phineasfritsch.com` appears zero times in the production HTML of any
       page; the local build contains it twice. `node ops/read-prod.mjs` exits 2.
 
+
+      ATTEMPTED FROM HERE 2026-08-31 and could not be done: the zone id resolves
+      fine with the session's `CLOUDFLARE_API_TOKEN`
+      (`GET /zones?name=phineasfritsch.com` succeeds), but the
+      `PATCH /zones/<id>/settings/email_obfuscation` call was refused by this
+      environment's permission policy before it was ever sent — so this is not a
+      Cloudflare permissions problem and retrying the API will not help. It is a
+      dashboard toggle, about thirty seconds, and only the owner can flip it.
+      `prod.edge-intact` in `ops/sanity.mjs` stays red until then, and deploys name
+      it in `--override-gate=` rather than pretending the gate is clean.
+
 - [ ] **B5. Confirm the dental-practice cut.** Vera A. Fritsch DMD (Jun–Oct 2023) was
       removed from the one-page resume: four months, three years ago, and it shares
       his surname, which the panel flagged as a liability rather than an asset. Easy
       to restore if he disagrees; the space it costs is real.
+
+## DONE 2026-08-31, second deploy round
+
+- [x] **Production is no longer stale.** `/version.json` served `625194f`
+      while HEAD was four commits ahead, so the live site still carried the claim
+      the owner permanently excluded. HEAD is deployed and verified: `grep -ic
+    collab` returns 0 on `/`, `/resume/`, `/work/`, `/work/biomed-schedule/`,
+      `/about/` and `/blog/`. This was the single reason all four HOLD votes in
+      ship-review round 1 gave.
+
+- [x] **The product resume no longer points at something a reader can count.**
+      The lede said "Six of the projects below are serving traffic today" on a
+      document that lists two. Five reviewers found it independently. It now reads
+      "Six of my projects are serving traffic today", which is true against
+      EVIDENCE.md and falsifies nothing on the page.
+
+- [x] **Three tools that reported the wrong thing, fixed.** Each of these would
+      have made a future agent act on a false reading: 1. `sanity.mjs` collapsed read-prod's exit 2 (serving, but the CDN altered
+      the page) into exit non-zero, and printed "apex is not serving" about a
+      site answering every page in 250ms — throwing away the real finding with
+      the exit code. Split into `prod.serving` and `prod.edge-intact`. 2. `deploy.mjs` retried the read-back for REACHABILITY, returning on the
+      first parseable response — which, seconds after an upload, is the OLD
+      version.json. It printed DEPLOY REFUSED over a deploy that worked. It now
+      waits for the commit it shipped. 3. `deploy.mjs` defaulted `--branch` to the checkout's name. This project's
+      production branch is `main`, so a deploy from a feature branch uploaded a
+      PREVIEW: wrangler printed "Deployment complete", the URL worked, and the
+      custom domain kept serving the old build. It now asks the project. 4. Every browser script read Chromium from `CHROMIUM_PATH` with no fallback,
+      and the bundled path carries a build number that changes between
+      containers. Unset, they died with Playwright's "run npx playwright
+      install" advice, which does not work in this image. `lib.mjs` now
+      resolves the newest `chromium-*` on disk.
 
 ## READY — unblocked, in priority order
 
