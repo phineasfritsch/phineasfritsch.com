@@ -3,8 +3,8 @@
 	import Scene from '$lib/components/Scene.svelte';
 
 	// The 3D scene used to be the homepage. It cost 903KB of JavaScript and 21.5
-	// seconds to deliver 37 characters of text, and with JS disabled it rendered
-	// an empty page — so every crawler and every link preview saw nothing.
+	// seconds to deliver 37 characters of rendered text, and only 53 characters of
+	// prerendered HTML, so a crawler saw a title and a skip link — so every crawler and every link preview saw nothing.
 	//
 	// It is kept, on its own route, because it is a real thing that was built and
 	// it is nobody's toll gate now. Nothing on the critical path loads it.
@@ -30,8 +30,8 @@
 		</p>
 		<p>
 			It was also <strong>903KB of JavaScript that took 21.5 seconds</strong> to render thirty-seven characters
-			of text, and with JavaScript switched off it rendered nothing at all — so search engines, screen
-			readers, and every link preview saw an empty page where my name should have been. That is a bad
+			of text, and with JavaScript switched off the page carried 53 characters: a title and a skip link.
+			Search engines, screen readers and link previews got nothing that said who I was. That is a bad
 			trade for a front door. It is a fine trade for a page you chose to open.
 		</p>
 	</div>

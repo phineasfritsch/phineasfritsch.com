@@ -36,7 +36,7 @@
 	</div>
 	<dl class="meta">
 		<dt>Degree</dt>
-		<dd>B.S. Financial Actuarial Mathematics, minor in Accounting. Expected June 2027.</dd>
+		<dd>B.S. Financial Actuarial Mathematics. Expected June 2027.</dd>
 		<dt>Actuarial</dt>
 		<dd>
 			MATH 174E (Mathematics of Finance), and 178A / 179 (actuarial models) in progress. Sitting

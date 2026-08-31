@@ -27,9 +27,9 @@
 	</h1>
 	<div class="prose" style="margin-top:1.1rem">
 		<p>
-			Financial actuarial mathematics at UCLA, graduating June 2027, minor in accounting. Sitting
-			Exam FM this fall. <strong>No exams passed yet</strong>. Most of what is below came out of a
-			job, a fraternity house, or a course I was annoyed by.
+			Financial actuarial mathematics at UCLA, graduating June 2027. Sitting Exam FM this fall. <strong
+				>No exams passed yet</strong
+			>. Most of what is below came out of a job, a fraternity house, or a course I was annoyed by.
 		</p>
 		<p>
 			Every project on this page names what it does not do, and says what an AI wrote. Both of those

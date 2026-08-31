@@ -11,7 +11,7 @@
 	const qs = [
 		{
 			q: 'What are you studying?',
-			a: `Financial actuarial mathematics at UCLA, with an accounting minor. I graduate in June 2027. Right now I am in the actuarial models sequence, and I take Exam FM this fall.`
+			a: `Financial actuarial mathematics at UCLA. I graduate in June 2027. Right now I am in the actuarial models sequence, and I take Exam FM this fall.`
 		},
 		{
 			q: 'Have you passed any actuarial exams?',
@@ -31,7 +31,7 @@
 		},
 		{
 			q: 'Does anyone actually use any of it?',
-			a: `Some of it, yes. At the library, getting the Collab Hub briefing meant signing into an admin portal, which meant messaging a supervisor on Slack for a two-factor code, every time. People in my unit now use my version instead. That one I care about more than the rest, because I did not have to convince anyone — it was just less annoying.`
+			a: `Some of it, yes. My unit's daily schedule used to arrive as an Excel file every morning, so I put it on a phone screen. People at my desk open mine now instead of the file. Nobody assigned it and nobody had to be talked into it, which is the part I care about.`
 		},
 		{
 			q: 'Why did you build them?',
@@ -51,7 +51,7 @@
 		},
 		{
 			q: 'What have you built that did not work?',
-			a: `A React portfolio in 2025 that is 41 lines long and has stock clipart in it, in a repository whose name I misspelled. An empty repository called prdfg. A first version of this site that was a 3D planet weighing 903KB and saying thirty-seven characters. They are all still up. Deleting the misses would make the hits harder to believe.`
+			a: `A React portfolio in 2025 that is 41 lines long and has stock clipart in it, in a repository whose name I misspelled. An empty repository called prdfg. A first version of this site that was a 3D planet weighing 903KB, and once it finally painted it said thirty-seven characters. They are all still up. Deleting the misses would make the hits harder to believe.`
 		},
 		{
 			q: 'How do you know when the AI is wrong?',
