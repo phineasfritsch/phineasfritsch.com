@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { chromiumPath } from './ops/lib.mjs';
 
 // Real browser, real built artefact, served the way production serves it.
 // Testing the dev server would test a thing no visitor ever loads.
@@ -13,7 +14,7 @@ export default defineConfig({
 	use: {
 		baseURL: process.env.TEST_BASE_URL ?? 'http://127.0.0.1:4173',
 		// The browser is pre-installed in this image; never download another.
-		launchOptions: { executablePath: process.env.CHROMIUM_PATH || undefined }
+		launchOptions: { executablePath: chromiumPath() }
 	},
 	projects: [
 		{ name: 'desktop', use: { ...devices['Desktop Chrome'] } },

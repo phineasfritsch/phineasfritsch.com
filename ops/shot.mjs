@@ -15,6 +15,7 @@
 import { chromium } from '@playwright/test';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
+import { chromiumPath } from './lib.mjs';
 
 const BASE = 'http://127.0.0.1:4173';
 const routes = ['/', '/work/', '/work/dibs/', '/answers/', '/resume/', '/blog/'];
@@ -76,7 +77,7 @@ process.on('SIGINT', () => {
 	process.exit(130);
 });
 
-const b = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
+const b = await chromium.launch({ executablePath: chromiumPath() });
 let failures = 0;
 
 for (const dev of [

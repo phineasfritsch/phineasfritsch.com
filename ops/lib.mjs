@@ -82,3 +82,33 @@ export function builtHaystack() {
 	const files = builtHtmlFiles();
 	return normalise(files.map((f) => readFileSync(f, 'utf8')).join('\n'));
 }
+
+/**
+ * Resolve a Chromium binary. `npx playwright install` does not work in this
+ * image, and the bundled path carries a build number that changes between
+ * containers, so an unset CHROMIUM_PATH used to fail every browser script at
+ * launch. Resolve it: env first, then whatever is actually on disk.
+ * @returns {string|undefined} undefined means "let Playwright decide"
+ */
+export function chromiumPath() {
+	if (process.env.CHROMIUM_PATH) return process.env.CHROMIUM_PATH;
+	const root = '/opt/pw-browsers';
+	let dirs;
+	try {
+		dirs = readdirSync(root)
+			.filter((d) => /^chromium-\d+$/.test(d))
+			.sort();
+	} catch {
+		return undefined;
+	}
+	for (const d of dirs.reverse()) {
+		const p = join(root, d, 'chrome-linux', 'chrome');
+		try {
+			statSync(p);
+			return p;
+		} catch {
+			/* try the next one */
+		}
+	}
+	return undefined;
+}

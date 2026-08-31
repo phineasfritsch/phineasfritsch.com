@@ -18,7 +18,7 @@ import { readFileSync, writeFileSync, mkdirSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import { join } from 'node:path';
-import { REPO } from './lib.mjs';
+import { REPO, chromiumPath } from './lib.mjs';
 
 const DIR = join(REPO, 'ops/private/resume');
 const OUT = join(DIR, 'build');
@@ -134,7 +134,7 @@ ${css}
 `;
 }
 
-const b = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
+const b = await chromium.launch({ executablePath: chromiumPath() });
 let failed = 0;
 
 for (const track of tracks) {
