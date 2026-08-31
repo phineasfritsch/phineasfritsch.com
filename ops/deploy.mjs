@@ -41,10 +41,80 @@ console.log(`\n  commit ${sha} on ${branch}`);
 
 // 1. The gate, in full. A deploy is the one place where "probably fine" costs
 //    something that cannot be taken back.
+//
+// One check is structurally unpassable here: `prod.serving` is red until the apex
+// serves this build, and the apex cannot serve it until this command deploys it. A
+// gate that can never go green before a deploy is a gate that gets switched off
+// wholesale, which is how a real failure ships. So the override is NAMED:
+// --override-gate=prod.serving permits exactly that check to be red and nothing
+// else. A failing gate whose individual check names cannot be read is never
+// overridable — "I could not tell what broke" must not read as permission.
+const allowRed = (process.argv.find((a) => a.startsWith('--override-gate=')) || '')
+	.replace('--override-gate=', '')
+	.split(',')
+	.map((x) => x.trim())
+	.filter(Boolean);
+
 console.log('  · running the gate');
 if (!dry) {
-	const g = spawnSync('node', [join(REPO, 'ops/gate.mjs')], { cwd: REPO, stdio: 'inherit' });
-	if (g.status !== 0) die('the gate is red. Fix it or say explicitly that you are overriding it.');
+	const g = spawnSync('node', [join(REPO, 'ops/gate.mjs'), '--json'], {
+		cwd: REPO,
+		encoding: 'utf8',
+		maxBuffer: 64 * 1024 * 1024
+	});
+
+	let report;
+	try {
+		report = JSON.parse(g.stdout);
+	} catch {
+		console.error((g.stdout || '').split('\n').slice(-40).join('\n'));
+		console.error((g.stderr || '').split('\n').slice(-40).join('\n'));
+		die('the gate did not produce a readable report; treat that as a failed gate.');
+	}
+
+	for (const r of report.results) {
+		const count = r.count === null ? '—' : `${r.count} ${r.unit}`;
+		const drift = r.drift
+			? `  ${r.drift > 0 ? '+' : ''}${r.drift} vs last run`
+			: r.prev !== null
+				? '  ='
+				: '';
+		console.log(
+			`    ${String(r.gate).padStart(2)}. ${r.name.padEnd(24)} ${(r.ok ? 'pass' : 'FAIL').padEnd(8)} ${count}${drift}`
+		);
+	}
+
+	const failed = report.results.filter((r) => !r.ok);
+	if (failed.length) {
+		const unexplained = [];
+		for (const f of failed) {
+			const names = [...(f.tail || '').matchAll(/FAIL\s+(\S+)/g)].map((m) => m[1]);
+			if (!names.length) {
+				unexplained.push(`gate ${f.gate} (${f.name}): no individual check names in its output`);
+				continue;
+			}
+			for (const n of names) {
+				if (!allowRed.includes(n)) unexplained.push(`gate ${f.gate} (${f.name}): ${n}`);
+			}
+		}
+		if (unexplained.length) {
+			for (const f of failed) {
+				console.error(`\n  ── gate ${f.gate} (${f.name}) output, last 40 lines ──`);
+				console.error(
+					(f.tail || '')
+						.split('\n')
+						.map((l) => '  ' + l)
+						.join('\n')
+				);
+			}
+			die(
+				'the gate is red on checks that were not explicitly overridden:\n    ' +
+					unexplained.join('\n    ') +
+					'\n  Fix them, or name them in --override-gate= if they are genuinely expected.'
+			);
+		}
+		console.log(`\n  OVERRIDDEN (red, allowed explicitly): ${allowRed.join(', ')}`);
+	}
 }
 
 // 2. Working tree must be clean, or the artefact does not match the commit.
