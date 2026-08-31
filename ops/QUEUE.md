@@ -26,15 +26,18 @@ than starting it a third time. A smaller honest result beats a larger claimed on
 
 ## READY — unblocked, in priority order
 
-- [ ] R1. Port the site to the frozen direction, one page per wave, per ops/OPERATING.md.
+- [ ] R1. Deploy, once B2 and B3 clear. `node ops/deploy.mjs` is written and refuses
+      correctly on a dirty tree, a red gate, or a missing token.
 - [ ] R2. Resume, built only from ops/panel/EVIDENCE.md. Blocked in part by B1 for
       the employment section; everything else can be written now.
 - [ ] R3. Flip the pending pins in ops/pins.json to active in the same commit that
       writes the property each one guards. Never in a later commit.
 - [ ] R4. Fix `build.page-metadata`: blog/hello-world renders two h1 elements.
-- [ ] R5. Decide the 3D scene's fate. It is 903KB of JS for 37 characters of text.
-      If any of it survives it must be behind a route nobody needs to load to read
-      the site, and it must never block first paint.
+- [ ] R5. Ask Phineas the two open facts: his current job title wording (he says
+      "Student Assistant II", promoted from I, and a Student Supervisor promotion is
+      under discussion but is NOT a fact yet), and whether "Team Captain" or
+      "President" is the correct UCLA Sailing title — LinkedIn says Captain, he said
+      President in conversation.
 
 ## PROFILE CLEANUP — cheap, high return, safe to do in any order
 
@@ -72,3 +75,22 @@ section of ops/panel/EVIDENCE.md for why each one matters.
       `ops/deploy.mjs`. Correctly refuses on a dirty tree.
 - [x] D7. This queue.
 - [x] D8. Verified evidence base — `ops/panel/EVIDENCE.md`.
+- [x] D9. Six-persona panel audited the live site as real users. Median time before
+      closing the tab: 16 seconds. All six flagged the dead apex first.
+- [x] D10. Sixteen-direction knockout bracket. Winner "Plain Answers", unanimous, no
+      vetoes. Shipped as `/answers/` rather than as the index, because a table serves
+      the 90-second reader better than prose; the bracket's grafts were applied to the
+      index instead — the AI disclosure is now a field in the stack line rather than a
+      callout box, and the failures are listed alongside the successes.
+- [x] D11. Site rebuilt as an exhibit sheet. Homepage 37 -> 5,349 characters of text,
+      21.5s -> 3.5s, 903KB -> 104KB of JS.
+- [x] D12. Fonts self-hosted. The font CDN was render-blocking at roughly 8s per page;
+      the browser suite went from 2.9 minutes to 12.8 seconds.
+- [x] D13. Two cloud routines, surviving this session: a tester every 4 hours that is
+      forbidden from fixing anything, and a daily fixer that works one queue item and
+      pushes to an isolated branch, never deploying.
+- [x] D14. Real bugs the gate found: the blog rendered its own filename as a headline
+      (mdsvex frontmatter is on `metadata`, both loaders read the module root); twelve
+      MeshToonMaterial constructors set `flatShading`, which that material ignores while
+      three.js logged a warning for each; playwright reused a stale preview server,
+      which can produce a green suite over an old build.

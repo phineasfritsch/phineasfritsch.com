@@ -57,7 +57,10 @@
 						{:else}
 							<span class="status unknown">source only</span>
 						{/if}
-						<span class="stack">{p.stack.join(' · ')}</span>
+						<!-- The disclosure is a FIELD here, sitting among the other ingredients,
+						     never a badge and never an apology. A reader takes it in with the
+						     stack rather than as a separate admission. -->
+						<span class="stack">{p.stack.join(' · ')}{p.assisted ? ' · AI-assisted' : ''}</span>
 					</div>
 					<p>{p.what}</p>
 					<dl class="meta">

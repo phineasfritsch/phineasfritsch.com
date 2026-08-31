@@ -7,6 +7,7 @@
 	const nav = [
 		{ href: '/', label: 'index' },
 		{ href: '/work/', label: 'work' },
+		{ href: '/answers/', label: 'questions' },
 		{ href: '/resume/', label: 'resume' },
 		{ href: '/blog/', label: 'writing' }
 	];

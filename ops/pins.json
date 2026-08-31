@@ -67,6 +67,12 @@
 			"active": true,
 			"why": "Keyboard and screen-reader users hit the nav on every page without one. Invisible to sighted testing, so nothing else will ever catch its removal.",
 			"any": ["skip to content", "skip to main"]
+		},
+		{
+			"id": "honesty.question-proportion",
+			"active": true,
+			"why": "The AI question sits in the ordinary run of questions on /answers/, not first and not last. Proportion IS the honesty mechanism the panel chose: elevated it becomes a confession, buried it becomes an evasion, and either reads worse than the plain answer. A later editor will want to move it for entirely reasonable-sounding reasons. This pin and the browser check that pairs with it are the only things that would notice.",
+			"any": ["how much of this did you write"]
 		}
 	]
 }

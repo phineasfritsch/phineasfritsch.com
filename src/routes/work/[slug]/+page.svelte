@@ -27,7 +27,7 @@
 		{:else}
 			<span class="status unknown">source only</span>
 		{/if}
-		<span class="stack">{p.year} · {p.stack.join(' · ')}</span>
+		<span class="stack">{p.year} · {p.stack.join(' · ')}{p.assisted ? ' · AI-assisted' : ''}</span>
 	</div>
 	<div class="prose" style="margin-top:1rem">
 		<p>{p.what}</p>

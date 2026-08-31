@@ -8,7 +8,7 @@ import { test, expect } from '@playwright/test';
  * scripts misbehaving. Unit tests cannot see any of it.
  */
 
-const PAGES = ['/', '/work/', '/resume/', '/blog/'];
+const PAGES = ['/', '/work/', '/answers/', '/resume/', '/blog/'];
 
 test.describe('arriving cold', () => {
 	for (const path of PAGES) {
@@ -130,6 +130,24 @@ test.describe('honesty', () => {
 			);
 			expect(text).not.toMatch(/passed exam/i);
 		}
+	});
+
+	test('the AI question sits in the middle of the questions, not first or last', async ({
+		page
+	}) => {
+		await page.goto('/answers/');
+		const questions = await page.evaluate(() =>
+			[...document.querySelectorAll('.rows h2')].map((h) => (h.textContent || '').toLowerCase())
+		);
+		const i = questions.findIndex((q) => q.includes('how much of this did you write'));
+		expect(i, 'the AI question is missing from /answers/ entirely').toBeGreaterThan(-1);
+		// Proportion is the mechanism. First reads as a confession, last reads as burying it.
+		expect(i, 'the AI question was moved to the top, which reads as a confession').toBeGreaterThan(
+			0
+		);
+		expect(i, 'the AI question was moved to the bottom, which reads as burying it').toBeLessThan(
+			questions.length - 1
+		);
 	});
 
 	test('no page publishes the phone number or a revenue projection', async ({ page }) => {

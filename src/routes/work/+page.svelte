@@ -32,7 +32,9 @@
 				<div>
 					<div class="row-title">
 						<h3><a href="/work/{p.slug}/">{p.name}</a></h3>
-						<span class="stack">{p.year} · {p.stack.join(' · ')}</span>
+						<span class="stack"
+							>{p.year} · {p.stack.join(' · ')}{p.assisted ? ' · AI-assisted' : ''}</span
+						>
 					</div>
 					<p>{p.what}</p>
 				</div>

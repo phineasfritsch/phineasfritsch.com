@@ -25,7 +25,10 @@ export default defineConfig({
 		: {
 				command: 'npx vite preview --port 4173 --strictPort',
 				url: 'http://127.0.0.1:4173',
-				reuseExistingServer: true,
+				// Never reuse a server someone else started. It may be serving an older
+				// build, which produces a green suite over a stale artefact — the precise
+				// failure this project exists to catch. Starting our own costs a second.
+				reuseExistingServer: false,
 				timeout: 120_000
 			}
 });
