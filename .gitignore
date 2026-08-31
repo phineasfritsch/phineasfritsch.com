@@ -25,3 +25,6 @@ vite.config.ts.timestamp-*
 # Playwright output
 test-results/
 playwright-report/
+
+# Generated at deploy time by ops/deploy.mjs
+static/version.json
