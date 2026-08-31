@@ -44,7 +44,10 @@ const GENERATED = [/^ops\/baseline\.json$/, /^ops\/shots\//, /^static\/version\.
 const dirty = sh('git', ['status', '--porcelain'])
 	.split('\n')
 	.filter(Boolean)
-	.map((l) => l.replace(/^..\s+/, '').trim())
+	// The status prefix is two columns, but sh() trims the whole output and eats the
+	// leading space of the FIRST line, so " M path" arrives as "M path". Matching
+	// one-or-two non-space characters handles both, and "??" for untracked.
+	.map((l) => l.replace(/^\s*\S{1,2}\s+/, '').trim())
 	.filter((f) => !GENERATED.some((re) => re.test(f)));
 if (dirty.length) {
 	die(
