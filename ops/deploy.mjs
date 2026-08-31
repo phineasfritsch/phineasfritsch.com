@@ -17,7 +17,10 @@ import { REPO } from './lib.mjs';
 
 const dry = process.argv.includes('--dry-run');
 const sh = (c, a, o = {}) => execFileSync(c, a, { cwd: REPO, encoding: 'utf8', ...o }).trim();
-const die = (msg) => { console.error(`\n  DEPLOY REFUSED: ${msg}\n`); process.exit(1); };
+const die = (msg) => {
+	console.error(`\n  DEPLOY REFUSED: ${msg}\n`);
+	process.exit(1);
+};
 
 const sha = sh('git', ['rev-parse', '--short', 'HEAD']);
 const branch = sh('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
@@ -32,7 +35,8 @@ if (!dry) {
 }
 
 // 2. Working tree must be clean, or the artefact does not match the commit.
-if (sh('git', ['status', '--porcelain'])) die('working tree is dirty; the deployed artefact would not match any commit.');
+if (sh('git', ['status', '--porcelain']))
+	die('working tree is dirty; the deployed artefact would not match any commit.');
 
 // 3. Push FIRST.
 console.log('  · pushing');
@@ -50,15 +54,28 @@ if (!dry) execFileSync('npm', ['run', 'build'], { cwd: REPO, stdio: 'inherit' })
 if (!process.env.CLOUDFLARE_API_TOKEN) {
 	die(
 		'CLOUDFLARE_API_TOKEN is not set.\n' +
-		'  wrangler login needs a browser, which this container does not have.\n' +
-		'  Create a token with the "Cloudflare Pages — Edit" template at\n' +
-		'  https://dash.cloudflare.com/profile/api-tokens and add it to the\n' +
-		'  environment as CLOUDFLARE_API_TOKEN.'
+			'  wrangler login needs a browser, which this container does not have.\n' +
+			'  Create a token with the "Cloudflare Pages — Edit" template at\n' +
+			'  https://dash.cloudflare.com/profile/api-tokens and add it to the\n' +
+			'  environment as CLOUDFLARE_API_TOKEN.'
 	);
 }
 console.log('  · deploying to cloudflare pages');
 if (!dry) {
-	const d = spawnSync('npx', ['wrangler', 'pages', 'deploy', 'build', '--project-name', 'phineasfritsch-com', '--branch', branch === 'main' ? 'main' : branch], { cwd: REPO, stdio: 'inherit' });
+	const d = spawnSync(
+		'npx',
+		[
+			'wrangler',
+			'pages',
+			'deploy',
+			'build',
+			'--project-name',
+			'phineasfritsch-com',
+			'--branch',
+			branch === 'main' ? 'main' : branch
+		],
+		{ cwd: REPO, stdio: 'inherit' }
+	);
 	if (d.status !== 0) die('wrangler deploy failed.');
 }
 
@@ -68,13 +85,25 @@ if (!dry) {
 	let live = null;
 	for (let i = 0; i < 10; i++) {
 		try {
-			live = JSON.parse(execFileSync('curl', ['-sS', '--max-time', '15', 'https://phineasfritsch.com/version.json'], { encoding: 'utf8' }));
+			live = JSON.parse(
+				execFileSync(
+					'curl',
+					['-sS', '--max-time', '15', 'https://phineasfritsch.com/version.json'],
+					{ encoding: 'utf8' }
+				)
+			);
 			if (live.commit === sha) break;
-		} catch { /* edge not warm yet */ }
+		} catch {
+			/* edge not warm yet */
+		}
 		execFileSync('sleep', ['6']);
 	}
-	if (!live) die('deployed, but production did not serve version.json. Verify by hand before claiming this shipped.');
+	if (!live)
+		die(
+			'deployed, but production did not serve version.json. Verify by hand before claiming this shipped.'
+		);
 	console.log(`\n  LIVE: ${live.commit} (built ${live.builtAt})`);
-	if (live.commit !== sha) die(`production is serving ${live.commit}, not ${sha}. Do not report this as deployed.`);
+	if (live.commit !== sha)
+		die(`production is serving ${live.commit}, not ${sha}. Do not report this as deployed.`);
 }
 console.log(`\n  deployed ${sha}\n`);

@@ -86,14 +86,14 @@ Stated as prohibitions, because that is the only form that survives a fresh cont
 
 The dividing line is shared mutable state, not task size.
 
-| Work | Shares | Run |
-|---|---|---|
-| Research, review, judging, persona panels | nothing | fan out wide |
-| One page per agent, ownership declared | nothing | parallel |
-| Anything running the suite | the build dir | serial, always |
-| Two agents on one file | the file | never; last write wins silently |
-| Anything committing | the index | one at a time, explicit paths |
-| Deploying | production | one, after everything else |
+| Work                                      | Shares        | Run                             |
+| ----------------------------------------- | ------------- | ------------------------------- |
+| Research, review, judging, persona panels | nothing       | fan out wide                    |
+| One page per agent, ownership declared    | nothing       | parallel                        |
+| Anything running the suite                | the build dir | serial, always                  |
+| Two agents on one file                    | the file      | never; last write wins silently |
+| Anything committing                       | the index     | one at a time, explicit paths   |
+| Deploying                                 | production    | one, after everything else      |
 
 Port agents never run the suite. One serial verifier runs after the wave. **Never let
 a worker grade its own work**, and treat a missing verification exactly as a failed one.

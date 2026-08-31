@@ -7,17 +7,19 @@ export const load: PageLoad = async ({ params }) => {
 
 	if (!posts[key]) throw error(404, 'Post not found');
 
+	// mdsvex exposes frontmatter as `metadata`. Reading it off the module root
+	// returns undefined and quietly falls back to the slug — the post rendered its
+	// own filename as its headline until this was fixed.
 	const mod = (await posts[key]()) as {
 		default: unknown;
-		title?: string;
-		date?: string;
-		excerpt?: string;
+		metadata?: Record<string, string>;
 	};
+	const meta = mod.metadata ?? {};
 
 	return {
 		content: mod.default,
-		title: mod.title ?? params.slug,
-		date: mod.date ?? '',
-		excerpt: mod.excerpt ?? ''
+		title: meta.title ?? params.slug,
+		date: meta.date ?? '',
+		excerpt: meta.excerpt ?? ''
 	};
 };

@@ -88,10 +88,10 @@ name it as an open question — do not assume a value.
 ## The screenshots
 
 Rendered in real Chromium against the real production build:
-  ops/shots/desktop-home.png     ops/shots/mobile-home.png
-  ops/shots/desktop-ucla.png     ops/shots/mobile-ucla.png
-  ops/shots/desktop-theta-chi.png
-  ops/shots/desktop-sailing.png
-  ops/shots/desktop-future.png
-  ops/shots/desktop-blog.png
+ops/shots/desktop-home.png ops/shots/mobile-home.png
+ops/shots/desktop-ucla.png ops/shots/mobile-ucla.png
+ops/shots/desktop-theta-chi.png
+ops/shots/desktop-sailing.png
+ops/shots/desktop-future.png
+ops/shots/desktop-blog.png
 Read the ones relevant to your remit. Judge the rendered page, not the source.

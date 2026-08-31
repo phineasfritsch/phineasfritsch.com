@@ -14,15 +14,23 @@
 	const R = 3.08;
 	const φ = (lat * Math.PI) / 180;
 	const λ = (lon * Math.PI) / 180;
-	const surfacePos = new THREE.Vector3(R * Math.cos(φ) * Math.cos(λ), R * Math.sin(φ), R * Math.cos(φ) * Math.sin(λ));
-	const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), surfacePos.clone().normalize());
+	const surfacePos = new THREE.Vector3(
+		R * Math.cos(φ) * Math.cos(λ),
+		R * Math.sin(φ),
+		R * Math.cos(φ) * Math.sin(λ)
+	);
+	const quat = new THREE.Quaternion().setFromUnitVectors(
+		new THREE.Vector3(0, 1, 0),
+		surfacePos.clone().normalize()
+	);
 
 	const S = 0.15;
 
 	// Sail canvas texture
 	function makeSailTex(): THREE.CanvasTexture {
 		const c = document.createElement('canvas');
-		c.width = 256; c.height = 512;
+		c.width = 256;
+		c.height = 512;
 		const ctx = c.getContext('2d')!;
 		ctx.fillStyle = '#F8F4EA';
 		ctx.fillRect(0, 0, 256, 512);
@@ -52,7 +60,7 @@
 	const deckMat = new THREE.MeshToonMaterial({ color: '#8B6914' });
 	const mastMat = new THREE.MeshToonMaterial({ color: '#C8A050' });
 	const sailMat = new THREE.MeshToonMaterial({ map: sailTex, side: THREE.DoubleSide });
-	const hitMat  = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
+	const hitMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
 </script>
 
 <T.Group
@@ -64,8 +72,14 @@
 	<!-- Hit zone -->
 	<T.Mesh
 		onclick={() => goto('/sailing/')}
-		onpointerenter={() => { hovered = true; hoveredHotspot.set('Sailing'); }}
-		onpointerleave={() => { hovered = false; hoveredHotspot.set(null); }}
+		onpointerenter={() => {
+			hovered = true;
+			hoveredHotspot.set('Sailing');
+		}}
+		onpointerleave={() => {
+			hovered = false;
+			hoveredHotspot.set(null);
+		}}
 	>
 		<T.BoxGeometry args={[3.5, 5, 2]} />
 		<T is={hitMat} />

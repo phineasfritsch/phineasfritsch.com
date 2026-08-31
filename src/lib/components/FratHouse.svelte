@@ -14,18 +14,25 @@
 	const R = 3.5;
 	const φ = (lat * Math.PI) / 180;
 	const λ = (lon * Math.PI) / 180;
-	const pos = new THREE.Vector3(R * Math.cos(φ) * Math.cos(λ), R * Math.sin(φ), R * Math.cos(φ) * Math.sin(λ));
-	const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), pos.clone().normalize());
+	const pos = new THREE.Vector3(
+		R * Math.cos(φ) * Math.cos(λ),
+		R * Math.sin(φ),
+		R * Math.cos(φ) * Math.sin(λ)
+	);
+	const quat = new THREE.Quaternion().setFromUnitVectors(
+		new THREE.Vector3(0, 1, 0),
+		pos.clone().normalize()
+	);
 
 	const S = 0.16;
 
 	let hovered = $state(false);
 
-	const wallMat    = new THREE.MeshToonMaterial({ color: '#F5F0E8' });
-	const roofMat    = new THREE.MeshToonMaterial({ color: '#7B3F00' });
-	const columnMat  = new THREE.MeshToonMaterial({ color: '#FFFFFF' });
-	const doorMat    = new THREE.MeshToonMaterial({ color: '#5a2d0c' });
-	const hitMat     = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
+	const wallMat = new THREE.MeshToonMaterial({ color: '#F5F0E8' });
+	const roofMat = new THREE.MeshToonMaterial({ color: '#7B3F00' });
+	const columnMat = new THREE.MeshToonMaterial({ color: '#FFFFFF' });
+	const doorMat = new THREE.MeshToonMaterial({ color: '#5a2d0c' });
+	const hitMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
 </script>
 
 <T.Group
@@ -36,8 +43,14 @@
 	<!-- Hit target -->
 	<T.Mesh
 		onclick={() => goto('/theta-chi/')}
-		onpointerenter={() => { hovered = true; hoveredHotspot.set('Theta Chi'); }}
-		onpointerleave={() => { hovered = false; hoveredHotspot.set(null); }}
+		onpointerenter={() => {
+			hovered = true;
+			hoveredHotspot.set('Theta Chi');
+		}}
+		onpointerleave={() => {
+			hovered = false;
+			hoveredHotspot.set(null);
+		}}
 	>
 		<T.BoxGeometry args={[4, 5, 3]} />
 		<T is={hitMat} />

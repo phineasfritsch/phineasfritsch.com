@@ -10,12 +10,12 @@ is not in this file.** If a page wants a fact, it comes from here or it is cut.
 
 ## Live right now (checked by HTTP request)
 
-| URL | Status | What it is |
-|---|---|---|
-| https://dibs.ge/ | 200 | Rails 8 app, GE course ranking + seat alerts, UCLA |
-| https://shelfmark.phineasfritsch.com/ | 200 | Call number to physical shelf, Cloudflare Worker |
-| https://better-bio-schedule.phineas-fritsch.workers.dev/ | 200 | Biomed library staff schedule, Cloudflare Worker |
-| https://phineasfritsch.com/ | **530** | **His own name. Cloudflare error 1033, dead tunnel.** |
+| URL                                                      | Status  | What it is                                            |
+| -------------------------------------------------------- | ------- | ----------------------------------------------------- |
+| https://dibs.ge/                                         | 200     | Rails 8 app, GE course ranking + seat alerts, UCLA    |
+| https://shelfmark.phineasfritsch.com/                    | 200     | Call number to physical shelf, Cloudflare Worker      |
+| https://better-bio-schedule.phineas-fritsch.workers.dev/ | 200     | Biomed library staff schedule, Cloudflare Worker      |
+| https://phineasfritsch.com/                              | **530** | **His own name. Cloudflare error 1033, dead tunnel.** |
 
 Three of his projects serve traffic. The one that does not is the one with his
 name on it. That is the shape of the whole problem.
@@ -23,8 +23,10 @@ name on it. That is the shape of the whole problem.
 ## Verified by reading the file
 
 ### ge_snipe / dibs.ge — `config/deploy.yml`
+
 Read in full by the main session. Real, and the strongest single artefact he has.
 Verbatim decisions documented in its comments:
+
 - A measured RAM budget against a 2.5 GB RackNerd box: kamal-proxy ~50 MB, Puma
   2 workers x 3 threads ~450 MB, Postgres ~500 MB, OS + dockerd ~350 MB, ~1.6 GB
   total, "plus a 2 GB swapfile for headroom. That leaves room for a deploy
@@ -33,7 +35,7 @@ Verbatim decisions documented in its comments:
 - `max_connections=60` with the reasoning written out: "Rails multi-database means
   a single thread can hold four connections (primary + cache + queue + cable) ...
   Kamal overlaps the old and new containers during a rollout -- so 30 is exceeded
-  exactly when deploying, and the symptom is the *website* failing, not the jobs."
+  exactly when deploying, and the symptom is the _website_ failing, not the jobs."
 - Postgres bound to `127.0.0.1:5432` — "The database must never be reachable from
   the internet."
 - "Never build on the server -- compiling assets on a 2.5 GB box is the classic
@@ -47,7 +49,9 @@ Verbatim decisions documented in its comments:
   (~250 MB) and the workload that justifies it.
 
 ### jellyfin-matcher — `gates.json`
+
 Fetched live from raw.githubusercontent.com. Verbatim, complete:
+
 > "Expected numbers for `npm run gate`. Floors, not equalities: the gate fails when
 > a number goes down, because that is what a silent deletion looks like. When work
 > legitimately adds tests or pins, raise these in the same commit."
@@ -93,6 +97,7 @@ direct request returns HTTP 999, their bot block. Everything below was supplied 
 Phineas himself. He stated LinkedIn is the more current of the two sources.
 
 ### Identity
+
 - Phineas Fritsch. Pronouns he/him (stated on his LinkedIn profile — use them).
 - El Cerrito, California (home). Los Angeles, California (school).
 - **Canonical email, decided by him: contact@phineasfritsch.com.** Use this
@@ -101,6 +106,7 @@ Phineas himself. He stated LinkedIn is the more current of the two sources.
 - Phone (510) 882-4915 — belongs on the resume. **Never publish it on the website.**
 
 ### Education
+
 - UCLA, **B.S. in Financial Actuarial Mathematics**, Minor in Accounting.
 - Attended 2023–2027, **expected June 2027**. He is a senior in 2026–27.
 - **GPA: 3.486 cumulative UC GPA.** Read directly from his DARS audit dated
@@ -119,6 +125,7 @@ Phineas himself. He stated LinkedIn is the more current of the two sources.
   in a way that reads as passed.
 
 ### Coursework, from the DARS audit
+
 Mathematics: 31A (AP credit), 31B, 32A, 32B, 33A, 33B, 61, 115A (linear algebra),
 131A (real analysis), 170E and 170S (probability), **174E (Mathematics of Finance)**,
 177, and in progress FA26 **178A and 179 (actuarial models)**.
@@ -134,22 +141,25 @@ Note: COMPTNG 16A is the current code for the course the `PIC16A` GitHub repo is
 named after. That repo contains eight Minecraft mod zips and no coursework.
 
 ### He is NOT pre-med
+
 `ge_snipe` ships `lib/bcpm/` and a science-GPA controller because they are features for
 its users. The earlier inference that he might be pre-med was wrong, and this file
 refused to put it on a resume. That refusal is the reason this section is correct.
 
 ### Experience — LinkedIn dates are authoritative where the two disagree
-| Role | Organisation | Dates (LinkedIn) |
-|---|---|---|
-| Network Manager | Theta Chi, Beta Alpha Chapter, UCLA | Jun 2026 – present |
-| House Manager | Theta Chi, Beta Alpha Chapter, UCLA | Jul 2025 – Aug 2026 |
-| Student Assistant (part-time) | UCLA Library — Biomedical Library | Mar 2026 – Jul 2026 |
-| Team Captain | UCLA Sailing Team | Jul 2025 – Jun 2026 |
-| Treasurer | UCLA Sailing Team | Jul 2024 – Jul 2025 |
-| IT Intern | MKTaxSolutions (tax accounting firm), San Leandro CA | Aug 2024 – Sep 2024 |
-| Operations Assistant | Vera A. Fritsch DMD (dental office), San Leandro CA | Jun 2023 – Oct 2023 |
+
+| Role                          | Organisation                                         | Dates (LinkedIn)    |
+| ----------------------------- | ---------------------------------------------------- | ------------------- |
+| Network Manager               | Theta Chi, Beta Alpha Chapter, UCLA                  | Jun 2026 – present  |
+| House Manager                 | Theta Chi, Beta Alpha Chapter, UCLA                  | Jul 2025 – Aug 2026 |
+| Student Assistant (part-time) | UCLA Library — Biomedical Library                    | Mar 2026 – Jul 2026 |
+| Team Captain                  | UCLA Sailing Team                                    | Jul 2025 – Jun 2026 |
+| Treasurer                     | UCLA Sailing Team                                    | Jul 2024 – Jul 2025 |
+| IT Intern                     | MKTaxSolutions (tax accounting firm), San Leandro CA | Aug 2024 – Sep 2024 |
+| Operations Assistant          | Vera A. Fritsch DMD (dental office), San Leandro CA  | Jun 2023 – Oct 2023 |
 
 ### Where the current resume is WRONG or STALE — fix these
+
 1. **It omits the UCLA Library job entirely.** Mar–Jul 2026, Biomedical Library. This
    is the job that produced two of his best projects. Its absence is the single
    biggest factual gap.
@@ -168,6 +178,7 @@ refused to put it on a resume. That refusal is the reason this section is correc
    not be described in language that implies an arms-length hire.
 
 ### Achievements that ARE established and are strong
+
 - 13th Annual Actuarial Case Competition (BAS), Winter Quarter 2025: evaluated three
   commercial property insurance structures for a simulated Fortune 500 real estate
   client; analysed retentions, aggregate limits and co-insurance against tail risk;
@@ -181,6 +192,7 @@ refused to put it on a resume. That refusal is the reason this section is correc
 - German at B2/C1, accredited.
 
 ### Career direction — his own words
+
 Recently interested in **Product / PM / associate** roles. Also has **actuarial**
 interests, which are in fact his major. These are not in conflict: an actuarial
 mathematics senior who independently ships production software used by real people is
@@ -189,6 +201,7 @@ credentialed one and needs Exam FM; the software work is the differentiator that
 other actuarial candidate in the pile will have.
 
 ### Still NOT established — do not invent
+
 - Whether he wants Bay Area, LA, or remote after June 2027.
 - Any award, honour, scholarship, or dean's list.
 - Any actuarial internship. He has had none.
@@ -211,6 +224,7 @@ other actuarial candidate in the pile will have.
 ## Known liabilities a skeptic will find in about four clicks
 
 Ordered by how fast they are hit. These are fixable, and fixing them is queued work.
+
 - `PIC16A` — public repo named after a UCLA course, containing eight Minecraft mod
   zips and the Palmer Penguins datasets. No Python. Worst item on the profile.
 - `uclalibhours` — public, ~5,100 lines, no README, and 20 of 31 commit messages

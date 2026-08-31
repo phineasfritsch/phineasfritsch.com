@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-// @ts-expect-error — plain esm helper, shared with the ops scripts
 import { REPO, sourceHaystack, builtHaystack, builtHtmlFiles, normalise } from '../ops/lib.mjs';
 
 const config = JSON.parse(readFileSync(join(REPO, 'ops/pins.json'), 'utf8'));
@@ -41,20 +40,30 @@ describe('pinned claims', () => {
 describe('pin hygiene', () => {
 	it('every pin states why the property is load-bearing', () => {
 		const noWhy = config.pins.filter((p: any) => !p.why || p.why.length < 40).map((p: any) => p.id);
-		expect(noWhy, 'a pin without a stated reason gets deleted by whoever it inconveniences').toEqual([]);
+		expect(
+			noWhy,
+			'a pin without a stated reason gets deleted by whoever it inconveniences'
+		).toEqual([]);
 	});
 
 	it('no pin asserts a fragment so short it would pass on any page', () => {
 		const tooLoose = config.pins
-			.flatMap((p: any) => [...(p.all ?? []), ...(p.any ?? [])].map((f: string) => ({ id: p.id, f })))
-			.filter(({ f }) => f.trim().length < 3);
-		expect(tooLoose, 'never weaken an assertion to something an empty artefact would satisfy').toEqual([]);
+			.flatMap((p: any) =>
+				[...(p.all ?? []), ...(p.any ?? [])].map((f: string) => ({ id: p.id, f }))
+			)
+			.filter(({ f }: { id: string; f: string }) => f.trim().length < 3);
+		expect(
+			tooLoose,
+			'never weaken an assertion to something an empty artefact would satisfy'
+		).toEqual([]);
 	});
 
 	it('reports pending pins so they cannot quietly stay pending forever', () => {
 		// Not a failure. Pending pins are the redesign's contract with itself; this
 		// test exists so their count is printed on every single run.
-		console.log(`      ${active.length} pins enforced, ${pending.length} pending: ${pending.map((p: any) => p.id).join(', ') || 'none'}`);
+		console.log(
+			`      ${active.length} pins enforced, ${pending.length} pending: ${pending.map((p: any) => p.id).join(', ') || 'none'}`
+		);
 		expect(pending.length).toBeLessThanOrEqual(12);
 	});
 });

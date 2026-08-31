@@ -11,17 +11,32 @@
 	const R = 3;
 	const φ = (lat * Math.PI) / 180;
 	const λ = (lon * Math.PI) / 180;
-	const pos = new THREE.Vector3(R * Math.cos(φ) * Math.cos(λ), R * Math.sin(φ), R * Math.cos(φ) * Math.sin(λ));
-	const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), pos.clone().normalize());
+	const pos = new THREE.Vector3(
+		R * Math.cos(φ) * Math.cos(λ),
+		R * Math.sin(φ),
+		R * Math.cos(φ) * Math.sin(λ)
+	);
+	const quat = new THREE.Quaternion().setFromUnitVectors(
+		new THREE.Vector3(0, 1, 0),
+		pos.clone().normalize()
+	);
 
-	const beachMat  = new THREE.MeshToonMaterial({ color: '#C8A850', flatShading: true });
-	const cliffMat  = new THREE.MeshToonMaterial({ color: '#7B5A28', flatShading: true });
-	const rockMat   = new THREE.MeshToonMaterial({ color: '#9E8A68', flatShading: true });
-	const grassMat  = new THREE.MeshToonMaterial({ color: '#2E7D32', flatShading: true });
-	const waterMat  = new THREE.MeshToonMaterial({ color: '#44BBEE', transparent: true, opacity: 0.88 });
-	const splashMat = new THREE.MeshToonMaterial({ color: '#99DDFF', transparent: true, opacity: 0.7 });
-	const treeMat   = new THREE.MeshToonMaterial({ color: '#2E7D32', flatShading: true });
-	const trunkMat  = new THREE.MeshToonMaterial({ color: '#6D4C41', flatShading: true });
+	const beachMat = new THREE.MeshToonMaterial({ color: '#C8A850' });
+	const cliffMat = new THREE.MeshToonMaterial({ color: '#7B5A28' });
+	const rockMat = new THREE.MeshToonMaterial({ color: '#9E8A68' });
+	const grassMat = new THREE.MeshToonMaterial({ color: '#2E7D32' });
+	const waterMat = new THREE.MeshToonMaterial({
+		color: '#44BBEE',
+		transparent: true,
+		opacity: 0.88
+	});
+	const splashMat = new THREE.MeshToonMaterial({
+		color: '#99DDFF',
+		transparent: true,
+		opacity: 0.7
+	});
+	const treeMat = new THREE.MeshToonMaterial({ color: '#2E7D32' });
+	const trunkMat = new THREE.MeshToonMaterial({ color: '#6D4C41' });
 </script>
 
 <T.Group position={[pos.x, pos.y, pos.z]} quaternion={[quat.x, quat.y, quat.z, quat.w]}>

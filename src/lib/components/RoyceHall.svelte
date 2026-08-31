@@ -14,17 +14,24 @@
 	const R = 3.5; // on top of raised land mass
 	const φ = (lat * Math.PI) / 180;
 	const λ = (lon * Math.PI) / 180;
-	const pos = new THREE.Vector3(R * Math.cos(φ) * Math.cos(λ), R * Math.sin(φ), R * Math.cos(φ) * Math.sin(λ));
-	const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), pos.clone().normalize());
+	const pos = new THREE.Vector3(
+		R * Math.cos(φ) * Math.cos(λ),
+		R * Math.sin(φ),
+		R * Math.cos(φ) * Math.sin(λ)
+	);
+	const quat = new THREE.Quaternion().setFromUnitVectors(
+		new THREE.Vector3(0, 1, 0),
+		pos.clone().normalize()
+	);
 
 	const S = 0.16;
 
 	let hovered = $state(false);
 
 	const stoneMat = new THREE.MeshToonMaterial({ color: '#D4C5A9' });
-	const roofMat  = new THREE.MeshToonMaterial({ color: '#8B2020' });
-	const darkMat  = new THREE.MeshToonMaterial({ color: '#5a4020' });
-	const hitMat   = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
+	const roofMat = new THREE.MeshToonMaterial({ color: '#8B2020' });
+	const darkMat = new THREE.MeshToonMaterial({ color: '#5a4020' });
+	const hitMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
 </script>
 
 <T.Group
@@ -35,8 +42,14 @@
 	<!-- Invisible hit target -->
 	<T.Mesh
 		onclick={() => goto('/ucla/')}
-		onpointerenter={() => { hovered = true; hoveredHotspot.set('UCLA — Royce Hall'); }}
-		onpointerleave={() => { hovered = false; hoveredHotspot.set(null); }}
+		onpointerenter={() => {
+			hovered = true;
+			hoveredHotspot.set('UCLA — Royce Hall');
+		}}
+		onpointerleave={() => {
+			hovered = false;
+			hoveredHotspot.set(null);
+		}}
 	>
 		<T.BoxGeometry args={[4.5, 5, 3]} />
 		<T is={hitMat} />

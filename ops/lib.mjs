@@ -4,7 +4,13 @@ import { join, extname } from 'node:path';
 
 export const REPO = new URL('..', import.meta.url).pathname.replace(/\/$/, '');
 
-/** Walk a directory, returning absolute paths of files matching `exts`. */
+/**
+ * Walk a directory, returning absolute paths of files matching `exts`.
+ * @param {string} dir
+ * @param {string[]} exts
+ * @param {string[]} [acc]
+ * @returns {string[]}
+ */
 export function walk(dir, exts, acc = []) {
 	let entries;
 	try {
@@ -27,6 +33,9 @@ export function walk(dir, exts, acc = []) {
  * Without this, a deleted sentence quoted in the comment that explains its
  * deletion satisfies the very test protecting it. Observed elsewhere seven
  * times in one day; it is the single cheapest way for a guard to lie.
+ *
+ * @param {string} src
+ * @returns {string}
  */
 export function stripComments(src) {
 	return (
@@ -42,7 +51,11 @@ export function stripComments(src) {
 	);
 }
 
-/** Collapse whitespace and normalise quotes/dashes so a reflow does not fail a pin. */
+/**
+ * Collapse whitespace and normalise quotes/dashes so a reflow does not fail a pin.
+ * @param {string} s
+ * @returns {string}
+ */
 export function normalise(s) {
 	return s
 		.replace(/[‘’]/g, "'")

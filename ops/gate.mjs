@@ -49,7 +49,7 @@ gate(3, 'build', () => {
 });
 
 gate(4, 'tests', () => {
-	const r = run('npx', ['vitest', 'run', '--reporter=basic']);
+	const r = run('npx', ['vitest', 'run']);
 	const m = r.out.match(/Tests\s+(?:(\d+) failed \| )?(\d+) passed/);
 	return { ...r, count: m ? Number(m[2]) : null, unit: 'tests passed' };
 });
@@ -78,7 +78,16 @@ for (const g of gates) {
 	// Drift is the signal the count exists for: a gate can stay green while its
 	// number falls, and that is exactly the case nobody notices.
 	const drift = prev !== null && r.count !== null && r.count !== prev ? r.count - prev : 0;
-	results.push({ gate: g.n, name: g.name, ok, count: r.count, unit: r.unit, prev, drift, tail: ok ? null : r.tail });
+	results.push({
+		gate: g.n,
+		name: g.name,
+		ok,
+		count: r.count,
+		unit: r.unit,
+		prev,
+		drift,
+		tail: ok ? null : r.tail
+	});
 }
 
 if (asJson) {
@@ -88,13 +97,24 @@ if (asJson) {
 	console.log('  ' + '─'.repeat(62));
 	for (const r of results) {
 		const count = r.count === null ? '—' : `${r.count} ${r.unit}`;
-		const drift = r.drift ? `  ${r.drift > 0 ? '+' : ''}${r.drift} vs last run` : r.prev !== null ? '  =' : '';
-		console.log(`  ${String(r.gate).padStart(2)}. ${r.name.padEnd(24)} ${(r.ok ? 'pass' : 'FAIL').padEnd(8)} ${count}${drift}`);
+		const drift = r.drift
+			? `  ${r.drift > 0 ? '+' : ''}${r.drift} vs last run`
+			: r.prev !== null
+				? '  ='
+				: '';
+		console.log(
+			`  ${String(r.gate).padStart(2)}. ${r.name.padEnd(24)} ${(r.ok ? 'pass' : 'FAIL').padEnd(8)} ${count}${drift}`
+		);
 	}
 	console.log('  ' + '─'.repeat(62));
 	for (const r of results.filter((x) => !x.ok)) {
 		console.log(`\n  ── gate ${r.gate} (${r.name}) output, last 40 lines ──`);
-		console.log(r.tail.split('\n').map((l) => '  ' + l).join('\n'));
+		console.log(
+			r.tail
+				.split('\n')
+				.map((l) => '  ' + l)
+				.join('\n')
+		);
 	}
 	const passed = results.filter((r) => r.ok).length;
 	console.log(`\n  ${passed}/${results.length} gates pass\n`);

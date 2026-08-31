@@ -56,7 +56,12 @@ async function probe(url) {
 			body: text
 		};
 	} catch (err) {
-		return { url, status: 0, ms: Date.now() - started, error: String(err.message || err).split('\n')[0] };
+		return {
+			url,
+			status: 0,
+			ms: Date.now() - started,
+			error: String(err.message || err).split('\n')[0]
+		};
 	}
 }
 
@@ -74,20 +79,33 @@ const root = results[0];
 const serving = root.status >= 200 && root.status < 400 && !root.cfError;
 
 if (asJson) {
-	console.log(JSON.stringify(results.map(({ body, ...r }) => r), null, 2));
+	console.log(
+		JSON.stringify(
+			results.map(({ body, ...r }) => r),
+			null,
+			2
+		)
+	);
 } else {
 	console.log(`PRODUCTION  ${APEX}`);
 	console.log('─'.repeat(64));
 	for (const r of results) {
 		const flag = r.cfError ? `CF-${r.cfError}` : r.status || 'ERR';
-		const note = r.cfError ? CF_CODES[r.cfError] || 'Cloudflare edge error.' : r.error || r.title || '';
-		console.log(`  ${String(flag).padEnd(8)} ${r.url.replace(APEX, '') || '/'}`.padEnd(28) + ` ${r.ms}ms  ${note}`);
+		const note = r.cfError
+			? CF_CODES[r.cfError] || 'Cloudflare edge error.'
+			: r.error || r.title || '';
+		console.log(
+			`  ${String(flag).padEnd(8)} ${r.url.replace(APEX, '') || '/'}`.padEnd(28) +
+				` ${r.ms}ms  ${note}`
+		);
 	}
 	console.log('─'.repeat(64));
 	if (root.final && !root.final.startsWith(APEX)) {
 		console.log(`  REDIRECT  apex redirects off-domain to ${root.final}`);
 	}
-	console.log(serving ? '  VERDICT   serving' : '  VERDICT   NOT SERVING — visitors see an error page');
+	console.log(
+		serving ? '  VERDICT   serving' : '  VERDICT   NOT SERVING — visitors see an error page'
+	);
 }
 
 process.exit(serving ? 0 : 1);

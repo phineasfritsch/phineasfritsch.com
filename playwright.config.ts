@@ -6,7 +6,10 @@ export default defineConfig({
 	testDir: './tests/e2e',
 	fullyParallel: true,
 	reporter: 'line',
-	timeout: 30_000,
+	timeout: 60_000,
+	// One preview server serves both projects. Unbounded workers starve it and
+	// produce navigation timeouts that look exactly like real failures.
+	workers: 4,
 	use: {
 		baseURL: process.env.TEST_BASE_URL ?? 'http://127.0.0.1:4173',
 		// The browser is pre-installed in this image; never download another.

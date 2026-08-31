@@ -47,10 +47,22 @@ for (const f of html) {
 		if (m) offenders.push(`${f.replace(REPO + '/', '')}: ${JSON.stringify(m[0])}`);
 	}
 }
-add('build.no-placeholders', offenders.length === 0, `${offenders.length} placeholder strings in built html`, offenders.slice(0, 8));
+add(
+	'build.no-placeholders',
+	offenders.length === 0,
+	`${offenders.length} placeholder strings in built html`,
+	offenders.slice(0, 8)
+);
 
 // ── 3. Every internal link resolves to something that was built ─────────────
-const built = new Set(html.map((f) => f.replace(buildDir, '').replace(/\/index\.html$/, '/').replace(/^$/, '/')));
+const built = new Set(
+	html.map((f) =>
+		f
+			.replace(buildDir, '')
+			.replace(/\/index\.html$/, '/')
+			.replace(/^$/, '/')
+	)
+);
 const badLinks = [];
 for (const f of html) {
 	const src = readFileSync(f, 'utf8');
@@ -60,7 +72,12 @@ for (const f of html) {
 		if (!built.has(href)) badLinks.push(`${f.replace(REPO + '/', '')} -> ${m[1]}`);
 	}
 }
-add('build.links-resolve', badLinks.length === 0, `${badLinks.length} internal links with no built page`, [...new Set(badLinks)].slice(0, 8));
+add(
+	'build.links-resolve',
+	badLinks.length === 0,
+	`${badLinks.length} internal links with no built page`,
+	[...new Set(badLinks)].slice(0, 8)
+);
 
 // ── 4. Every page has a title, a description, and exactly one h1 ────────────
 const seoBad = [];
@@ -69,23 +86,70 @@ for (const f of html) {
 	const src = readFileSync(f, 'utf8');
 	const rel = f.replace(REPO + '/', '');
 	const title = (src.match(/<title[^>]*>([^<]*)<\/title>/i) || [, ''])[1].trim();
-	const desc = (src.match(/<meta[^>]+name="description"[^>]+content="([^"]*)"/i) || [, ''])[1].trim();
+	const desc = (src.match(/<meta[^>]+name="description"[^>]+content="([^"]*)"/i) || [
+		,
+		''
+	])[1].trim();
 	const h1s = [...src.matchAll(/<h1[\s>]/gi)].length;
 	if (!title) seoBad.push(`${rel}: no <title>`);
-	if (title && normalise(title) === 'phineas fritsch' && !rel.endsWith('index.html')) seoBad.push(`${rel}: title not page-specific`);
+	if (title && normalise(title) === 'phineas fritsch' && !rel.endsWith('index.html'))
+		seoBad.push(`${rel}: title not page-specific`);
 	if (!desc) seoBad.push(`${rel}: no meta description`);
 	if (h1s !== 1) seoBad.push(`${rel}: ${h1s} h1 elements`);
 }
-add('build.page-metadata', seoBad.length === 0, `${seoBad.length} metadata problems`, seoBad.slice(0, 10));
+add(
+	'build.page-metadata',
+	seoBad.length === 0,
+	`${seoBad.length} metadata problems`,
+	seoBad.slice(0, 10)
+);
 
-// ── 5. Page weight budget ───────────────────────────────────────────────────
-// A portfolio that takes a recruiter's phone eight seconds to paint has failed
-// before a word is read. Budget is on the initial document plus its JS.
-const jsBytes = existsSync(buildDir)
-	? walk(buildDir, ['.js']).reduce((n, f) => n + readFileSync(f).length, 0)
-	: 0;
-const JS_BUDGET = 400 * 1024;
-add('build.js-budget', jsBytes <= JS_BUDGET, `${(jsBytes / 1024).toFixed(0)}KB js (budget ${JS_BUDGET / 1024}KB)`);
+// ── 5. Page weight budget, measured PER PAGE ───────────────────────────────
+// CHANGED 2026-08-31, and the reason matters. This used to sum every .js file in
+// build/ and compare the total against one budget. That was correct while the
+// 3D scene was the homepage. It is wrong now: the scene moved to /planet/, which
+// nobody loads unless they click a button that says "Load the scene (903KB)".
+// Summing the whole directory counted an 812KB chunk against pages that never
+// fetch it.
+//
+// Verified before changing it, per the rule about not weakening a check to
+// something an empty artefact would satisfy: build/index.html preloads
+// nodes/0 and nodes/2 and does NOT reference nodes/5, the three.js chunk. The
+// property this check exists to defend — the pages a reader actually lands on
+// are light — is intact, and this form measures it directly rather than by proxy.
+//
+// The new form reads each page's own modulepreload graph, which is what the
+// browser fetches before first interaction. /planet/ is exempt by name because
+// its weight is disclosed on the page itself and gated behind a click.
+const PER_PAGE_JS_BUDGET = 250 * 1024;
+const EXEMPT = ['/planet/'];
+const heavy = [];
+let worstPage = { page: null, bytes: 0 };
+for (const f of html) {
+	if (f.endsWith('200.html')) continue;
+	const rel = f.replace(buildDir, '').replace(/index\.html$/, '');
+	const src = readFileSync(f, 'utf8');
+	const mods = [...src.matchAll(/href="([^"]*_app\/immutable\/[^"]*\.js)"/g)].map((m) => m[1]);
+	let bytes = 0;
+	for (const m of mods) {
+		const abs = join(buildDir, m.replace(/^\.?\//, ''));
+		try {
+			bytes += readFileSync(abs).length;
+		} catch {
+			/* hashed asset moved; the links-resolve check covers genuine breakage */
+		}
+	}
+	if (bytes > worstPage.bytes) worstPage = { page: rel, bytes };
+	if (bytes > PER_PAGE_JS_BUDGET && !EXEMPT.includes(rel)) {
+		heavy.push(`${rel} loads ${(bytes / 1024).toFixed(0)}KB of js`);
+	}
+}
+add(
+	'build.js-budget',
+	heavy.length === 0,
+	`heaviest non-exempt page ${(worstPage.bytes / 1024).toFixed(0)}KB (budget ${PER_PAGE_JS_BUDGET / 1024}KB/page)`,
+	heavy.slice(0, 6)
+);
 
 // ── 6. Content renders without JavaScript ───────────────────────────────────
 // If the prerendered html is an empty shell, then every crawler, every link
@@ -100,9 +164,15 @@ for (const f of html) {
 		.replace(/<[^>]+>/g, ' ')
 		.replace(/\s+/g, ' ')
 		.trim();
-	if (bodyText.length < 200) noJsBad.push(`${f.replace(REPO + '/', '')}: ${bodyText.length} chars without js`);
+	if (bodyText.length < 200)
+		noJsBad.push(`${f.replace(REPO + '/', '')}: ${bodyText.length} chars without js`);
 }
-add('build.renders-without-js', noJsBad.length === 0, `${noJsBad.length} pages that are empty without js`, noJsBad.slice(0, 8));
+add(
+	'build.renders-without-js',
+	noJsBad.length === 0,
+	`${noJsBad.length} pages that are empty without js`,
+	noJsBad.slice(0, 8)
+);
 
 // ── 7. Production is serving ────────────────────────────────────────────────
 if (!skipProd) {
@@ -121,7 +191,18 @@ if (!skipProd) {
 const failed = checks.filter((c) => !c.ok);
 
 if (asJson) {
-	console.log(JSON.stringify({ ok: failed.length === 0, passed: checks.length - failed.length, failed: failed.length, checks }, null, 2));
+	console.log(
+		JSON.stringify(
+			{
+				ok: failed.length === 0,
+				passed: checks.length - failed.length,
+				failed: failed.length,
+				checks
+			},
+			null,
+			2
+		)
+	);
 } else {
 	for (const c of checks) {
 		console.log(`  ${c.ok ? 'ok  ' : 'FAIL'}  ${c.id.padEnd(28)} ${c.detail}`);
