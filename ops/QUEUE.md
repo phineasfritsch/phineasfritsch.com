@@ -26,9 +26,9 @@ than starting it a third time. A smaller honest result beats a larger claimed on
       the domain is in his email signature and his resume header, and a dead link
       there discredits every claim under it. Blocks: the site being reachable at all,
       and putting the URL back in the resume header.
-- [ ] **B4. Confirm the UCLA Sailing title.** LinkedIn says Team Captain; he said
-      "president of the sailing team" in conversation. The resume and the site both
-      currently say Team Captain, following LinkedIn. One word, and only he knows it.
+- [x] **B4. RESOLVED. UCLA Sailing title is "Team Captain".** He held both titles
+      technically. Captain matches LinkedIn, so a recruiter cross-checking the two
+      documents finds the same word. Already correct on the site and the resume.
 - [ ] **B5. Confirm the dental-practice cut.** Vera A. Fritsch DMD (Jun–Oct 2023) was
       removed from the one-page resume: four months, three years ago, and it shares
       his surname, which the panel flagged as a liability rather than an asset. Easy
