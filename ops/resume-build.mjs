@@ -128,7 +128,7 @@ ${css}
 			.join('')}</div>
 		<p class="lede">${esc(data.ledes[track])}</p>
 
-		<h2>Education</h2>
+		<h2>EDUCATION</h2>
 		<div class="rowhead">
 			<strong>${esc(data.education.school)}</strong><span class="when">${esc(data.education.when)}</span>
 		</div>
@@ -136,16 +136,16 @@ ${css}
 			${eduRows}
 		</dl>
 
-		<h2>Experience</h2>
+		<h2>EXPERIENCE</h2>
 		${exp}
 
-		<h2>Projects</h2>
+		<h2>PROJECTS</h2>
 		${proj}
 
-		<h2>Leadership</h2>
+		<h2>LEADERSHIP</h2>
 		${lead}
 
-		<h2>Skills</h2>
+		<h2>SKILLS</h2>
 		<dl class="kv">
 			${skillRows}
 		</dl>

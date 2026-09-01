@@ -91,6 +91,23 @@ gate(5, 'sanity', () => {
 
 if (!fast) {
 	gate(6, 'real user (browser)', () => {
+		// Free the port first. playwright.config.ts sets reuseExistingServer:false on
+		// purpose — a reused server may be serving an older build, and that is how a
+		// green browser suite once passed over a stale artefact — but that also means
+		// a preview server left behind by any earlier command makes this gate fail
+		// with "port already used", which reads as a browser failure and is not one.
+		// Twice now that has cost a diagnosis.
+		try {
+			const pids = spawnSync('bash', ['-lc', 'fuser 4173/tcp 2>/dev/null || true'], {
+				encoding: 'utf8'
+			}).stdout.trim();
+			if (pids) {
+				spawnSync('bash', ['-lc', 'fuser -k 4173/tcp 2>/dev/null || true']);
+				spawnSync('bash', ['-lc', 'sleep 1']);
+			}
+		} catch {
+			/* nothing holding it, or no fuser here */
+		}
 		const r = run('npx', ['playwright', 'test', '--reporter=line']);
 		const m = r.out.match(/(\d+) passed/);
 		return { ...r, count: m ? Number(m[1]) : null, unit: 'browser checks' };

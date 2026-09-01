@@ -403,7 +403,11 @@ if (!skipProd) {
 		for (const [, w] of d.matchAll(new RegExp(`\\b(${NUM}) things that are running\\b`, 'gi'))) {
 			if (num(w) !== nRunning) wrong.push(`${rel}: says ${w} running, ${nRunning} are live`);
 		}
-		for (const [, w] of d.matchAll(new RegExp(`\\b(${NUM}) of my projects are running`, 'gi'))) {
+		for (const [, w] of d.matchAll(
+			// 'are', never 'is': /work/bruinthetachi/ says "this one is running at a
+			// preview URL", which the plural claim pattern read as a count of one.
+			new RegExp(`\\b(${NUM})(?: of my projects)? are running`, 'gi')
+		)) {
 			if (num(w) !== nRunning) wrong.push(`${rel}: says ${w} running, ${nRunning} are live`);
 		}
 		for (const [, w] of d.matchAll(new RegExp(`\\b(${NUM}) are open to anyone`, 'gi'))) {
@@ -559,6 +563,55 @@ if (!skipProd) {
 	);
 }
 
+// ── 9h. Every repository the site links has to be readable ─────────────────
+// The essay told a reader the commit history was public and one click from
+// catching him. It is not: that repository is private, and the site already knew
+// — /work/dibs/ is the only running project with no Source link. Four reviewers
+// clicked it. On a site whose argument is "go and check", an invitation nobody
+// can accept is worse than no invitation, and nothing here could see it because
+// the claim was prose and the link was absent rather than broken.
+if (!skipProd) {
+	const projectsSrc = readFileSync(join(REPO, 'src/lib/data/projects.ts'), 'utf8');
+	const repos = [...projectsSrc.matchAll(/repo:\s*'https:\/\/github\.com\/([^/']+)\/([^/']+)'/g)];
+	const unreadable = [];
+	for (const [, owner, name] of repos) {
+		// raw.githubusercontent, not github.com: the proxy in this environment 403s
+		// the HTML host for repositories that are perfectly public, and reading a 403
+		// as "private" is the same mistake in the other direction.
+		let code = '';
+		try {
+			code = execFileSync(
+				'curl',
+				[
+					'-sS',
+					'-o',
+					'/dev/null',
+					'-w',
+					'%{http_code}',
+					'--max-time',
+					'20',
+					`https://raw.githubusercontent.com/${owner}/${name}/HEAD/README.md`
+				],
+				{ encoding: 'utf8' }
+			).trim();
+		} catch {
+			code = 'unreachable';
+		}
+		if (code === '404') unreadable.push(`${owner}/${name} is linked but not public`);
+	}
+	// And the essay must not tell anyone a private history is public.
+	const hay = builtHaystack();
+	if (hay.includes('the commit history is public')) {
+		unreadable.push('the essay claims a public commit history; name which repository');
+	}
+	add(
+		'build.linked-repos-readable',
+		unreadable.length === 0,
+		unreadable.length ? unreadable[0] : `${repos.length} linked repositories, all readable`,
+		unreadable
+	);
+}
+
 // ── 9a. The public resume is present, and is the public one ────────────────
 // It ships from static/ and is linked from /resume/. Two ways this goes wrong
 // silently: the file is missing, so the link 404s on the one page a recruiter
@@ -586,6 +639,24 @@ if (!skipProd) {
 		// is the reliable tell that a private variant was published by mistake.
 		if (/tel:\+?\d/.test(bytes)) problems.push('the published PDF carries a tel: link');
 		if (bytes.length < 20_000) problems.push('the published PDF is suspiciously small');
+		// Run the machine-readability verifier against the SHIPPED file. It existed
+		// for weeks and the gate never pointed it at anything: it ran inside
+		// resume-build against the freshly rendered copy, so nothing checked what is
+		// actually in static/ and on the website. Both defects it was written to
+		// catch were live in the published PDF while it reported no problems.
+		try {
+			const out = execFileSync('python3', [join(REPO, 'ops/resume-verify.py'), pdf], {
+				encoding: 'utf8'
+			});
+			for (const pr of JSON.parse(out).problems || []) problems.push(`published PDF: ${pr}`);
+		} catch (e) {
+			const out = (e.stdout || '').trim();
+			try {
+				for (const pr of JSON.parse(out).problems || []) problems.push(`published PDF: ${pr}`);
+			} catch {
+				problems.push('the published PDF could not be machine-verified');
+			}
+		}
 		// The fact base is gitignored, so this only runs where it exists. Where it
 		// does, a PDF older than the facts it was built from is a stale document
 		// with a download button on it, which is worse than no download button.

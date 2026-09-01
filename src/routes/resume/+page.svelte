@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Seo from '$lib/components/Seo.svelte';
-	import { runningCount, spell } from '$lib/data/counts';
+	import { openCount, runningCount, spell } from '$lib/data/counts';
 	import { emailLink } from '$lib/data/contact';
 	// Every fact on this page comes from ops/panel/EVIDENCE.md. Nothing is inferred.
 	// Dates follow LinkedIn where LinkedIn and the older .docx disagree, because he
@@ -9,15 +9,11 @@
 	// GPA is deliberately absent, and the figures are deliberately not repeated here:
 	// this repository is public. The reasoning is in ops/private/EVIDENCE.md, which is
 	// not. Omitting a GPA is unremarkable; publishing one nobody asked for is not.
+
+	const DESCRIPTION = `Financial actuarial mathematics at UCLA, June 2027. Actuarial coursework and case competition work, plus ${spell(runningCount)} deployed software projects, ${spell(openCount)} of them open to anyone.`;
 </script>
 
-<Seo
-	title="Resume — Phineas Fritsch"
-	description="Financial actuarial mathematics at UCLA, June 2027. Actuarial coursework and case competition work, plus {spell(
-		runningCount
-	)} deployed software projects."
-	path="/resume/"
-/>
+<Seo title="Resume — Phineas Fritsch" description={DESCRIPTION} path="/resume/" />
 
 <section class="section" style="margin-top:2.5rem">
 	<h1 style="font-size:clamp(1.6rem,3.6vw,2.2rem);letter-spacing:-0.02em;font-weight:600">
@@ -78,11 +74,11 @@
 					interlibrary-loan pull lists, shelf reading, headcounts, opening and closing.
 				</p>
 				<p>
-					Built four tools for the unit on my own initiative, none of them assigned. The daily staff
-					schedule used to arrive as a spreadsheet every morning, so I put it on a phone screen;
-					people at my desk open mine now instead of the file. The others map the stacks to a shelf
-					so you can find a call number after the library retired LibMaps, and give shelf-reading
-					and ILL pulls an efficient route through the building.
+					Built three tools for the unit on my own initiative, none of them assigned. The daily
+					staff schedule used to arrive as a spreadsheet every morning, so I put it on a phone
+					screen; people at my desk open mine now instead of the file. The others map the stacks to
+					a shelf so you can find a call number after the library retired LibMaps, and give
+					shelf-reading and ILL pulls an efficient route through the building.
 				</p>
 			</div>
 		</li>

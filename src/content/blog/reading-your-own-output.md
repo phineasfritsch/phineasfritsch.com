@@ -47,11 +47,14 @@ goes red and I learn to edit the guard instead of the code.
 ## Why this site says what an AI wrote
 
 The argument for hiding it is that a reader who suspects AI discounts everything, and
-that is a real cost — I will lose some of you on this page. I say it anyway, and not
+that is a real cost. I will lose some of you on this page. I say it anyway, and not
 only for honesty's sake. If I claimed to have
-hand-written sixty thousand lines of Ruby in fourteen days, the commit history is
-public and it would take one click to catch me. Every claim on this site would then be
-worth nothing. Saying what was assisted costs me the readers who were going to
+hand-written sixty thousand lines of Ruby in fourteen days, one question from anyone
+who has read a codebase that size would catch me, and the repositories I do link (this
+site, jellyfin-matcher, nakra) have public histories that would catch me faster. Dibs'
+repository is not one of them: it is private, so on that project you have my word and
+the running site and nothing else. Every claim here would be worth nothing the moment
+one of them turned out to be dressed up. Saying what was assisted costs me the readers who were going to
 discount me anyway, and it buys the rest a reason to believe the specific things I do
 claim: that I decided what to build, and that the reason Postgres is configured the way
 it is was mine, is written down in the deploy config, and I can defend it.

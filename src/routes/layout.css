@@ -136,6 +136,13 @@ body {
 
 a {
 	color: var(--accent);
+	/* Underlined, because colour alone is not a distinction: WCAG 2.2 SC 1.4.1
+	   fails when a link inside running text differs from the prose only by hue,
+	   and a reader with a colour vision deficiency sees no link at all. Tailwind's
+	   preflight sets text-decoration to inherit, so nothing was underlining these.
+	   The nav and the row titles set text-decoration: none explicitly and are
+	   unaffected; only links inside prose gain the underline. */
+	text-decoration-line: underline;
 	text-underline-offset: 0.2em;
 	text-decoration-thickness: 1px;
 }

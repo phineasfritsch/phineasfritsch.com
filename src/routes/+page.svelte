@@ -2,7 +2,7 @@
 	import Seo from '$lib/components/Seo.svelte';
 	import { orderedProjects } from '$lib/data/projects';
 	import status from '$lib/data/status.json';
-	import { runningCount, spell } from '$lib/data/counts';
+	import { openCount, runningCount, spell } from '$lib/data/counts';
 
 	// Measured at build time by ops/probe-live.mjs, not now. The page says so
 	// explicitly below: a green dot that implied live monitoring would be a lie
@@ -11,13 +11,15 @@
 	const checkedLabel = checked.toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 	const st = (slug: string) =>
 		(status.results as Record<string, { status: string; ms: number | null }>)[slug];
+
+	// Built here rather than interpolated inside the attribute: three counts in one
+	// string had wrapped into something nobody could read or edit safely.
+	const DESCRIPTION = `Financial actuarial mathematics senior at UCLA. I build tools for problems I have: course grade data, library shelf routing, staff schedules. ${spell(runningCount)[0].toUpperCase() + spell(runningCount).slice(1)} are running and ${spell(openCount)} are open to anyone with the link.`;
 </script>
 
 <Seo
 	title="Phineas Fritsch — actuarial mathematics at UCLA, and things that are running"
-	description="Financial actuarial mathematics senior at UCLA. I build tools for problems I have: course grade data, library shelf routing, staff schedules — and {spell(
-		runningCount
-	)} of them are serving traffic right now."
+	description={DESCRIPTION}
 	path="/"
 />
 
