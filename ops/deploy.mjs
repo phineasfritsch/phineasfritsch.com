@@ -139,7 +139,18 @@ if (!dry) {
 // time it runs and deploy could NEVER succeed. What this check actually defends is
 // that the SOURCE producing build/ matches a commit, and neither the drift record nor
 // a screenshot affects the artefact.
-const GENERATED = [/^ops\/baseline\.json$/, /^ops\/shots\//, /^static\/version\.json$/];
+// Files this command writes itself, and whose contents are measurements rather
+// than source: a latency in milliseconds and the instant it was taken cannot be
+// reproduced from a commit, so requiring them to match one is asking the wrong
+// question. Everything else must be committed, because the point of this check is
+// that the deployed artefact corresponds to a commit someone can go and read.
+const GENERATED = [
+	/^ops\/baseline\.json$/,
+	/^ops\/floors\.json$/,
+	/^ops\/shots\//,
+	/^static\/version\.json$/,
+	/^src\/lib\/data\/status\.json$/
+];
 const dirty = sh('git', ['status', '--porcelain'])
 	.split('\n')
 	.filter(Boolean)

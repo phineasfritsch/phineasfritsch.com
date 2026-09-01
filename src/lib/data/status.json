@@ -1,35 +1,35 @@
 {
-  "checkedAt": "2026-09-01T00:14:02.501Z",
+  "checkedAt": "2026-09-01T00:20:24.332Z",
   "results": {
     "dibs": {
       "status": "up",
       "code": 200,
-      "ms": 1255
+      "ms": 828
     },
     "shelfmark": {
       "status": "up",
       "code": 200,
-      "ms": 441
+      "ms": 263
     },
     "biomed-schedule": {
       "status": "up",
       "code": 200,
-      "ms": 283
+      "ms": 232
     },
     "the-cut-card": {
       "status": "up",
       "code": 200,
-      "ms": 267
+      "ms": 290
     },
     "jellyfin-matcher": {
       "status": "up",
       "code": 200,
-      "ms": 486
+      "ms": 475
     },
     "bruinthetachi": {
       "status": "up",
       "code": 200,
-      "ms": 315
+      "ms": 255
     }
   }
 }
