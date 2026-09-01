@@ -238,6 +238,41 @@ if (!skipProd) {
 	);
 }
 
+// ── 9a. The public resume is present, and is the public one ────────────────
+// It ships from static/ and is linked from /resume/. Two ways this goes wrong
+// silently: the file is missing, so the link 404s on the one page a recruiter
+// came for; or a rebuild without --public leaves the tailored variant's phone
+// number in a file anyone can download. Both are invisible to every other check.
+{
+	const pdf = join(REPO, 'build/Phineas-Fritsch-resume.pdf');
+	const problems = [];
+	if (!existsSync(pdf)) {
+		problems.push(
+			'build/Phineas-Fritsch-resume.pdf is missing — run: node ops/resume-build.mjs --public'
+		);
+	} else {
+		const bytes = readFileSync(pdf, 'latin1');
+		// PDF text is compressed, so a digit run will not appear literally; the
+		// clickable tel: annotation is stored as plain text in the link object and
+		// is the reliable tell that a private variant was published by mistake.
+		if (/tel:\+?\d/.test(bytes)) problems.push('the published PDF carries a tel: link');
+		if (bytes.length < 20_000) problems.push('the published PDF is suspiciously small');
+		// The fact base is gitignored, so this only runs where it exists. Where it
+		// does, a PDF older than the facts it was built from is a stale document
+		// with a download button on it, which is worse than no download button.
+		const facts = join(REPO, 'ops/private/resume/resume.data.mjs');
+		if (existsSync(facts) && statSync(facts).mtimeMs > statSync(pdf).mtimeMs) {
+			problems.push('the published PDF is older than the facts it was built from');
+		}
+	}
+	add(
+		'build.public-resume',
+		problems.length === 0,
+		problems[0] ?? 'published, with no phone number',
+		problems
+	);
+}
+
 // ── 9b. The status figures were measured when the page says they were ───────
 // The homepage prints "checked <time> / when this page was built" next to an
 // uptime figure for each service. ops/probe-live.mjs, which produces those
@@ -261,6 +296,17 @@ if (!skipProd) {
 	}
 	add('build.status-freshness', ok, detail);
 }
+
+// Files a deploy writes itself. Their contents are measurements — a latency, an
+// instant, a count — and cannot be reproduced from a commit, so a difference in
+// them is not a difference a visitor can see. Kept in step with ops/deploy.mjs.
+const GENERATED_PATHS = [
+	/^ops\/baseline\.json$/,
+	/^ops\/floors\.json$/,
+	/^ops\/shots\//,
+	/^static\/version\.json$/,
+	/^src\/lib\/data\/status\.json$/
+];
 
 // ── 10-11. What the EDGE is serving, not what this directory contains ───────
 // Every content guard above reads build/. Nothing compared the live bytes to
@@ -322,13 +368,35 @@ if (!skipProd) {
 	} catch {
 		/* left null, reported below */
 	}
-	add(
-		'prod.commit-parity',
-		liveCommit === head,
-		liveCommit === head
-			? `production serves ${head}`
-			: `production serves ${liveCommit ?? 'no readable version.json'}, HEAD is ${head}`
-	);
+	// A deploy writes its own measurements — gate counts, service latencies — and
+	// those get committed afterwards, so HEAD is routinely one commit ahead of the
+	// deployed one with nothing in between that a visitor could see. Comparing the
+	// shas alone made this check permanently red and therefore permanently ignored,
+	// which is worse than not having it. So: equal shas pass, and unequal shas pass
+	// only if every file that differs is generated output. Anything else is stale.
+	let parity = liveCommit === head;
+	let why = parity ? `production serves ${head}` : '';
+	if (!parity && liveCommit) {
+		let changed = [];
+		try {
+			changed = execFileSync('git', ['diff', '--name-only', `${liveCommit}..${head}`], {
+				cwd: REPO,
+				encoding: 'utf8'
+			})
+				.split('\n')
+				.filter(Boolean);
+		} catch {
+			changed = ['<could not diff>'];
+		}
+		const meaningful = changed.filter((f) => !GENERATED_PATHS.some((re) => re.test(f)));
+		parity = changed.length > 0 && meaningful.length === 0;
+		why = parity
+			? `production serves ${liveCommit}; HEAD ${head} differs only in generated output`
+			: `production serves ${liveCommit}, HEAD is ${head} — ${meaningful.length} file(s) differ: ${meaningful.slice(0, 3).join(', ')}`;
+	} else if (!parity) {
+		why = `no readable version.json from production, HEAD is ${head}`;
+	}
+	add('prod.commit-parity', parity, why);
 
 	// The same patterns as build.no-private-data, run over the live bytes. A guard
 	// that only ever reads the local build cannot see a stale or rewritten edge.

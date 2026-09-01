@@ -26,6 +26,14 @@
 			<strong>no exams passed yet</strong>. Reach me at
 			<a href="mailto:contact@phineasfritsch.com">contact@phineasfritsch.com</a>.
 		</p>
+		<!-- Five of eight reviewers asked for this independently: a recruiter who
+		     wants to forward something to a hiring manager had nothing to attach.
+		     One file, built from the same fact base as this page by
+		     ops/resume-build.mjs, with the phone number stripped because a public
+		     download is on the open internet permanently. -->
+		<p>
+			<a href="/Phineas-Fritsch-resume.pdf">Download as PDF</a> — one page, same facts as this page.
+		</p>
 	</div>
 </section>
 

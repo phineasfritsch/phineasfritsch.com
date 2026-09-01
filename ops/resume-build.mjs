@@ -36,7 +36,10 @@ const css = readFileSync(join(DIR, 'resume.css'), 'utf8').replace(
 );
 
 const want = process.argv.slice(2).filter((a) => !a.startsWith('-'));
-const tracks = want.length ? want : data.TRACKS;
+// The public one is opt-in: `--public` builds it, and it is the only variant that
+// leaves ops/private/. Everything else stays a file he attaches to an application.
+const wantPublic = process.argv.includes('--public');
+const tracks = want.length ? want : wantPublic ? [data.PUBLIC_TRACK] : data.TRACKS;
 
 // Never rendered, in any variant. Each was decided deliberately and each would be easy
 // to reintroduce by accident from a stale draft.
@@ -56,6 +59,17 @@ const pick = (v, track) =>
 const forTrack = (items, track) => items.filter((i) => !i.variants || i.variants.includes(track));
 
 const esc = (s) => String(s);
+
+/**
+ * The public PDF drops the phone number. The three tailored documents go to a named
+ * person who asked for one; the public file is something a stranger downloads from
+ * a website, and a phone number on it is on the open internet forever. The address
+ * stays, because a resume nobody can answer is not a resume.
+ */
+function contactLine(track) {
+	if (track !== data.PUBLIC_TRACK) return data.contact.line;
+	return data.contact.line.filter((x) => !(x.href || '').startsWith('tel:'));
+}
 
 function render(track) {
 	const exp = forTrack(data.experience, track)
@@ -105,7 +119,13 @@ ${css}
 	</head>
 	<body>
 		<h1>${esc(data.contact.name)}</h1>
-		<div class="contact">${data.contact.line.map((x) => (x.href ? `<span><a href="${x.href}">${esc(x.text)}</a></span>` : `<span>${esc(x.text)}</span>`)).join('')}</div>
+		<div class="contact">${contactLine(track)
+			.map((x) =>
+				x.href
+					? `<span><a href="${x.href}">${esc(x.text)}</a></span>`
+					: `<span>${esc(x.text)}</span>`
+			)
+			.join('')}</div>
 		<p class="lede">${esc(data.ledes[track])}</p>
 
 		<h2>Education</h2>
@@ -153,8 +173,13 @@ for (const track of tracks) {
 		continue;
 	}
 
+	const isPublic = track === data.PUBLIC_TRACK;
 	const htmlPath = join(OUT, `resume-${track}.html`);
-	const pdfPath = join(OUT, `Phineas-Fritsch-resume-${track}.pdf`);
+	// The public one is written straight into static/, so it ships with the site and
+	// the gate's own checks see it. The others never leave ops/private/.
+	const pdfPath = isPublic
+		? join(REPO, 'static/Phineas-Fritsch-resume.pdf')
+		: join(OUT, `Phineas-Fritsch-resume-${track}.pdf`);
 	writeFileSync(htmlPath, html);
 
 	// Letter minus 0.55in margins each side is 7.4in = 710px at 96dpi. Measuring at the
