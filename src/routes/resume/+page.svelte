@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { servingCount, spell } from '$lib/data/counts';
 	// Every fact on this page comes from ops/panel/EVIDENCE.md. Nothing is inferred.
 	// Dates follow LinkedIn where LinkedIn and the older .docx disagree, because he
 	// confirmed LinkedIn is the current one.
@@ -12,7 +13,9 @@
 	<title>Resume — Phineas Fritsch</title>
 	<meta
 		name="description"
-		content="Financial actuarial mathematics at UCLA, June 2027. Actuarial coursework and case competition work, plus three deployed software projects."
+		content="Financial actuarial mathematics at UCLA, June 2027. Actuarial coursework and case competition work, plus {spell(
+			servingCount
+		)} deployed software projects."
 	/>
 </svelte:head>
 
@@ -32,7 +35,8 @@
 		     ops/resume-build.mjs, with the phone number stripped because a public
 		     download is on the open internet permanently. -->
 		<p>
-			<a href="/Phineas-Fritsch-resume.pdf">Download as PDF</a> — one page, same facts as this page.
+			<a href="/Phineas-Fritsch-resume.pdf">Download as PDF</a> — one page, from the same evidence as
+			this one but not the same words: shorter in places, more specific in others.
 		</p>
 	</div>
 </section>

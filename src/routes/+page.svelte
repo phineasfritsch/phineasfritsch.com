@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { orderedProjects } from '$lib/data/projects';
 	import status from '$lib/data/status.json';
+	import { servingCount, spell } from '$lib/data/counts';
 
 	// Measured at build time by ops/probe-live.mjs, not now. The page says so
 	// explicitly below: a green dot that implied live monitoring would be a lie
@@ -15,7 +16,9 @@
 	<title>Phineas Fritsch — actuarial mathematics at UCLA, and things that are running</title>
 	<meta
 		name="description"
-		content="Financial actuarial mathematics senior at UCLA. I build tools for problems I have: course grade data, library shelf routing, staff schedules — and three of them are serving traffic right now."
+		content="Financial actuarial mathematics senior at UCLA. I build tools for problems I have: course grade data, library shelf routing, staff schedules — and {spell(
+			servingCount
+		)} of them are serving traffic right now."
 	/>
 </svelte:head>
 

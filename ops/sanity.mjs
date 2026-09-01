@@ -188,7 +188,16 @@ const PRIVATE_PATTERNS = [
 	// He confirmed he never asked permission to publish this outside the admin portal.
 	// It was removed once and came back in three files, because the only thing holding
 	// it out was a paragraph. A paragraph does not fail a build.
-	[/collab\s*hub/i, 'the Collab Hub claim, which he asked to keep off permanently']
+	[/collab\s*hub/i, 'the Collab Hub claim, which he asked to keep off permanently'],
+	// Not private data of HIS — private data of his coworkers. The worker behind
+	// this hostname answers an unauthenticated GET with their first names, their
+	// duty assignments and a link to the internal sheet, and the site was the thing
+	// driving traffic to it. The anchor stays out until the worker requires auth;
+	// prose alone put the Collab Hub claim back in three files, so this one is code.
+	[
+		/better-bio-schedule\.phineas-fritsch\.workers\.dev/i,
+		'a public link to an endpoint that exposes coworkers\u2019 names; see B8 in ops/QUEUE.md'
+	]
 ];
 const leaks = [];
 for (const f of html) {
@@ -286,6 +295,67 @@ if (!skipProd) {
 				: saysBranch
 					? 'main is still the scaffold, and the page says so'
 					: 'main lacks ops/ but /answers/ sends readers there anyway'
+	);
+}
+
+// ── 9d. Counted claims in metadata must match what is counted ──────────────
+// Three meta descriptions said "three of them are serving traffic" and "Six
+// projects" while the site rendered seven projects and six live services. None
+// of it was a lie — each number was true when it was typed, and then a project
+// was added. Those strings are derived now; this is what notices if one is ever
+// typed back in, and it reads the same two files the pages render from.
+{
+	const projectsSrc = readFileSync(join(REPO, 'src/lib/data/projects.ts'), 'utf8');
+	const nProjects = (projectsSrc.match(/^\t\tslug: '/gm) || []).length;
+	const statusJson = JSON.parse(readFileSync(join(REPO, 'src/lib/data/status.json'), 'utf8'));
+	const nServing = Object.values(statusJson.results).filter((r) => r.status === 'up').length;
+	const WORDS = [
+		'zero',
+		'one',
+		'two',
+		'three',
+		'four',
+		'five',
+		'six',
+		'seven',
+		'eight',
+		'nine',
+		'ten',
+		'eleven',
+		'twelve'
+	];
+	// Only an actual number, spelled or in digits. Matching any word here caught
+	// 'software projects' and 'routing ... serving traffic' and reported both as
+	// disagreements, which is the failure mode where a guard cries wolf and is then
+	// switched off.
+	const NUM = `${WORDS.join('|')}|\\d+`;
+	const num = (w) => {
+		const i = WORDS.indexOf(w.toLowerCase());
+		return i >= 0 ? i : Number(w);
+	};
+	const wrong = [];
+	for (const f of html) {
+		const m = readFileSync(f, 'utf8').match(/name="description" content="([^"]*)"/);
+		if (!m) continue;
+		const d = m[1];
+		const rel = f.replace(REPO + '/', '');
+		for (const [, w] of d.matchAll(new RegExp(`\\b(${NUM}) projects\\b`, 'gi'))) {
+			if (num(w) !== nProjects) wrong.push(`${rel}: says ${w} projects, there are ${nProjects}`);
+		}
+		for (const [, w] of d.matchAll(
+			new RegExp(`\\b(${NUM})(?: of them)? (?:are|is) serving traffic`, 'gi')
+		)) {
+			if (num(w) !== nServing) wrong.push(`${rel}: says ${w} serving, ${nServing} are up`);
+		}
+		for (const [, w] of d.matchAll(new RegExp(`\\b(${NUM}) deployed software projects\\b`, 'gi'))) {
+			if (num(w) !== nServing) wrong.push(`${rel}: says ${w} deployed, ${nServing} are up`);
+		}
+	}
+	add(
+		'build.counted-claims',
+		wrong.length === 0,
+		`${wrong.length} counted claims that disagree with the data`,
+		wrong.slice(0, 6)
 	);
 }
 

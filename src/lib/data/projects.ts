@@ -66,13 +66,26 @@ export const projects: Project[] = [
 		slug: 'biomed-schedule',
 		name: 'Better Bio Schedule',
 		what: 'One link for every daily staff schedule at the biomedical library, laid out for a phone, with a notification when you are put on something other than the desk.',
-		url: 'https://better-bio-schedule.phineas-fritsch.workers.dev',
+		// The public link is OFF. Its API answers an unauthenticated request with
+		// coworkers' first names, their duty assignments, and a link to the internal
+		// sheet — other people's information, on a service this page was sending
+		// readers to. The queue decided not to NAME the endpoint here because naming
+		// it advertises it, and then left a hyperlink to it on the homepage, which
+		// advertises it considerably more. A reviewer called that the one judgment
+		// call on the site that ran the wrong way, and he was right.
+		//
+		// `url` comes back when the worker requires auth. The status probe still
+		// runs, so the measured latency below stays honest; only the anchor is gone.
+		// Its return is guarded in ops/sanity.mjs, because prose alone put the
+		// Collab Hub claim back in three files.
+		url: undefined,
 		live: true,
 		year: '2026',
 		stack: ['Cloudflare Workers', 'Web Push', 'iCalendar'],
 		decision:
 			'It reads the schedule the library already publishes rather than asking anyone to maintain a second copy. A tool that needs someone to keep it fed stops being fed the week you stop asking.',
-		limit: 'Reads the schedule; it cannot change it. One library.',
+		limit:
+			'Reads the schedule; it cannot change it. One library. The public link is off while an access fix ships.',
 		assisted:
 			'Claude wrote most of the code. I wanted it because I was the one checking the sheet on my phone before every shift.'
 	},

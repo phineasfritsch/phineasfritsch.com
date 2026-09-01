@@ -107,7 +107,7 @@ if (!dry) {
 				? '  ='
 				: '';
 		console.log(
-			`    ${String(r.gate).padStart(2)}. ${r.name.padEnd(24)} ${(r.ok ? 'pass' : 'FAIL').padEnd(8)} ${count}${drift}`
+			`    ${String(r.gate).padStart(2)}. ${r.name.padEnd(24)} ${(r.ok ? 'pass' : 'FAIL').padEnd(8)} ${count}${drift}${r.belowFloor ? `  BELOW FLOOR ${r.floor}` : ''}`
 		);
 	}
 
@@ -115,6 +115,22 @@ if (!dry) {
 	if (failed.length) {
 		const unexplained = [];
 		for (const f of failed) {
+			// A floor breach is never overridable, and it is checked BEFORE the name
+			// scraping. The breach text only reaches the tail when the gate's own
+			// command exited 0; when the command ALSO failed for another reason — the
+			// permanent state of this repo, where sanity is red pending a Cloudflare
+			// toggle the operator overrides by name — the tail is ordinary output, the
+			// scraper finds only the overridden name, and a deploy with checks deleted
+			// underneath it printed OVERRIDDEN and shipped. The gate has always handed
+			// over `belowFloor`; nothing here read it.
+			if (f.belowFloor) {
+				unexplained.push(
+					`gate ${f.gate} (${f.name}): ${f.count} ${f.unit}, below the floor of ${f.floor} — ` +
+						'something that used to be checked is not being checked any more. ' +
+						'A floor cannot be overridden; lower it in ops/floors.json if the drop is deliberate.'
+				);
+				continue;
+			}
 			// Only sanity's check ids, which are dotted lowercase (build.js-budget,
 			// prod.404-is-404). The pattern used to be /FAIL\s+(\S+)/, and vitest
 			// prints `FAIL tests/voice.spec.ts` — so a failing test FILE became a

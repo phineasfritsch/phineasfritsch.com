@@ -1,12 +1,18 @@
 <script lang="ts">
 	import { orderedProjects } from '$lib/data/projects';
+	import { projectCount, servingCount, spell } from '$lib/data/counts';
 </script>
 
 <svelte:head>
 	<title>Work — Phineas Fritsch</title>
 	<meta
 		name="description"
-		content="Six projects, each with the decision worth asking about, what it does not do, and what an AI wrote. Three are serving traffic."
+		content="{spell(projectCount)[0].toUpperCase() +
+			spell(projectCount).slice(
+				1
+			)} projects, each with the decision worth asking about, what it does not do, and what an AI wrote. {spell(
+			servingCount
+		)[0].toUpperCase() + spell(servingCount).slice(1)} are serving traffic."
 	/>
 </svelte:head>
 
