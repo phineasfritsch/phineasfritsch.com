@@ -74,11 +74,10 @@
 					interlibrary-loan pull lists, shelf reading, headcounts, opening and closing.
 				</p>
 				<p>
-					Built three tools for the unit on my own initiative, none of them assigned. The daily
-					staff schedule used to arrive as a spreadsheet every morning, so I put it on a phone
-					screen; people at my desk open mine now instead of the file. The others map the stacks to
-					a shelf so you can find a call number after the library retired LibMaps and route a
-					shelf-reading or ILL pull through the building, and rebuild the headcount page.
+					Built three tools for the unit on my own initiative, none of them assigned: the daily
+					staff schedule on a phone screen, a call-number-to-shelf lookup after the library retired
+					LibMaps, and a rebuilt headcount page. The schedule used to arrive as a spreadsheet every
+					morning. People at my desk open mine now instead of the file.
 				</p>
 			</div>
 		</li>

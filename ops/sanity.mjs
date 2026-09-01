@@ -591,9 +591,13 @@ if (!skipProd) {
 	const repos = [...seen].map((k) => [null, ...k.split('\u0000')]);
 	const unreadable = [];
 	for (const [, owner, name, ref] of repos) {
-		// raw.githubusercontent, not github.com: the proxy in this environment 403s
-		// the HTML host for repositories that are perfectly public, and reading a 403
-		// as "private" is the same mistake in the other direction.
+		// git's own discovery endpoint, not a README fetch. Asking for README.md and
+		// reading the 404 as "private" is exactly how this check certified that
+		// ge_snipe was private — it is public and simply has no README at its root —
+		// and the essay then told every reader that Dibs could not be inspected. A
+		// repository with no README is not a private repository. The proxy 403s the
+		// HTML host for repositories that are perfectly public, so that is no use
+		// either; info/refs answers 200 for anything anyone can clone.
 		let code = '';
 		try {
 			code = execFileSync(
@@ -606,7 +610,7 @@ if (!skipProd) {
 					'%{http_code}',
 					'--max-time',
 					'20',
-					`https://raw.githubusercontent.com/${owner}/${name}/${ref}/README.md`
+					`https://github.com/${owner}/${name}/info/refs?service=git-upload-pack`
 				],
 				{ encoding: 'utf8' }
 			).trim();
@@ -614,11 +618,29 @@ if (!skipProd) {
 			code = 'unreachable';
 		}
 		if (code === '404') {
-			unreadable.push(
-				ref === 'HEAD'
-					? `${owner}/${name} is linked but not public`
-					: `${owner}/${name} is linked at ref "${ref}", which does not resolve`
-			);
+			unreadable.push(`${owner}/${name} is linked but not public`);
+			continue;
+		}
+		// info/refs answers for the repository, not for a ref, so a /tree/<branch>
+		// link needs its own question: does that branch exist? This is the link that
+		// carries the whole "go and check" invitation.
+		if (ref !== 'HEAD') {
+			let refs = '';
+			try {
+				refs = execFileSync(
+					'git',
+					['ls-remote', '--heads', `https://github.com/${owner}/${name}`, ref],
+					{
+						encoding: 'utf8',
+						env: { ...process.env, GIT_TERMINAL_PROMPT: '0' }
+					}
+				).trim();
+			} catch {
+				refs = '';
+			}
+			if (!refs) {
+				unreadable.push(`${owner}/${name} is linked at ref "${ref}", which does not resolve`);
+			}
 		}
 	}
 	// And the essay must not tell anyone a private history is public.

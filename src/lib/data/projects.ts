@@ -46,6 +46,11 @@ export const projects: Project[] = [
 		name: 'Dibs',
 		what: 'Ranks UCLA general-education courses by real grade history and emails you when a seat opens in one you are watching.',
 		url: 'https://dibs.ge',
+		// Public, and checked with `git ls-remote` rather than by asking for a README:
+		// this repository has no README.md, and the round-9 check took that 404 as
+		// evidence the repository was private. It was not, and the essay went out
+		// saying so.
+		repo: 'https://github.com/phineasfritsch/ge_snipe',
 		live: true,
 		year: '2026',
 		stack: ['Rails 8', 'PostgreSQL', 'Kamal', 'Docker'],
@@ -100,7 +105,8 @@ export const projects: Project[] = [
 		stack: ['Cloudflare Workers', 'Web Push', 'iCalendar'],
 		decision:
 			'It reads the schedule the library already publishes rather than asking anyone to maintain a second copy. A tool that needs someone to keep it fed stops being fed the week you stop asking.',
-		limit: 'Reads the schedule; it cannot change it. One library. The public link is off for now.',
+		limit:
+			'Reads the schedule; it cannot change it. One library. I have taken the link off this page.',
 		assisted:
 			'Claude wrote most of the code. I wanted it because I was the one checking the sheet on my phone before every shift.'
 	},

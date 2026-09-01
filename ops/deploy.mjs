@@ -85,26 +85,6 @@ if (!dry) {
 	// A probe that cannot run writes 'unknown' and the page says unknown, so a
 	// non-zero exit is worth reporting but is not worth refusing a deploy over.
 	if (pr.status !== 0) console.log('    (probe exited non-zero; the page will say unknown)');
-
-	// Commit the measurement, here, as part of the deploy that publishes it.
-	// status.json is the sole source of every status badge on the site, so it is
-	// not "generated output a visitor cannot see" and the clean-tree check below
-	// treats it like any other source. But this command writes it, so leaving it to
-	// be committed afterwards guaranteed production and HEAD disagreed about a file
-	// that changes the page — parity red on every deploy, which is how a check
-	// becomes background noise. The artefact and the commit now describe each other.
-	const statusDirty = sh('git', ['status', '--porcelain', 'src/lib/data/status.json']).trim();
-	if (statusDirty) {
-		spawnSync('git', ['add', 'src/lib/data/status.json'], { cwd: REPO, stdio: 'inherit' });
-		const c = spawnSync(
-			'git',
-			['commit', '-q', '-m', 'Measure the live services for this deploy'],
-			{ cwd: REPO, stdio: 'inherit' }
-		);
-		if (c.status !== 0) die('could not commit the status measurement.');
-		sha = sh('git', ['rev-parse', '--short', 'HEAD']);
-		console.log(`    committed the measurement (${sha})`);
-	}
 }
 
 console.log('  · running the gate');
@@ -190,6 +170,35 @@ if (!dry) {
 			);
 		}
 		console.log(`\n  OVERRIDDEN (red, allowed explicitly): ${allowRed.join(', ')}`);
+	}
+}
+
+// 1b. Commit the measurement, AFTER the gate has read it.
+//     It used to be committed in step 0, before the gate ran — and
+//     build.status-measured compares the current status.json against the one in
+//     HEAD to catch a service going from up to down. With the commit first, it was
+//     comparing the file to itself, on every real deploy, so the regression half of
+//     that check was dead: an infra reviewer reproduced it and watched sanity print
+//     "every live target answered" over a service returning 503.
+if (!dry) {
+	// Commit the measurement, here, as part of the deploy that publishes it.
+	// status.json is the sole source of every status badge on the site, so it is
+	// not "generated output a visitor cannot see" and the clean-tree check below
+	// treats it like any other source. But this command writes it, so leaving it to
+	// be committed afterwards guaranteed production and HEAD disagreed about a file
+	// that changes the page — parity red on every deploy, which is how a check
+	// becomes background noise. The artefact and the commit now describe each other.
+	const statusDirty = sh('git', ['status', '--porcelain', 'src/lib/data/status.json']).trim();
+	if (statusDirty) {
+		spawnSync('git', ['add', 'src/lib/data/status.json'], { cwd: REPO, stdio: 'inherit' });
+		const c = spawnSync(
+			'git',
+			['commit', '-q', '-m', 'Measure the live services for this deploy'],
+			{ cwd: REPO, stdio: 'inherit' }
+		);
+		if (c.status !== 0) die('could not commit the status measurement.');
+		sha = sh('git', ['rev-parse', '--short', 'HEAD']);
+		console.log(`    committed the measurement (${sha})`);
 	}
 }
 

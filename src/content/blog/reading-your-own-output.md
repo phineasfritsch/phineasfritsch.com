@@ -51,15 +51,14 @@ The argument for hiding it is that a reader who suspects AI discounts everything
 that is a real cost. I will lose some of you on this page. I say it anyway, and not
 only for honesty's sake. If I claimed to have
 hand-written sixty thousand lines of Ruby in fourteen days, one question from anyone
-who has read a codebase that size would catch me, and the repositories I do link
-([this site](https://github.com/phineasfritsch/phineasfritsch.com/tree/claude/operator-manual-agent-systems-tmrdiz),
+who has read a codebase that size would catch me, and the histories are public and one
+clone would catch me: [Dibs](https://github.com/phineasfritsch/ge_snipe),
+[this site](https://github.com/phineasfritsch/phineasfritsch.com/tree/claude/operator-manual-agent-systems-tmrdiz),
 [jellyfin-matcher](https://github.com/phineasfritsch/jellyfin-matcher),
-[nakra](https://github.com/phineasfritsch/nakra),
-[the shelf survey](https://github.com/phineasfritsch/biomed_callnumber_finder))
-have public histories that would catch me faster. Dibs'
-repository is not one of them: it is private, so on that project you have my word and
-the running site and nothing else. Every claim here would be worth nothing the moment
-one of them turned out to be dressed up. Saying what was assisted costs me the readers who were going to
+[nakra](https://github.com/phineasfritsch/nakra) and
+[the shelf survey](https://github.com/phineasfritsch/biomed_callnumber_finder).
+Every claim here would be worth nothing the moment one of them turned out to be
+dressed up. Saying what was assisted costs me the readers who were going to
 discount me anyway, and it buys the rest a reason to believe the specific things I do
 claim: that I decided what to build, and that the reason Postgres is configured the way
 it is was mine, is written down in the deploy config, and I can defend it.
