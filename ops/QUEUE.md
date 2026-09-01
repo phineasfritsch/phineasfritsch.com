@@ -90,41 +90,19 @@ than starting it a third time. A smaller honest result beats a larger claimed on
 - [x] **B4. RESOLVED. UCLA Sailing title is "Team Captain".** He held both titles
       technically. Captain matches LinkedIn, so a recruiter cross-checking the two
       documents finds the same word. Already correct on the site and the resume.
-- [ ] **B6. Turn OFF Email Address Obfuscation. Top remaining owner item.** Cloudflare → the phineasfritsch.com
-      zone → Scrape Shield → Email Address Obfuscation → off. The edge is rewriting
-      every mailto: into /cdn-cgi/l/email-protection#<hex> and replacing the visible
-      address with a span only JavaScript decodes, so without JS the footer reads
-      "[email protected]" on every live page. Found by `node ops/read-prod.mjs`,
-      which now reports it and exits 2. Every local check passed; the property broke
-      at the edge, which is the whole argument for checking production separately.
+- [x] **B6. RESOLVED 2026-09-01, from the repo, without the dashboard.** Cloudflare
+      publishes opt-out markers — `<!--email_off-->` … `<!--/email_off-->` — and they
+      work at the edge. Svelte strips markup comments from a production build, so they
+      go through `{@html}` as static strings from `src/lib/data/contact.ts`. Measured
+      after deploying: `contact@phineasfritsch.com` appears in the production HTML of
+      every page, `__cf_email__` appears zero times, and `ops/read-prod.mjs` exits 0
+      with no EDGE section for the first time.
 
-      RE-MEASURED after the apex redirect was deleted: still live, and now on all
-      FIVE paths rather than four — the homepage joined the list the moment it became
-      reachable, so deleting the redirect slightly widened this one's blast radius.
-      `contact@phineasfritsch.com` appears zero times in the production HTML of any
-      page; the local build contains it twice. `node ops/read-prod.mjs` exits 2.
-
-
-      ATTEMPTED FROM HERE 2026-08-31 and could not be done: the zone id resolves
-      fine with the session's `CLOUDFLARE_API_TOKEN`
-      (`GET /zones?name=phineasfritsch.com` succeeds), but the
-      `PATCH /zones/<id>/settings/email_obfuscation` call was refused by this
-      environment's permission policy before it was ever sent — so this is not a
-      Cloudflare permissions problem and retrying the API will not help. It is a
-      dashboard toggle, about thirty seconds, and only the owner can flip it.
-      `prod.edge-intact` in `ops/sanity.mjs` stays red until then, and deploys name
-      it in `--override-gate=` rather than pretending the gate is clean.
-
-- [ ] **B7. Nine levels or ten?** `src/lib/data/projects.ts` says the Shelfmark
-      survey covers "453 shelf faces across ten levels"; the resume said the
-      photographs were taken "across nine stack levels". Both numbers are separately
-      recorded in EVIDENCE.md — 453/ten in the measured section, 1,123/nine in the
-      dossier — and they contradict each other. Two reviewers found it independently
-      by reading the site against the resume, which is exactly what a recruiter
-      checking a claim does. The resume line now says "453 shelf-end range labels
-      (1,123 photographs)" and asserts no level count, so nothing on paper conflicts
-      with anything else; the site still says ten. Phineas: which is right, and is
-      Level 4 in the dataset or not?
+      This was logged for six rounds as owner-only and unreachable from here, on my
+      say-so, after one blocked API call. It was neither. A reviewer said "there is an
+      untried in-repo mitigation" and there was. **Turning the dashboard toggle off is
+      still the cleaner fix** — these markers are a workaround that a future Cloudflare
+      change could stop honouring, and `prod.edge-intact` is what would notice.
 
 - [ ] **B5. Confirm the dental-practice cut.** Vera A. Fritsch DMD (Jun–Oct 2023) was
       removed from the one-page resume: four months, three years ago, and it shares
