@@ -23,7 +23,9 @@
 
 <div class="sheet">
 	<header class="masthead">
-		<a class="wordmark" href="/">PHINEAS FRITSCH</a>
+		<!-- Written in ordinary case and uppercased in CSS. Some screen readers spell a
+		     literal all-caps string letter by letter, and this one is his name. -->
+		<a class="wordmark" href="/">Phineas Fritsch</a>
 		<nav aria-label="Primary">
 			{#each nav as item (item.href)}
 				<a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a

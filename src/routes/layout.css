@@ -57,7 +57,10 @@
 	--rule-strong: #b8ae9e;
 	--ink: #17150f;
 	--ink-soft: #4a463c;
-	--ink-faint: #7d7768;
+	/* 5.46:1 on --paper and 5.01:1 on --paper-sunk. It was #7d7768, which measured
+	   4.20 and 3.85 — below the 4.5:1 that WCAG AA requires for text this size, and
+	   every timestamp, stack line and note on the site uses this token. */
+	--ink-faint: #6b6557;
 
 	/* One accent. Ink blue, not a brand gradient. */
 	--accent: #1a3a6b;
@@ -192,6 +195,7 @@ a:hover {
 	letter-spacing: -0.01em;
 	color: var(--ink);
 	text-decoration: none;
+	text-transform: uppercase;
 }
 
 .masthead nav {

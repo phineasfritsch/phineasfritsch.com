@@ -58,6 +58,19 @@ const allowRed = (process.argv.find((a) => a.startsWith('--override-gate=')) || 
 	.map((x) => x.trim())
 	.filter(Boolean);
 
+// 0. Re-measure the live services BEFORE the gate builds, because the gate builds
+//    and the homepage bakes these figures in. The page tells the reader they were
+//    checked "when this page was built"; probe-live.mjs was wired to nothing, so
+//    the deployed figures were stamped 21:11Z inside a build made at 23:33Z. A
+//    claim about when a number was measured is a claim like any other.
+if (!dry) {
+	console.log('  · re-measuring the live services');
+	const pr = spawnSync('node', [join(REPO, 'ops/probe-live.mjs')], { cwd: REPO, stdio: 'inherit' });
+	// A probe that cannot run writes 'unknown' and the page says unknown, so a
+	// non-zero exit is worth reporting but is not worth refusing a deploy over.
+	if (pr.status !== 0) console.log('    (probe exited non-zero; the page will say unknown)');
+}
+
 console.log('  · running the gate');
 if (!dry) {
 	const g = spawnSync('node', [join(REPO, 'ops/gate.mjs'), '--json'], {

@@ -179,21 +179,27 @@ if (asJson) {
 // Record counts so the next run can report drift. Only ever written on a full run
 // that was fully GREEN: a red run used to overwrite the previous counts, which
 // destroyed the drift signal at exactly the moment it was worth having.
-if (!fast && !preDeploy && results.every((r) => r.ok)) {
-	const next = {};
-	for (const r of results) next[r.name] = { count: r.count, at: new Date().toISOString() };
-	writeFileSync(BASELINE, JSON.stringify(next, null, 2) + '\n');
-
-	// Ratchet: a green run raises any floor its count has cleared, never lowers one.
+if (!fast && !preDeploy) {
+	// Per GATE, not per run. Requiring a fully green run to record anything
+	// deadlocked the moment one check went red for a reason outside this repo —
+	// prod.edge-intact waits on a Cloudflare dashboard toggle only the owner can
+	// flip — and a floor that can never rise again is a floor that stops
+	// protecting anything new. A gate that passed its own command has earned its
+	// number; a gate that failed keeps the last number it earned, which is what
+	// stops a red run from laundering away the evidence of what it broke.
+	const next = { ...baseline };
 	const nextFloors = { ...floors };
 	let raised = false;
 	for (const r of results) {
+		if (!r.ok) continue;
+		next[r.name] = { count: r.count, at: new Date().toISOString() };
 		if (r.floor === null || r.count === null) continue;
 		if (r.count > nextFloors[r.name]) {
 			nextFloors[r.name] = r.count;
 			raised = true;
 		}
 	}
+	writeFileSync(BASELINE, JSON.stringify(next, null, 2) + '\n');
 	if (raised) writeFileSync(FLOORS, JSON.stringify(nextFloors, null, 2) + '\n');
 }
 

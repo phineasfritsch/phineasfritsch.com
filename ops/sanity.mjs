@@ -6,7 +6,7 @@
  *
  *   node ops/sanity.mjs [--json] [--skip-prod]
  */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { REPO, walk, normalise } from './lib.mjs';
@@ -236,6 +236,30 @@ if (!skipProd) {
 			: 'the CDN serves the page as built',
 		edgeLines.slice(0, 6)
 	);
+}
+
+// ── 9b. The status figures were measured when the page says they were ───────
+// The homepage prints "checked <time> / when this page was built" next to an
+// uptime figure for each service. ops/probe-live.mjs, which produces those
+// figures, was wired into no script and no gate, so the deployed page carried
+// numbers stamped two hours and twenty-two minutes before the build it sat in.
+// The figures were real; the sentence about them was not, and on this site that
+// sentence is the entire reason the figures are worth anything.
+{
+	const statusPath = join(REPO, 'src/lib/data/status.json');
+	const indexPath = join(REPO, 'build/index.html');
+	let detail = 'status.json or build/index.html is missing';
+	let ok = false;
+	if (existsSync(statusPath) && existsSync(indexPath)) {
+		const checkedAt = new Date(JSON.parse(readFileSync(statusPath, 'utf8')).checkedAt).getTime();
+		const builtAt = statSync(indexPath).mtimeMs;
+		const minutes = Math.round(Math.abs(builtAt - checkedAt) / 60000);
+		ok = minutes <= 30;
+		detail = ok
+			? `measured ${minutes} min from the build`
+			: `measured ${minutes} min from the build — the page says "when this page was built"`;
+	}
+	add('build.status-freshness', ok, detail);
 }
 
 // ── 10-11. What the EDGE is serving, not what this directory contains ───────

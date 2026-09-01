@@ -73,6 +73,17 @@ than starting it a third time. A smaller honest result beats a larger claimed on
       `prod.edge-intact` in `ops/sanity.mjs` stays red until then, and deploys name
       it in `--override-gate=` rather than pretending the gate is clean.
 
+- [ ] **B7. Nine levels or ten?** `src/lib/data/projects.ts` says the Shelfmark
+      survey covers "453 shelf faces across ten levels"; the resume said the
+      photographs were taken "across nine stack levels". Both numbers are separately
+      recorded in EVIDENCE.md — 453/ten in the measured section, 1,123/nine in the
+      dossier — and they contradict each other. Two reviewers found it independently
+      by reading the site against the resume, which is exactly what a recruiter
+      checking a claim does. The resume line now says "453 shelf-end range labels
+      (1,123 photographs)" and asserts no level count, so nothing on paper conflicts
+      with anything else; the site still says ten. Phineas: which is right, and is
+      Level 4 in the dataset or not?
+
 - [ ] **B5. Confirm the dental-practice cut.** Vera A. Fritsch DMD (Jun–Oct 2023) was
       removed from the one-page resume: four months, three years ago, and it shares
       his surname, which the panel flagged as a liability rather than an asset. Easy

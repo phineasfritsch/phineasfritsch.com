@@ -50,7 +50,7 @@
 		},
 		{
 			q: 'Why should an actuarial employer care that you write software?',
-			a: `Because most of the work is getting messy data into a state you can defend. For Dibs I filed four public records requests with UCLA and got back 176,290 rows in four inconsistent formats. There was an instructor fan-out in them that would have overstated the grade count by about eighty thousand. Finding that was most of the job; the app was the easy part.`
+			a: `Because most of the work is getting messy data into a state you can defend. For Dibs I filed four public records requests with UCLA and got back 176,290 rows across four separate responses. There was an instructor fan-out in them that would have overstated the grade count by about eighty thousand. Finding that was most of the job; the app was the easy part.`
 		},
 		{
 			q: 'Why should a product team care that you are an actuarial major?',
