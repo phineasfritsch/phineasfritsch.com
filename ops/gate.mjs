@@ -193,8 +193,14 @@ if (!fast && !preDeploy) {
 	for (const r of results) {
 		if (!r.ok) continue;
 		next[r.name] = { count: r.count, at: new Date().toISOString() };
-		if (r.floor === null || r.count === null) continue;
-		if (r.count > nextFloors[r.name]) {
+		if (r.count === null || r.invert) continue;
+		// Seed, then ratchet. Without the seed a gate added tomorrow would have no
+		// floors.json entry, r.floor would be null, and it would never acquire one
+		// on its own — a new check protected by nothing until somebody remembered.
+		if (nextFloors[r.name] === undefined) {
+			nextFloors[r.name] = r.count;
+			raised = true;
+		} else if (r.count > nextFloors[r.name]) {
 			nextFloors[r.name] = r.count;
 			raised = true;
 		}

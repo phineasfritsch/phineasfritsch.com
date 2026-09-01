@@ -32,7 +32,6 @@
 			Sitting Exam FM in fall 2026. <strong>No exams passed yet</strong>. Most of what is below came
 			out of a job, a fraternity house, or a course I was annoyed by.
 		</p>
-		<p>Every project below names what it does not do, and says what an AI wrote.</p>
 	</div>
 </section>
 
@@ -92,12 +91,12 @@
 			wrong, and own whether the thing works when a real person opens it.
 		</p>
 		<p>
-			That last part is the whole job. Agents report success on broken work, confidently, with a
-			detailed account of what they checked. So the useful skill is not prompting, it is building
-			the thing that can contradict them and then actually reading the result. This site runs a gate
-			before it deploys, pins the sentences that matter so a later rewrite cannot quietly delete
-			them, and reads production back after shipping to confirm what is live. The status figures
-			above were measured rather than asserted.
+			Owning it is most of the work. Agents report success on broken work, confidently, with a
+			detailed account of what they checked, so the useful skill is building the thing that can
+			contradict them and then actually reading what it says. This site runs a gate before it
+			deploys, pins the sentences that matter so a later rewrite cannot quietly delete them, and
+			reads production back after shipping to confirm what is live. The status figures above were
+			measured rather than asserted.
 		</p>
 		<p>
 			The decisions worth asking me about are on each project's page: why Dibs runs Postgres at
@@ -140,9 +139,10 @@
 			<div>
 				<div class="row-title"><h3>Actuarial Case Competition (BAS)</h3></div>
 				<p>
-					Winter 2025. Priced three commercial property insurance structures for a simulated Fortune
-					500 client, then ran 10,000-iteration Monte Carlo simulations against Lognormal, Gamma and
-					Pareto fits to compare Risk-Adjusted TCOR across retentions and aggregate limits.
+					Winter 2025. Evaluated three commercial property insurance structures for a simulated
+					Fortune 500 client, then ran 10,000-iteration Monte Carlo simulations against Lognormal,
+					Gamma and Pareto fits to compare Risk-Adjusted TCOR across retentions and aggregate
+					limits.
 				</p>
 			</div>
 		</li>

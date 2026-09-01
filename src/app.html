@@ -10,10 +10,8 @@
 		/>
 		<!-- Fonts are self-hosted, not fetched from a font CDN. A cross-origin
 		     stylesheet is render-blocking and DOMContentLoaded waits on it: measured
-		     here at roughly eight seconds per page before any script ran. This site's
-		     whole argument is that its numbers are real, so it does not get to be slow
-		     for a reason it chose. Same origin, preloaded, and swap so text paints
-		     immediately. -->
+		     here at roughly eight seconds per page before any script ran. Same origin,
+		     preloaded, and swap so text paints immediately. -->
 		<link
 			rel="preload"
 			href="/fonts/ibm-plex-sans-var.woff2"

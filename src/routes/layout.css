@@ -69,7 +69,10 @@
 	/* Status colours mean status. They are never decorative. */
 	--up: #1d6b3f;
 	--down: #a3231c;
-	--unknown: #7d7768;
+	/* Same value as --ink-faint. It was #7d7768, which measured 4.20:1 on --paper —
+	   the only WCAG AA failure left on the site after the --ink-faint fix, found by
+	   walking every leaf text node rather than by reading the file. */
+	--unknown: #6b6557;
 
 	--font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 	--font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;

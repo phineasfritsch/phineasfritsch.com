@@ -9,7 +9,7 @@
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { REPO, walk, normalise } from './lib.mjs';
+import { REPO, walk, normalise, builtHtmlFiles } from './lib.mjs';
 
 const asJson = process.argv.includes('--json');
 const skipProd = process.argv.includes('--skip-prod');
@@ -332,8 +332,20 @@ if (!skipProd) {
 
 	// The same patterns as build.no-private-data, run over the live bytes. A guard
 	// that only ever reads the local build cannot see a stale or rewritten edge.
+	// Derived from what was built, not a hardcoded list: the hardcoded one still
+	// asked for /about/, which has 301'd to /answers/ since the page was renamed,
+	// and a page added tomorrow would not have been scanned at all. Top-level
+	// routes only — the per-project pages share their prose with /work/.
+	const livePaths = [
+		'/',
+		...new Set(
+			builtHtmlFiles()
+				.map((f) => f.slice(join(REPO, 'build').length).replace(/index\.html$/, ''))
+				.filter((p) => /^\/[^/]+\/$/.test(p))
+		)
+	];
 	const liveLeaks = [];
-	for (const p of ['/', '/work/', '/about/', '/blog/', '/resume/']) {
+	for (const p of livePaths) {
 		const body = curl(`https://phineasfritsch.com${p}?d=${Date.now()}`);
 		if (body === null) {
 			liveLeaks.push(`${p}: could not be read`);

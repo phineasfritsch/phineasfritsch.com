@@ -36,14 +36,27 @@
 		</p>
 	</div>
 	<p style="margin-top:1.2rem">
+		<!-- The border was --rule-strong, which is 2.07:1 on --paper: the fill is
+		     --paper-sunk, 1.06:1 against the page, so the outline was the button's
+		     only boundary and it did not meet the 3:1 WCAG 2.1 asks of a control's
+		     shape. --ink-soft is 8.6:1.
+
+		     It also used to go `disabled` on click while its label changed. A
+		     disabled control drops out of the accessibility tree, so a screen
+		     reader user lost focus and heard nothing about what they had just
+		     started. It stays focusable now, says it is busy, and the status line
+		     below announces the change politely. -->
 		<button
 			type="button"
 			onclick={() => (show = true)}
-			disabled={show}
-			style="font-family:var(--font-mono);font-size:0.8rem;padding:0.55rem 1rem;border:1px solid var(--rule-strong);background:var(--paper-sunk);color:var(--ink);cursor:pointer;border-radius:2px"
+			aria-busy={show}
+			style="font-family:var(--font-mono);font-size:0.8rem;padding:0.55rem 1rem;border:1px solid var(--ink-soft);background:var(--paper-sunk);color:var(--ink);cursor:pointer;border-radius:2px"
 		>
-			{show ? 'loading the scene…' : 'Load the scene (903KB)'}
+			Load the scene (903KB)
 		</button>
+		<span role="status" aria-live="polite" class="stack" style="margin-left:0.6rem">
+			{show ? 'loading the scene…' : ''}
+		</span>
 	</p>
 </section>
 

@@ -23,6 +23,26 @@ than starting it a third time. A smaller honest result beats a larger claimed on
 
 ## BLOCKED — needs the owner, cannot be resolved by an agent
 
+- [ ] **B8. YOUR COWORKERS' DATA IS PUBLIC. Do this before anything else on this
+      list.** `GET https://better-bio-schedule.phineas-fritsch.workers.dev/api/schedule`
+      needs no authentication of any kind and returns, for every shift: coworker
+      first names, each person's duty assignment, and `sheetUrl` — a direct link to
+      the internal Google Sheet the data comes from. Verified by an unauthenticated
+      request from this container on 2026-09-01; a reviewer found it independently
+      by reading the page and trying the endpoint printed on it.
+
+      This is other people's information, published by an app whose live URL the
+      portfolio links from `/work/biomed-schedule/`. It is not a portfolio problem,
+      it is a your-coworkers problem, and it is the one item here that gets worse
+      the longer the site drives traffic at it.
+
+      Fixed in the worker, not here — it is a different repository, so no agent in
+      this session can touch it. The smallest fix that works: drop `coworkers[].student`
+      and `sheetUrl` from the API response, since the phone view you actually use
+      needs neither. Deliberately NOT disclosed in the site copy, because a sentence
+      on a public page naming an open endpoint is an advertisement for it. Once the
+      worker is fixed, say so on the project page.
+
 - [ ] **B1. LinkedIn contents.** Egress policy blocks linkedin.com and a direct
       request returns HTTP 999. No agent can read it. Phineas must paste: headline,
       any employment with dates, education incl. major and expected graduation,

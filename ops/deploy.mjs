@@ -104,7 +104,15 @@ if (!dry) {
 	if (failed.length) {
 		const unexplained = [];
 		for (const f of failed) {
-			const names = [...(f.tail || '').matchAll(/FAIL\s+(\S+)/g)].map((m) => m[1]);
+			// Only sanity's check ids, which are dotted lowercase (build.js-budget,
+			// prod.404-is-404). The pattern used to be /FAIL\s+(\S+)/, and vitest
+			// prints `FAIL tests/voice.spec.ts` — so a failing test FILE became a
+			// name you could pass to --override-gate and deploy over. An override
+			// has to be a thing someone deliberately decided to accept, not any
+			// token that happened to follow the word FAIL.
+			const names = [
+				...(f.tail || '').matchAll(/FAIL\s+([a-z][a-z0-9]*(?:[.-][a-z0-9]+)+)\b/g)
+			].map((m) => m[1]);
 			if (!names.length) {
 				unexplained.push(`gate ${f.gate} (${f.name}): no individual check names in its output`);
 				continue;

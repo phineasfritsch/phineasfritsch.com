@@ -2,23 +2,33 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 
 /**
- * Colour contrast, measured rather than eyeballed.
+ * Colour contrast, measured rather than eyeballed, over every token the
+ * stylesheet actually uses as text.
  *
- * An accessibility reviewer found --ink-faint at 4.20:1 on --paper and 3.85:1 on
- * --paper-sunk, under the 4.5:1 WCAG 2.1 AA requires for text below 18.66px —
- * and that token colours every timestamp, stack line and note on the site. It
- * had looked fine to everyone who had looked at it, which is the whole reason
- * this is arithmetic in a test rather than a judgement in a review.
+ * The first version of this file hard-coded three ink tokens, passed, and missed
+ * --unknown at 4.20:1 — which an accessibility reviewer then found by walking
+ * every leaf text node in a browser. A list of things to check is only as good as
+ * whoever remembered to add to it, so the list is derived from the stylesheet:
+ * anything used as `color: var(--x)` is text, and text has to meet 4.5:1. A new
+ * token added tomorrow is covered without anyone remembering.
  */
 const css = readFileSync(new URL('../src/routes/layout.css', import.meta.url), 'utf8');
 
-function token(name: string, scope: 'light' | 'dark'): string {
-	// The dark values live in the prefers-color-scheme block, which is the second
-	// half of the file; the light ones are on bare :root above it.
-	const darkAt = css.indexOf('prefers-color-scheme: dark');
-	const region = scope === 'light' ? css.slice(0, darkAt) : css.slice(darkAt);
-	const m = region.match(new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})`));
-	if (!m) throw new Error(`token --${name} not found in the ${scope} palette`);
+const DARK_AT = css.indexOf('prefers-color-scheme: dark');
+
+/** Tokens the stylesheet paints text with. */
+const textTokens = [...new Set([...css.matchAll(/color:\s*var\((--[\w-]+)\)/g)].map((m) => m[1]))]
+	// The masthead bar paints --paper ON --ink, which is the same pair inverted and
+	// is covered by testing --ink against --paper.
+	.filter((t) => t !== '--paper' && t !== '--paper-sunk');
+
+/** Surfaces text can sit on. */
+const surfaces = ['--paper', '--paper-sunk'];
+
+function value(token: string, scope: 'light' | 'dark'): string {
+	const region = scope === 'light' ? css.slice(0, DARK_AT) : css.slice(DARK_AT);
+	const m = region.match(new RegExp(`${token}:\\s*(#[0-9a-fA-F]{6})`));
+	if (!m) throw new Error(`${token} has no hex value in the ${scope} palette`);
 	return m[1];
 }
 
@@ -34,16 +44,20 @@ function ratio(a: string, b: string): number {
 	return (hi + 0.05) / (lo + 0.05);
 }
 
-describe('text contrast meets WCAG 2.1 AA', () => {
+describe('every text colour meets WCAG 2.1 AA', () => {
+	it('finds the text tokens to check', () => {
+		// If this drops, the derivation broke and the suite below is testing nothing.
+		expect(textTokens.length).toBeGreaterThanOrEqual(6);
+	});
+
 	for (const scope of ['light', 'dark'] as const) {
-		for (const ink of ['ink', 'ink-soft', 'ink-faint']) {
-			for (const paper of ['paper', 'paper-sunk']) {
-				it(`${scope}: --${ink} on --${paper}`, () => {
-					const r = ratio(token(ink, scope), token(paper, scope));
-					expect(
-						Number(r.toFixed(2)),
-						`--${ink} on --${paper} in the ${scope} palette`
-					).toBeGreaterThanOrEqual(4.5);
+		for (const token of textTokens) {
+			for (const surface of surfaces) {
+				it(`${scope}: ${token} on ${surface}`, () => {
+					const r = ratio(value(token, scope), value(surface, scope));
+					expect(Number(r.toFixed(2)), `${token} on ${surface} in ${scope}`).toBeGreaterThanOrEqual(
+						4.5
+					);
 				});
 			}
 		}

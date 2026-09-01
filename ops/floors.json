@@ -1,6 +1,8 @@
 {
 	"build": 16,
-	"tests": 68,
+	"tests": 85,
 	"sanity": 11,
-	"real user (browser)": 40
+	"real user (browser)": 40,
+	"format": 0,
+	"typecheck": 11
 }
