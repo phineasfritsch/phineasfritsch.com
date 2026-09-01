@@ -1,16 +1,15 @@
 <script lang="ts">
+	import Seo from '$lib/components/Seo.svelte';
 	import { postDate } from '$lib/date';
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
 </script>
 
-<svelte:head>
-	<title>Writing — Phineas Fritsch</title>
-	<meta
-		name="description"
-		content="Notes on building software as a non-engineer, and on what it takes to trust work an AI produced."
-	/>
-</svelte:head>
+<Seo
+	title="Writing — Phineas Fritsch"
+	description="Notes on building software as a non-engineer, and on what it takes to trust work an AI produced."
+	path="/blog/"
+/>
 
 <section class="section" style="margin-top:2.5rem">
 	<h1 style="font-size:clamp(1.6rem,3.6vw,2.2rem);letter-spacing:-0.02em;font-weight:600">

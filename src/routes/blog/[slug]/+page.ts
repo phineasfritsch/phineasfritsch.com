@@ -17,6 +17,9 @@ export const load: PageLoad = async ({ params }) => {
 	const meta = mod.metadata ?? {};
 
 	return {
+		// The slug travels with the data because the page needs it for its canonical
+		// and og:url. Without it those rendered as /blog// on every post.
+		slug: params.slug,
 		content: mod.default,
 		title: meta.title ?? params.slug,
 		date: meta.date ?? '',

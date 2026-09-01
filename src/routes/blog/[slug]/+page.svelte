@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Seo from '$lib/components/Seo.svelte';
 	import { postDate } from '$lib/date';
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
@@ -7,10 +8,11 @@
 	const PostContent = $derived(data.content as unknown as import('svelte').Component);
 </script>
 
-<svelte:head>
-	<title>{data.title} — Phineas Fritsch</title>
-	<meta name="description" content={data.excerpt ?? data.title} />
-</svelte:head>
+<Seo
+	title="{data.title} — Phineas Fritsch"
+	description={data.excerpt ?? data.title}
+	path="/blog/{data.slug}/"
+/>
 
 <article class="section" style="margin-top:2.5rem">
 	<p class="stack" style="margin-bottom:0.5rem"><a href="/blog/">← writing</a></p>

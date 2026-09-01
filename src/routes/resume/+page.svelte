@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Seo from '$lib/components/Seo.svelte';
 	import { servingCount, spell } from '$lib/data/counts';
 	// Every fact on this page comes from ops/panel/EVIDENCE.md. Nothing is inferred.
 	// Dates follow LinkedIn where LinkedIn and the older .docx disagree, because he
@@ -9,15 +10,13 @@
 	// not. Omitting a GPA is unremarkable; publishing one nobody asked for is not.
 </script>
 
-<svelte:head>
-	<title>Resume — Phineas Fritsch</title>
-	<meta
-		name="description"
-		content="Financial actuarial mathematics at UCLA, June 2027. Actuarial coursework and case competition work, plus {spell(
-			servingCount
-		)} deployed software projects."
-	/>
-</svelte:head>
+<Seo
+	title="Resume — Phineas Fritsch"
+	description="Financial actuarial mathematics at UCLA, June 2027. Actuarial coursework and case competition work, plus {spell(
+		servingCount
+	)} deployed software projects."
+	path="/resume/"
+/>
 
 <section class="section" style="margin-top:2.5rem">
 	<h1 style="font-size:clamp(1.6rem,3.6vw,2.2rem);letter-spacing:-0.02em;font-weight:600">
@@ -51,8 +50,8 @@
 		<dd>B.S. Financial Actuarial Mathematics. Expected June 2027.</dd>
 		<dt>Actuarial</dt>
 		<dd>
-			MATH 174E (Mathematics of Finance), completed. 178A / 179 (actuarial models) in progress.
-			Sitting Exam FM in fall 2026.
+			MATH 174E (Mathematics of Finance), completed. 178A / 179 (actuarial models), enrolled for
+			fall 2026. Sitting Exam FM in fall 2026.
 		</dd>
 		<dt>Quantitative</dt>
 		<dd>

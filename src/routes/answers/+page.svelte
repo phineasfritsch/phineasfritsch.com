@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Seo from '$lib/components/Seo.svelte';
 	// Direction chosen by the panel bracket, unanimous, no vetoes: replace topics with
 	// QUESTIONS, phrased the way the person asking would phrase them, each answered in
 	// his own voice and capped short.
@@ -11,11 +12,11 @@
 	const qs = [
 		{
 			q: 'What are you studying?',
-			a: `Financial actuarial mathematics at UCLA, graduating June 2027. I am in the actuarial models sequence now, 178A and 179, and I sit Exam FM this fall. Most of what is on the rest of this page happened outside class.`
+			a: `Financial actuarial mathematics at UCLA, graduating June 2027. I am enrolled in the actuarial models sequence, 178A and 179, for the quarter starting 24 September, and I sit Exam FM this fall. Most of what is on the rest of this page happened outside class.`
 		},
 		{
 			q: 'Have you passed any actuarial exams?',
-			a: `No. None. FM is in fall 2026, and until I pass it that is a plan and not a qualification. The coursework behind it is real: 174E, Mathematics of Finance, which is FM material, and the models sequence I am in now.`
+			a: `No. None. FM is in fall 2026, and until I pass it that is a plan and not a qualification. The coursework behind it is real: 174E, Mathematics of Finance, which is FM material, and the models sequence I am enrolled in for this fall.`
 		},
 		{
 			q: 'What do you want to do?',
@@ -34,7 +35,7 @@
 		},
 		{
 			q: 'You have no healthcare experience. Why revenue cycle?',
-			a: `Because the part of it I have seen up close is the part I am already good at. Most of the work is getting messy institutional data into a state you can defend, and knowing that a number being wrong is usually a process being wrong. I have not worked a claim, I have not touched an EHR, and I would be starting from zero on the domain. The transferable half is real and the healthcare half is not there yet.`
+			a: `Because the part of it I have seen up close is the part I am already good at. Most of the work is getting messy institutional data into a state you can defend, and knowing that a number being wrong is usually a process being wrong. The closest I have been is five months of front-office work at a dental practice in 2023, on Dentrix, which is practice management and billing software: patient data entry and financial record accuracy, not claims and not coding. I have not worked a claim, I have not touched a hospital EHR, and I would be starting close to zero on the domain. The transferable half is real and the healthcare half is barely there.`
 		},
 		{
 			q: 'Does anyone use any of this besides you?',
@@ -71,13 +72,11 @@
 	];
 </script>
 
-<svelte:head>
-	<title>Questions — Phineas Fritsch</title>
-	<meta
-		name="description"
-		content="The questions people ask me, in their words, answered straight: what I study, what I have built, who uses it, and how much of the code an AI wrote."
-	/>
-</svelte:head>
+<Seo
+	title="Questions — Phineas Fritsch"
+	description="The questions people ask me, in their words, answered straight: what I study, what I have built, who uses it, and how much of the code an AI wrote."
+	path="/answers/"
+/>
 
 <section class="section" style="margin-top:2.5rem">
 	<h1 style="font-size:clamp(1.6rem,3.6vw,2.2rem);letter-spacing:-0.02em;font-weight:600">

@@ -96,6 +96,28 @@ for (const f of html) {
 		seoBad.push(`${rel}: title not page-specific`);
 	if (!desc) seoBad.push(`${rel}: no meta description`);
 	if (h1s !== 1) seoBad.push(`${rel}: ${h1s} h1 elements`);
+
+	// Every page shipped TWO description tags: a generic one in app.html and the
+	// page's own. The generic one came first, so a crawler read the boilerplate —
+	// and this very check read the first match too, which meant it was guarding the
+	// tag that never changed. An infra reviewer proved it by stripping the
+	// page-specific description from a built page and watching three guards stay
+	// green. Counting them is the check that would have caught it.
+	const nDesc = [...src.matchAll(/<meta[^>]+name="description"/gi)].length;
+	if (nDesc !== 1) seoBad.push(`${rel}: ${nDesc} meta descriptions`);
+
+	// The canonical must name the page it is on. It rendered as /blog// on every
+	// post for one build, because the slug was not passed through to the component.
+	const canonical = (src.match(/<link[^>]+rel="canonical"[^>]+href="([^"]*)"/i) || [, ''])[1];
+	const expected =
+		'https://phineasfritsch.com' + rel.replace(/^build/, '').replace(/index\.html$/, '');
+	// build/404.html is a copy of the prerendered /not-found/ page, served by
+	// Cloudflare for any unmatched path. Its canonical correctly names the page it
+	// is a copy of, not the URL the reader happened to mistype.
+	const isNotFoundCopy = rel === 'build/404.html';
+	if (!canonical) seoBad.push(`${rel}: no canonical`);
+	else if (!isNotFoundCopy && canonical !== expected)
+		seoBad.push(`${rel}: canonical is ${canonical}, expected ${expected}`);
 }
 add(
 	'build.page-metadata',

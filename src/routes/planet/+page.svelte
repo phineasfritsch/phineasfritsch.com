@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Seo from '$lib/components/Seo.svelte';
 	import { browser } from '$app/environment';
 	import Scene from '$lib/components/Scene.svelte';
 
@@ -11,13 +12,11 @@
 	let show = $state(false);
 </script>
 
-<svelte:head>
-	<title>The planet — Phineas Fritsch</title>
-	<meta
-		name="description"
-		content="A low-poly planet built with Threlte and three.js. It used to be the homepage; it cost 903KB to say almost nothing, so it lives here instead."
-	/>
-</svelte:head>
+<Seo
+	title="The planet — Phineas Fritsch"
+	description="A low-poly planet built with Threlte and three.js. It used to be the homepage; it cost 903KB to say almost nothing, so it lives here instead."
+	path="/planet/"
+/>
 
 <section class="section" style="margin-top:2.5rem">
 	<h1 style="font-size:clamp(1.6rem,3.6vw,2.2rem);letter-spacing:-0.02em;font-weight:600">

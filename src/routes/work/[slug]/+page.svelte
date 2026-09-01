@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Seo from '$lib/components/Seo.svelte';
 	import status from '$lib/data/status.json';
 	let { data } = $props();
 	const p = $derived(data.project);
@@ -9,10 +10,7 @@
 		new Date(status.checkedAt).toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 </script>
 
-<svelte:head>
-	<title>{p.name} — Phineas Fritsch</title>
-	<meta name="description" content={p.what} />
-</svelte:head>
+<Seo title="{p.name} — Phineas Fritsch" description={p.what} path="/work/{p.slug}/" />
 
 <section class="section" style="margin-top:2.5rem">
 	<p class="stack" style="margin-bottom:0.5rem"><a href="/work/">← work</a></p>

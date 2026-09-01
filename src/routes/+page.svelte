@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Seo from '$lib/components/Seo.svelte';
 	import { orderedProjects } from '$lib/data/projects';
 	import status from '$lib/data/status.json';
 	import { servingCount, spell } from '$lib/data/counts';
@@ -12,15 +13,13 @@
 		(status.results as Record<string, { status: string; ms: number | null }>)[slug];
 </script>
 
-<svelte:head>
-	<title>Phineas Fritsch — actuarial mathematics at UCLA, and things that are running</title>
-	<meta
-		name="description"
-		content="Financial actuarial mathematics senior at UCLA. I build tools for problems I have: course grade data, library shelf routing, staff schedules — and {spell(
-			servingCount
-		)} of them are serving traffic right now."
-	/>
-</svelte:head>
+<Seo
+	title="Phineas Fritsch — actuarial mathematics at UCLA, and things that are running"
+	description="Financial actuarial mathematics senior at UCLA. I build tools for problems I have: course grade data, library shelf routing, staff schedules — and {spell(
+		servingCount
+	)} of them are serving traffic right now."
+	path="/"
+/>
 
 <section class="section" style="margin-top:2.5rem">
 	<h1
@@ -31,7 +30,7 @@
 	<div class="prose" style="margin-top:1.1rem">
 		<p>
 			Financial actuarial mathematics at UCLA, graduating June 2027. MATH 174E, Mathematics of
-			Finance, is FM material and is behind me; the actuarial models sequence is in progress.
+			Finance, is FM material and is behind me; the actuarial models sequence starts this fall.
 			Sitting Exam FM in fall 2026. <strong>No exams passed yet</strong>. Most of what is below came
 			out of a job, a fraternity house, or a course I was annoyed by.
 		</p>

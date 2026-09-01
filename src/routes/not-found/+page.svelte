@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Seo from '$lib/components/Seo.svelte';
 	// This page exists to be copied to build/404.html by ops/postbuild.mjs, which
 	// is what Cloudflare Pages serves — with a real 404 status — for a path that
 	// matches nothing. Before it existed the adapter's 200.html fallback answered
@@ -7,11 +8,12 @@
 	// It is a normal prerendered route, so it reads without JavaScript like the rest.
 </script>
 
-<svelte:head>
-	<title>Not found — Phineas Fritsch</title>
-	<meta name="description" content="That page does not exist. The site index is one link away." />
-	<meta name="robots" content="noindex" />
-</svelte:head>
+<Seo
+	title="Not found — Phineas Fritsch"
+	description="That page does not exist. The site index is one link away."
+	path="/not-found/"
+	noindex
+/>
 
 <section class="section" style="margin-top:2.5rem">
 	<h1 style="font-size:clamp(1.6rem,3.6vw,2.2rem);letter-spacing:-0.02em;font-weight:600">

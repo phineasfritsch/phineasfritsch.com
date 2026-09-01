@@ -1,20 +1,19 @@
 <script lang="ts">
+	import Seo from '$lib/components/Seo.svelte';
 	import { orderedProjects } from '$lib/data/projects';
 	import { projectCount, servingCount, spell } from '$lib/data/counts';
 </script>
 
-<svelte:head>
-	<title>Work — Phineas Fritsch</title>
-	<meta
-		name="description"
-		content="{spell(projectCount)[0].toUpperCase() +
-			spell(projectCount).slice(
-				1
-			)} projects, each with the decision worth asking about, what it does not do, and what an AI wrote. {spell(
-			servingCount
-		)[0].toUpperCase() + spell(servingCount).slice(1)} are serving traffic."
-	/>
-</svelte:head>
+<Seo
+	title="Work — Phineas Fritsch"
+	description="{spell(projectCount)[0].toUpperCase() +
+		spell(projectCount).slice(
+			1
+		)} projects, each with the decision worth asking about, what it does not do, and what an AI wrote. {spell(
+		servingCount
+	)[0].toUpperCase() + spell(servingCount).slice(1)} are serving traffic."
+	path="/work/"
+/>
 
 <section class="section" style="margin-top:2.5rem">
 	<h1 style="font-size:clamp(1.6rem,3.6vw,2.2rem);letter-spacing:-0.02em;font-weight:600">Work</h1>
