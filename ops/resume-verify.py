@@ -40,6 +40,25 @@ ORDER = [
     ("LEADERSHIP", "SKILLS", "executive board"),
 ]
 
+# Employer or role, and the dates that must extract with it rather than with the entry
+# below. `display: flex; justify-content: space-between` pushed the date to the right
+# margin and pdfminer read that as a second column: MKTaxSolutions' dates came out AFTER
+# the dental practice's title, so a parser filed "Aug – Sep 2024" under the wrong job.
+# Round 9 fixed this shape for the bullets and did not look one row up.
+#
+# HONEST LIMIT: this check is UNPROVEN against a live failure. The defect was real and
+# reproduced on the file production was serving, but after the content around it changed
+# the old CSS no longer reproduces it — the misordering depended on where the lines
+# happened to fall. So this asserts the property on every build and has never been seen
+# to fire. Do not read a green here as strong evidence; read it as the property being
+# checked at all, which is more than was true before.
+DATED = [
+    ("UCLA Library", "Mar 2026"),
+    ("MKTaxSolutions", "Aug – Sep 2024"),
+    ("UCLA Sailing Team", "Jul 2024"),
+    ("Theta Chi", "Jul 2025"),
+]
+
 def squash(s):
     return re.sub(r"\s+", "", s)
 
@@ -93,6 +112,17 @@ def main(path):
                 problems.append(
                     f'{name}: the first {start} bullet does not extract between '
                     f'{start} and {end} — bullets are being collected elsewhere'
+                )
+
+        for title, when in DATED:
+            k = text.find(title)
+            if k == -1:
+                continue
+            # The date must extract inside the same entry, not after the next title.
+            if squash(when) not in squash(text[k : k + 400]):
+                problems.append(
+                    f'{name}: the dates for "{title}" do not extract with it — '
+                    "a parser will file them under the entry below"
                 )
 
         if " " in text:

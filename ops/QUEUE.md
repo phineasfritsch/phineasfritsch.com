@@ -45,25 +45,37 @@ than starting it a third time. A smaller honest result beats a larger claimed on
 
       Merge it and the caveat comes out on the next deploy.
 
-- [ ] **B8. YOUR COWORKERS' DATA IS PUBLIC. Do this before anything else on this
-      list.** `GET https://better-bio-schedule.phineas-fritsch.workers.dev/api/schedule`
-      needs no authentication of any kind and returns, for every shift: coworker
-      first names, each person's duty assignment, and `sheetUrl` — a direct link to
-      the internal Google Sheet the data comes from. Verified by an unauthenticated
-      request from this container on 2026-09-01; a reviewer found it independently
-      by reading the page and trying the endpoint printed on it.
+- [ ] **B8. Access change needed on the schedule worker. Do this before anything
+      else on this list.** Its read API returns more than a stranger should be able
+      to read, including information about other people. Confirmed by direct request
+      twice, and found independently by a reviewer.
 
-      This is other people's information, published by an app whose live URL the
-      portfolio links from `/work/biomed-schedule/`. It is not a portfolio problem,
-      it is a your-coworkers problem, and it is the one item here that gets worse
-      the longer the site drives traffic at it.
+      Details are deliberately NOT in this file. It is a public repository, and
+      `/answers/` invites a skeptical reader into it — so the first version of this
+      entry, which named the endpoint, quoted its lack of authentication and listed
+      the fields it exposes, was a working recipe published in the one place the
+      website points people at. The reasoning that kept it off the site should have
+      kept it out of the repository on the same day, and did not for four days. The
+      unredacted text is in the session transcript and in Phineas' hands; ask him.
 
-      Fixed in the worker, not here — it is a different repository, so no agent in
-      this session can touch it. The smallest fix that works: drop `coworkers[].student`
-      and `sheetUrl` from the API response, since the phone view you actually use
-      needs neither. Deliberately NOT disclosed in the site copy, because a sentence
-      on a public page naming an open endpoint is an advertisement for it. Once the
-      worker is fixed, say so on the project page.
+      Fixed in the worker, which is a different repository no agent in this session
+      can reach. Not fixable here. The site no longer links the service at all, and
+      `ops/sanity.mjs` fails the build if that link returns. Once the access change
+      ships, put the link back and say so on the project page.
+
+- [ ] **B10. Is the iOS app a separate thing from Shelfmark's route planner?** The
+      resume bullet used to read "three tools ... plus an iOS app routing shelf-reading,
+      shelving and ILL pulls" two lines above Shelfmark's own "pull-list route planner".
+      An actuarial reviewer read those in order and said his first instinct was that one
+      piece of work had been split in two to look like two — which is the worst instinct
+      to trigger on a document whose pitch is "check it yourself". EVIDENCE.md records
+      the iOS app as its own artefact, so it may well be separate; it is also the only
+      one of the four library artefacts with no URL, no repository and no screenshot.
+
+      The iOS clause is off both documents until he says which it is. If it is a phone
+      client for the same routing, say so in one clause. If it is separate work, it
+      needs the same treatment as everything else here: what it does, what it does not,
+      and something a reader can look at.
 
 - [ ] **B1. LinkedIn contents.** Egress policy blocks linkedin.com and a direct
       request returns HTTP 999. No agent can read it. Phineas must paste: headline,

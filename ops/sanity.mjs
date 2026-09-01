@@ -303,7 +303,11 @@ if (!skipProd) {
 	} catch {
 		/* left null: unreachable, reported as unknown rather than guessed */
 	}
-	const saysBranch = builtHaystack().includes('rather than main');
+	// Match the LINK, not a sentence. It matched the phrase "rather than main", and
+	// then the sentence was reworded to "rather than on main" while meaning exactly
+	// the same thing, and the check reported that the page was sending readers to a
+	// scaffold. A guard that fires on a paraphrase teaches people to edit the guard.
+	const saysBranch = builtHaystack().includes('/tree/claude/');
 	const ok = mainHasOps === null ? true : mainHasOps !== saysBranch;
 	add(
 		'repo.source-claim',

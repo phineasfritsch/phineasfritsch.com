@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { emailText } from '$lib/data/contact';
+	import { emailLink } from '$lib/data/contact';
 	import { runningCount, spell } from '$lib/data/counts';
 	import Seo from '$lib/components/Seo.svelte';
 	// Direction chosen by the panel bracket, unanimous, no vetoes: replace topics with
@@ -69,7 +69,7 @@
 		},
 		{
 			q: 'How do I get in touch?',
-			a: `${emailText()}. If you want to check something on this page before you write, the source is at github.com/phineasfritsch/phineasfritsch.com — the gate, the pinned sentences and the tests are on the working branch rather than main, which is still the framework scaffold.`
+			a: `${emailLink()}. If you want to check something on this page before you write, the source for the site is <a href="https://github.com/phineasfritsch/phineasfritsch.com/tree/claude/operator-manual-agent-systems-tmrdiz">on the working branch</a> — the gate, the pinned sentences and the tests are there rather than on main, which is still the framework scaffold.`
 		}
 	];
 </script>

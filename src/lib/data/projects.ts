@@ -62,6 +62,11 @@ export const projects: Project[] = [
 		name: 'Shelfmark',
 		what: 'A replacement for UCLA library search, built on the catalog endpoint the university already publishes. It finds the book, then tells you which shelf face to stand at — which the official search cannot do at all.',
 		url: 'https://shelfmark.phineasfritsch.com',
+		// /work/ says source is linked where it is public, and this one is public. It
+		// was the only project whose readable source the site withheld, on the page
+		// making the most specific numeric claims — a reviewer cloned it, counted 453
+		// faces and ten level keys with Level 4 absent, and confirmed every figure.
+		repo: 'https://github.com/phineasfritsch/biomed_callnumber_finder',
 		live: true,
 		year: '2026',
 		stack: ['Vanilla JS', 'Alma SRU', 'Cloudflare Workers', 'Tesseract.js'],
