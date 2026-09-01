@@ -80,10 +80,18 @@ for (const p of PATHS) results.push(await probe(APEX + p));
 // unmatched URL with HTTP 200 and the homepage body while this file reported
 // "serving". A check that can only see the happy case is not a check. The path
 // is randomised so a cached answer cannot fake it.
-const missing = await probe(
-	`${APEX}/__gate-probe-${Date.now()}-${Math.random().toString(36).slice(2)}/`
+// Two depths, not one. The 404 page is a copy of a page that lived one segment
+// deep, so its asset paths were relative and resolved only at that depth — every
+// mistyped URL under /work/ or /blog/, which is where every shared link points,
+// rendered unstyled. One probe at depth one is exactly the probe that cannot see it.
+const stamp = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+const missingShallow = await probe(`${APEX}/__gate-probe-${stamp}/`);
+const missingDeep = await probe(`${APEX}/work/__gate-probe-${stamp}/`);
+const softNotFound = missingShallow.status === 200 || missingDeep.status === 200;
+// A 404 body that cannot load its own stylesheet is a 404 page in name only.
+const brokenNotFound = [missingShallow, missingDeep].some(
+	(r) => r.body && /["'(]\.\.\/_app\//.test(r.body)
 );
-const softNotFound = missing.status === 200;
 
 // ── things that are only broken in production ──────────────────────────────
 // Every local check can pass while the edge rewrites the page underneath you.
@@ -128,6 +136,7 @@ if (asJson) {
 			{
 				serving,
 				softNotFound,
+				brokenNotFound,
 				pages: results.map(({ body, ...r }) => r)
 			},
 			null,
@@ -151,6 +160,10 @@ if (asJson) {
 	if (root.final && !root.final.startsWith(APEX)) {
 		console.log(`  REDIRECT  apex redirects off-domain to ${root.final}`);
 	}
+	if (brokenNotFound) {
+		console.log('  404       the not-found page loads its assets by a relative path,');
+		console.log('            so it renders unstyled below the first path segment');
+	}
 	if (softNotFound) {
 		console.log('  SOFT 404  a path that does not exist answered 200 — every mistyped link');
 		console.log('            renders as a real page');
@@ -166,4 +179,4 @@ if (asJson) {
 
 // Exit 2 means production answers, but the edge has broken something on the way out.
 // Distinct from 1 (not serving at all) so a loop can tell the two apart.
-process.exit(serving ? (edgeIssues.length || softNotFound ? 2 : 0) : 1);
+process.exit(serving ? (edgeIssues.length || softNotFound || brokenNotFound ? 2 : 0) : 1);

@@ -37,7 +37,7 @@
 		},
 		{
 			q: 'You have no healthcare experience. Why revenue cycle?',
-			a: `Because the part of it I have seen up close is the part I am already good at. Most of the work is getting messy institutional data into a state you can defend, and knowing that a number being wrong is usually a process being wrong. The closest I have been is five months of front-office work at a dental practice in 2023, on Dentrix, which is practice management and billing software: patient data entry and financial record accuracy, not claims and not coding. I have not worked a claim, I have not touched a hospital EHR, and I would be starting close to zero on the domain. The transferable half is real and the healthcare half is barely there.`
+			a: `Because the part of it I have seen up close is the part I am already good at. Most of the work is getting messy institutional data into a state you can defend, and knowing that a number being wrong is usually a process being wrong. The closest I have been is five months of front-office work at my family's dental practice in 2023, on Dentrix, which is practice management and billing software: patient data entry and financial record accuracy, not claims and not coding. I have not worked a claim, I have not touched a hospital EHR, and I would be starting close to zero on the domain. The transferable half is real and the healthcare half is barely there.`
 		},
 		{
 			q: 'Does anyone use any of this besides you?',

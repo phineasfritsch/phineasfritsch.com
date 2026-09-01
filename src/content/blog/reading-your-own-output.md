@@ -24,9 +24,10 @@ contradict them, before there is any volume to check.
 
 ## What that looks like in practice
 
-On `jellyfin-matcher` there is a file called `gates.json` that holds three numbers:
-how many test files there are, how many test cases, and how many pinned claims. The
-build fails when any of those numbers goes **down**. Not when a test fails — when a
+On `jellyfin-matcher` there is a file called `gates.json` that holds four numbers:
+how many test files there are, how many test cases, how many pinned claims, and how
+many mutations the suite kills. The build fails when any of those numbers goes
+**down**. Not when a test fails — when a
 test disappears. A deleted test and a passing suite look identical from the outside,
 and that is the failure I could not otherwise see.
 

@@ -259,10 +259,14 @@ if (!skipProd) {
 		.split('\n')
 		.filter((l) => l.includes('·') && l.toLowerCase().includes('cloudflare'))
 		.map((l) => l.trim());
+	// Keyed on the edge lines, not on the exit code. read-prod exits 2 for three
+	// different reasons now — a CDN rewrite, a soft 404, a 404 page that cannot load
+	// its own assets — and this check reported "0 page(s) rewritten by the CDN" as a
+	// failure when the exit code was raised by one of the others.
 	add(
 		'prod.edge-intact',
-		code !== 2,
-		code === 2
+		edgeLines.length === 0,
+		edgeLines.length
 			? `${edgeLines.length} page(s) rewritten by the CDN — turn off Scrape Shield email obfuscation`
 			: 'the CDN serves the page as built',
 		edgeLines.slice(0, 6)
@@ -581,15 +585,37 @@ if (!skipProd) {
 	// branch that has never existed and the gate stayed green at 20/20. Whatever a
 	// reader can click is what has to resolve.
 	const seen = new Set();
+	let hrefs = 0;
+	let skipped = 0;
 	for (const f of builtHtmlFiles()) {
-		for (const m of readFileSync(f, 'utf8').matchAll(
-			/href="https:\/\/github\.com\/([^/"]+)\/([^/"]+?)(?:\/tree\/([^"]+))?"/g
-		)) {
-			seen.add([m[1], m[2], m[3] ?? 'HEAD'].join('\u0000'));
+		const src = readFileSync(f, 'utf8');
+		for (const m of src.matchAll(/href="(https:\/\/github\.com\/[^"]*)"/g)) {
+			hrefs++;
+			const u = m[1];
+			// A bare profile link has nothing to resolve.
+			const p = u.replace('https://github.com/', '').replace(/\/+$/, '').split('/');
+			if (p.length < 2) continue;
+			const [owner, name, ...rest] = p;
+			const ref = rest[0] === 'tree' && rest[1] ? rest.slice(1).join('/') : 'HEAD';
+			if (rest.length && rest[0] !== 'tree') {
+				// Some other shape — an issue, a blob, a release. Not silently ignored.
+				skipped++;
+				continue;
+			}
+			seen.add([owner, name.replace(/\.git$/, ''), ref].join('\u0000'));
 		}
 	}
+	// The previous pattern required the repo name to be followed immediately by a
+	// quote or /tree/, so a trailing slash made the whole link invisible: an infra
+	// reviewer pointed three Source links at a repository that does not exist and
+	// this check reported "6 linked repositories, all readable" and 21/21. A guard
+	// that silently declines to look at something is worse than no guard, so every
+	// github href is now either resolved or counted as skipped and reported.
+	if (skipped)
+		unreadableSkipNote = `${skipped} github link(s) of a shape this check does not resolve`;
 	const repos = [...seen].map((k) => [null, ...k.split('\u0000')]);
 	const unreadable = [];
+	let unreadableSkipNote = '';
 	for (const [, owner, name, ref] of repos) {
 		// git's own discovery endpoint, not a README fetch. Asking for README.md and
 		// reading the 404 as "private" is exactly how this check certified that
@@ -658,7 +684,9 @@ if (!skipProd) {
 	add(
 		'build.linked-repos-readable',
 		unreadable.length === 0,
-		unreadable.length ? unreadable[0] : `${repos.length} linked repositories, all readable`,
+		unreadable.length
+			? unreadable[0]
+			: `${repos.length} of ${hrefs} github links resolved${unreadableSkipNote ? `; ${unreadableSkipNote}` : ''}`,
 		unreadable
 	);
 }
@@ -705,6 +733,45 @@ if (!skipProd) {
 		problems.length === 0,
 		problems[0] ?? `measured against ${JSON.parse(readFileSync(f, 'utf8')).total} URLs`,
 		problems
+	);
+}
+
+// ── 9j. The gates.json claim matches gates.json ────────────────────────────
+// The essay and /work/jellyfin-matcher/ both enumerate the floors in another
+// repository's gates.json. The file gained a fourth floor and both places still
+// said three, for however long — an anti-corny reviewer opened the file the essay
+// links one click away and counted. A claim about a file you link is a claim the
+// reader can check faster than you can.
+if (!skipProd) {
+	const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'];
+	let n = null;
+	try {
+		const raw = execFileSync(
+			'curl',
+			[
+				'-sS',
+				'--max-time',
+				'20',
+				'https://raw.githubusercontent.com/phineasfritsch/jellyfin-matcher/HEAD/gates.json'
+			],
+			{ encoding: 'utf8' }
+		);
+		n = Object.values(JSON.parse(raw)).filter((v) => typeof v === 'number').length;
+	} catch {
+		/* unreachable: reported as unknown rather than guessed */
+	}
+	const hay = builtHaystack();
+	// Tags intervene between the filename and the count in the rendered HTML, so the
+	// phrase is matched without them.
+	const ok = n === null || hay.includes(`holds ${words[n]} numbers`);
+	add(
+		'build.gates-claim',
+		ok,
+		n === null
+			? 'could not fetch gates.json — claim not checked'
+			: ok
+				? `gates.json holds ${n} floors, and the essay says ${words[n]}`
+				: `gates.json holds ${n} floors; the essay does not say "holds ${words[n]} numbers"`
 	);
 }
 
@@ -851,12 +918,34 @@ if (!skipProd) {
 	} catch {
 		/* left null, reported below */
 	}
+	// Two depths. build/404.html is a copy of a page that lived one segment deep, so
+	// its asset hrefs were relative and resolved only at that depth: a mistyped URL
+	// under /work/ or /blog/ — where every shared and indexed link points — rendered
+	// the right words in Times New Roman with the nav run together. The single-depth
+	// probe was at the one depth where it happens to work.
+	const deepPath = `/work/__gate-probe-${Date.now()}-${Math.random().toString(36).slice(2)}/`;
+	let deepStatus = null;
+	let deepBody = '';
+	try {
+		deepBody = execFileSync(
+			'curl',
+			['-sS', '-w', '\n%{http_code}', '--max-time', '20', `https://phineasfritsch.com${deepPath}`],
+			{ encoding: 'utf8' }
+		);
+		deepStatus = Number(deepBody.trim().split('\n').pop());
+	} catch {
+		/* left null, reported below */
+	}
+	const relativeAssets = /["'(]\.\.\/_app\//.test(deepBody);
+	const ok404 = probeStatus === 404 && deepStatus === 404 && !relativeAssets;
 	add(
 		'prod.404-is-404',
-		probeStatus === 404,
-		probeStatus === 404
-			? 'a path that does not exist returns 404'
-			: `a path that does not exist returned ${probeStatus ?? 'nothing readable'}`
+		ok404,
+		ok404
+			? 'a path that does not exist returns 404 at one and two segments deep'
+			: relativeAssets
+				? 'the 404 page loads its assets relatively, so it renders unstyled below the first segment'
+				: `paths that do not exist returned ${probeStatus ?? '?'} and ${deepStatus ?? '?'}`
 	);
 
 	const head = execFileSync('git', ['rev-parse', '--short', 'HEAD'], {

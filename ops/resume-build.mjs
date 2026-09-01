@@ -188,10 +188,18 @@ for (const track of tracks) {
 	await p.emulateMedia({ media: 'print' });
 	await p.goto(pathToFileURL(htmlPath).href, { waitUntil: 'networkidle' });
 	const height = await p.evaluate(() => document.body.scrollHeight);
+	// tagged: true emits a /StructTreeRoot, so a screen reader gets headings and
+	// lists instead of a wall of positioned glyphs. The published PDF had none — no
+	// structure tree, no /MarkInfo, no /Lang — which fails WCAG 1.3.1 and 3.1.1 on
+	// the one artefact a reader keeps offline, on a site that advertises measured
+	// accessibility everywhere else. outline: false because a one-page document does
+	// not need bookmarks.
 	await p.pdf({
 		path: pdfPath,
 		format: 'Letter',
 		printBackground: true,
+		tagged: true,
+		outline: false,
 		margin: { top: '0.5in', bottom: '0.5in', left: '0.55in', right: '0.55in' }
 	});
 	await p.close();

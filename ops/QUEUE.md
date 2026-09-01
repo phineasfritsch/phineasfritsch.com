@@ -77,6 +77,16 @@ than starting it a third time. A smaller honest result beats a larger claimed on
       needs the same treatment as everything else here: what it does, what it does not,
       and something a reader can look at.
 
+- [ ] **B11. Open The Cut Card's paywall and check it against the rule.** The site
+      quotes its README verbatim: "No claim about money, anywhere. Not in the app, not
+      on the paywall, not in a notification." A reviewer said the live paywall prints
+      monthly, annual and lifetime prices and a bankroll figure. I could not reproduce
+      that — the figures I found in the shipped bundle are competitor prices inside a
+      market-analysis page, which are not claims about returns — but I cannot sign in
+      and drive the UI from here. Thirty seconds on your phone settles it. If it does
+      print prices, the site should say what the rule actually forbids rather than
+      claiming an absolute it does not keep.
+
 - [ ] **B1. LinkedIn contents.** Egress policy blocks linkedin.com and a direct
       request returns HTTP 999. No agent can read it. Phineas must paste: headline,
       any employment with dates, education incl. major and expected graduation,

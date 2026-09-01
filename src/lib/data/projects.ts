@@ -90,7 +90,7 @@ export const projects: Project[] = [
 		year: '2026',
 		stack: ['Vanilla JS', 'Alma SRU', 'Cloudflare Workers', 'Tesseract.js'],
 		decision:
-			"UCLA's search will give you a call number and then abandon you: there is no floor, row or side field anywhere in its records. Ours came from walking the building. I photographed and transcribed 453 shelf-end range labels into a 26KB file that ships with the page, so a call-number lookup makes zero network requests. The endpoint it searches also returns results in filing-title order with no spelling correction, so ranking, edition grouping and typo recovery are all done in the browser afterwards. Call numbers sort as decimals rather than as whole numbers, because the Cutter digits after the letters are a fraction: sort the digits as whole numbers and W1 AM477 lands before W1 AM4733, which is not where they sit on the shelf. That pair is in the real survey, so getting it wrong sends someone to the wrong end of a range.",
+			"UCLA's search will give you a call number and then abandon you: there is no floor, row or side field anywhere in its records. Ours came from walking the building. I walked the stacks with a phone and transcribed the range labels into a 26KB file describing 453 shelf faces that ships with the page, so a call-number lookup makes zero network requests. The endpoint it searches also returns results in filing-title order with no spelling correction, so ranking, edition grouping and typo recovery are all done in the browser afterwards. Call numbers sort as decimals rather than as whole numbers, because the Cutter digits after the letters are a fraction: sort the digits as whole numbers and W1 AM477 lands before W1 AM4733, which is not where they sit on the shelf. That pair is in the real survey, so getting it wrong sends someone to the wrong end of a range.",
 		limit:
 			'The shelf map is the biomedical library only, and a bare call number is currently assumed to be a Biomed one, so a call number that lives in another building can still return a confident shelf face here. Level 4 has not been surveyed. It has no accounts, holds or renewals, and it links out to the official record rather than replacing it.',
 		assisted:
@@ -151,7 +151,7 @@ export const projects: Project[] = [
 		year: '2026',
 		stack: ['Next.js', 'socket.io', 'Docker', 'GHCR'],
 		decision:
-			'The build gate fails when a number goes down, not just when a test breaks — test files, test cases and pinned claims all have floors in gates.json, because a silently deleted test looks exactly like a passing suite. Raising a floor has to happen in the same commit that earns it.',
+			'The build gate fails when a number goes down, not just when a test breaks — test files, test cases, pinned claims and killed mutations all have floors in gates.json, because a silently deleted test looks exactly like a passing suite. Raising a floor has to happen in the same commit that earns it.',
 		limit:
 			'You need your own Jellyfin server. It is not a hosted service and there is nothing to sign up for.',
 		assisted:

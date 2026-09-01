@@ -131,6 +131,19 @@ def main(path):
     if annots == 0:
         problems.append("no link annotations: the email and URLs are not clickable")
 
+    # Tagging. An untagged PDF hands a screen reader positioned glyphs with no
+    # headings, lists or reading order, which fails WCAG 1.3.1 and 3.1.1 on the one
+    # artefact a reader keeps offline. Chromium emits the structure tree only when
+    # asked (tagged: true in ops/resume-build.mjs), and the published file was not.
+    root = reader.trailer["/Root"]
+    if "/StructTreeRoot" not in root:
+        problems.append("untagged PDF: no /StructTreeRoot, so it has no reading structure")
+    mark = root.get("/MarkInfo")
+    if not (mark and mark.get("/Marked")):
+        problems.append("untagged PDF: /MarkInfo /Marked is not true")
+    if not root.get("/Lang"):
+        problems.append("no /Lang: a screen reader cannot tell what language to read it in")
+
     print(
         json.dumps(
             {
