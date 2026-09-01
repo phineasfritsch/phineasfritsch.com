@@ -52,11 +52,22 @@ console.log(`\n  commit ${sha} on ${branch}`);
 // --override-gate=prod.serving permits exactly that check to be red and nothing
 // else. A failing gate whose individual check names cannot be read is never
 // overridable — "I could not tell what broke" must not read as permission.
-const allowRed = (process.argv.find((a) => a.startsWith('--override-gate=')) || '')
-	.replace('--override-gate=', '')
-	.split(',')
-	.map((x) => x.trim())
-	.filter(Boolean);
+// Two checks are structurally unpassable BEFORE a deploy, both for the same
+// reason: they compare production against this commit, and this commit is not in
+// production until the command below puts it there. Requiring them to be named
+// every time trained the operator to type a list of overrides from memory, which
+// is how a real failure gets waved through inside a habit. They are allowed here,
+// in code, with the reason attached — and both are re-checked against production
+// AFTER the upload, where they can actually be true.
+const STRUCTURAL = ['prod.serving', 'prod.commit-parity'];
+const allowRed = [
+	...STRUCTURAL,
+	...(process.argv.find((a) => a.startsWith('--override-gate=')) || '')
+		.replace('--override-gate=', '')
+		.split(',')
+		.map((x) => x.trim())
+		.filter(Boolean)
+];
 
 // 0. Re-measure the live services BEFORE the gate builds, because the gate builds
 //    and the homepage bakes these figures in. The page tells the reader they were
