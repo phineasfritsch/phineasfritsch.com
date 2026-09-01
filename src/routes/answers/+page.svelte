@@ -14,11 +14,11 @@
 	const qs = [
 		{
 			q: 'What are you studying?',
-			a: `Financial actuarial mathematics at UCLA, graduating June 2027. I am enrolled in the actuarial models sequence, 178A and 179, for the quarter starting 24 September, and I sit Exam FM this fall. Most of what is on the rest of this page happened outside class.`
+			a: `Financial actuarial mathematics at UCLA, graduating June 2027. I am enrolled in 178A, Foundations of Actuarial Mathematics, and 179, Advanced Topic in Financial Mathematics, for the quarter starting 24 September, and I sit Exam FM this fall. Most of what is on the rest of this page happened outside class.`
 		},
 		{
 			q: 'Have you passed any actuarial exams?',
-			a: `No. None. FM is in fall 2026, and until I pass it that is a plan and not a qualification. The coursework behind it is real: 174E, Mathematics of Finance, which is FM material, and the models sequence I am enrolled in for this fall.`
+			a: `No. None. FM is in fall 2026, and until I pass it that is a plan and not a qualification. The coursework behind it is real: 177, Theory of Interest and Applications, which is the FM syllabus almost line for line, and 174E, Mathematics of Finance, both behind me; 178A and 179 start this fall.`
 		},
 		{
 			q: 'What do you want to do?',

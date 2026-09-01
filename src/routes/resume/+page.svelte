@@ -47,8 +47,9 @@
 		<dd>B.S. Financial Actuarial Mathematics. Expected June 2027.</dd>
 		<dt>Actuarial</dt>
 		<dd>
-			MATH 174E (Mathematics of Finance), completed. 178A / 179 (actuarial models), enrolled for
-			fall 2026. Sitting Exam FM in fall 2026.
+			MATH 177 (Theory of Interest and Applications) and 174E (Mathematics of Finance), completed.
+			178A (Foundations of Actuarial Mathematics) and 179 (Advanced Topic in Financial Mathematics),
+			enrolled for fall 2026. Sitting Exam FM in fall 2026.
 		</dd>
 		<dt>Quantitative</dt>
 		<dd>

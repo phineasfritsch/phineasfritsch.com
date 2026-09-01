@@ -32,9 +32,10 @@
 	<div class="prose" style="margin-top:1.1rem">
 		<p>
 			Financial actuarial mathematics at UCLA, graduating June 2027. MATH 174E, Mathematics of
-			Finance, is FM material and is behind me; the actuarial models sequence starts this fall.
-			Sitting Exam FM in fall 2026. <strong>No exams passed yet</strong>. Most of what is below came
-			out of a job, a fraternity house, or a course I was annoyed by.
+			Finance, and MATH 177, Theory of Interest and Applications, are behind me — 177 is the Exam FM
+			syllabus almost line for line. MATH 178A, Foundations of Actuarial Mathematics, starts this
+			fall. Sitting Exam FM in fall 2026. <strong>No exams passed yet</strong>. Most of what is
+			below came out of a job, a fraternity house, or a course I was annoyed by.
 		</p>
 	</div>
 </section>
