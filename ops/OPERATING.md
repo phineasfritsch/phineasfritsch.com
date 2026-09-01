@@ -31,12 +31,19 @@ silently moves backwards has cost real days elsewhere.
     npm run gate               # everything, numbered, with counts
     npm run gate:fast          # skips the browser gate
 
-Expected, as of this writing: format pass, typecheck pass, build pass, **15 tests**,
-**6 of 7 sanity checks**, **40 browser checks**. The seventh sanity check is
-`prod.serving`, red until the apex is deployed.
+Do not write the expected counts here. This paragraph used to name them, went stale by
+seventy tests and eight sanity checks, and named the wrong check as the expected-red
+one — a reviewer read it, believed it, and had to re-derive the truth from the repo.
+**A number in a runbook has nobody to keep it true.** The counts live in
+`ops/floors.json`, which the gate maintains, and the gate prints them every run.
+
+One check is expected red and it is `prod.edge-intact`: Cloudflare Scrape Shield
+rewrites the contact address on every live page, and only the owner can turn it off in
+the dashboard. Everything else being red is a finding.
 
 `ops/baseline.json` holds the previous run's numbers and the gate prints drift against
-them. **Green and red are not enough.** A gate can stay green while its count falls,
+them. `ops/floors.json` holds the minimum each count may take, and a count below its
+floor FAILS the run and cannot be overridden at a deploy. **Green and red are not enough.** A gate can stay green while its count falls,
 and that is exactly the case nobody notices. When a count drops, that is the finding —
 investigate it before doing anything else. Do not adjust a baseline to make a number
 match; the baseline records what happened, it does not decide it.

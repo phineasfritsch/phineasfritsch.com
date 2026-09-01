@@ -131,6 +131,13 @@ for (const g of gates) {
 		ok,
 		count: r.count,
 		unit: r.unit,
+		// Carried through because the floor logic below needs it. It was not, so
+		// `r.invert` read undefined there and the two inverted gates — which count
+		// PROBLEMS, where lower is better — were seeded with floors demanding at
+		// least as many problems as they had. Inert, because floors are not applied
+		// to inverted gates, but a number in a file that means the opposite of what
+		// it says is the kind of thing someone later acts on.
+		invert: r.invert ?? false,
 		prev,
 		drift,
 		floor,
@@ -191,7 +198,16 @@ if (!fast && !preDeploy) {
 	const nextFloors = { ...floors };
 	let raised = false;
 	for (const r of results) {
-		if (!r.ok) continue;
+		// Gate by the FLOOR, not by the gate's exit code. `if (!r.ok) continue` meant
+		// a gate that is red for a reason unrelated to its count never updated its
+		// floor again — and gate 5 is red by design until the owner flips a
+		// Cloudflare toggle, so its floor froze at 11 while the check count grew to
+		// 16. Five checks could have vanished without ever breaching it, on the one
+		// gate whose individual failures are overridable at deploy. A count that met
+		// its floor has earned its number regardless of why the command exited
+		// non-zero; a count that broke the floor still launders nothing, because
+		// this skips it.
+		if (r.belowFloor || r.count === null) continue;
 		next[r.name] = { count: r.count, at: new Date().toISOString() };
 		if (r.count === null || r.invert) continue;
 		// Seed, then ratchet. Without the seed a gate added tomorrow would have no
@@ -205,8 +221,13 @@ if (!fast && !preDeploy) {
 			raised = true;
 		}
 	}
-	writeFileSync(BASELINE, JSON.stringify(next, null, 2) + '\n');
-	if (raised) writeFileSync(FLOORS, JSON.stringify(nextFloors, null, 2) + '\n');
+	// Tabs, because .prettierrc says useTabs and gate 1 checks every file in the
+	// repo — including the two this gate writes. Two-space output made the gate
+	// dirty its own tree and fail its own first check on the next run, and it did
+	// it twice before anyone traced it.
+	const json = (o) => JSON.stringify(o, null, '\t') + '\n';
+	writeFileSync(BASELINE, json(next));
+	if (raised) writeFileSync(FLOORS, json(nextFloors));
 }
 
 process.exit(results.every((r) => r.ok) ? 0 : 1);

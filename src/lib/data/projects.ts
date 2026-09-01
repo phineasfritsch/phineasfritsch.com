@@ -43,20 +43,20 @@ export const projects: Project[] = [
 		decision:
 			'It runs on one 2.5 GB VPS, so the whole configuration is shaped by that ceiling. Postgres is set to 60 connections rather than the obvious 30, because Rails multi-database means a single thread holds four connections at once, and Kamal overlaps the old and new containers during a rollout — so the limit is breached exactly when deploying, and the symptom is the website failing rather than the jobs. That one is written down in config/deploy.yml so the next person does not have to rediscover it at 2am.',
 		limit:
-			'UCLA only, and it cannot enrol you. It watches and it emails. The grade data ends at Spring 2025, because that is the last term the public-records responses cover.',
+			'UCLA only, and it cannot enroll you. It watches and it emails. The grade data ends at Spring 2025, because that is the last term the public-records responses cover.',
 		assisted:
 			'Claude wrote most of the code. The data model, the scraping budget, and the deployment sizing were decisions I made and can defend line by line.'
 	},
 	{
 		slug: 'shelfmark',
 		name: 'Shelfmark',
-		what: 'A replacement for UCLA library search, built on the catalogue endpoint the university already publishes. It finds the book, then tells you which shelf face to stand at — which the official search cannot do at all.',
+		what: 'A replacement for UCLA library search, built on the catalog endpoint the university already publishes. It finds the book, then tells you which shelf face to stand at — which the official search cannot do at all.',
 		url: 'https://shelfmark.phineasfritsch.com',
 		live: true,
 		year: '2026',
 		stack: ['Vanilla JS', 'Alma SRU', 'Cloudflare Workers', 'Tesseract.js'],
 		decision:
-			"UCLA's search will give you a call number and then abandon you: there is no floor, row or side field anywhere in its records. Ours came from walking the building. I photographed and transcribed 453 shelf faces across ten levels into a 26KB file that ships with the page, so a call-number lookup makes zero network requests. The endpoint it searches also returns results in filing-title order with no spelling correction, so ranking, edition grouping and typo recovery are all done in the browser afterwards.",
+			"UCLA's search will give you a call number and then abandon you: there is no floor, row or side field anywhere in its records. Ours came from walking the building. I photographed and transcribed 453 shelf faces across ten levels into a 26KB file that ships with the page, so a call-number lookup makes zero network requests. The endpoint it searches also returns results in filing-title order with no spelling correction, so ranking, edition grouping and typo recovery are all done in the browser afterwards. Call numbers sort as decimals rather than as strings, because the Cutter digits after the letters are a fraction: sorted as text, W1 AM4733 comes before W1 AM477, and on the shelf it does not. That pair is in the real survey, so getting it wrong sends someone to the wrong end of a range.",
 		limit:
 			'The shelf map is the biomedical library only, and a bare call number is currently assumed to be a Biomed one, so a call number that lives in another building can still return a confident shelf face here. Level 4 has not been surveyed. It has no accounts, holds or renewals, and it links out to the official record rather than replacing it.',
 		assisted:
@@ -84,8 +84,7 @@ export const projects: Project[] = [
 		stack: ['Cloudflare Workers', 'Web Push', 'iCalendar'],
 		decision:
 			'It reads the schedule the library already publishes rather than asking anyone to maintain a second copy. A tool that needs someone to keep it fed stops being fed the week you stop asking.',
-		limit:
-			'Reads the schedule; it cannot change it. One library. The public link is off while an access fix ships.',
+		limit: 'Reads the schedule; it cannot change it. One library. The public link is off for now.',
 		assisted:
 			'Claude wrote most of the code. I wanted it because I was the one checking the sheet on my phone before every shift.'
 	},

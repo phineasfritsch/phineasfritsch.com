@@ -12,14 +12,14 @@ was built and what was verified. The summary is the problem.
 
 ## Agents report success on broken work
 
-Not occasionally. Routinely, and in detail. I have been handed a report describing
-tests that pass, describing the specific edge case that was handled, describing the
-migration that was applied — for work that did not run. This is not a complaint about
-any particular tool. It is just the normal case, and it gets worse the more you run at
-once, because nobody reads twelve reports as carefully as they read one.
+This happens constantly, and it is not a complaint about any particular tool. The
+reports are detailed and specific: which tests passed, which edge case got handled,
+which migration was applied. Sometimes none of it ran. Nothing about the report tells
+you which kind you are holding, which is the entire problem.
 
-So the entire skill is building the thing that can contradict them, and building it
-first, before there is any volume to check.
+It gets worse the more you run at once, for the boring reason that nobody reads twelve
+reports as carefully as they read one. So the thing to build first is whatever can
+contradict them, before there is any volume to check.
 
 ## What that looks like in practice
 
@@ -38,19 +38,17 @@ idea in a sentence.
 
 The other habit is pinning sentences. Some things on a page are load-bearing and no
 test covers them: a caveat under a number, a warning before something destructive, the
-line saying what a tool will not do. They accumulate one incident at a time, and to
-anyone rewriting a page for appearance they read as decoration. So I assert the small
+line saying what a tool will not do. Each one is usually there because
+something went wrong once, and to anyone rewriting a page for appearance they read as
+decoration. So I assert the small
 fragment that carries the meaning — never the full sentence, or every honest rewrite
 goes red and I learn to edit the guard instead of the code.
 
 ## Why this site says what an AI wrote
 
-Two reasonable people disagree about this. One says scrub every trace, because a
-reader who suspects AI discounts everything. The other says say it plainly, because
-half the industry ships assisted code now and the only thing left worth judging is
-whether you can tell when it is wrong.
-
-I think the second is right, and not only for honesty's sake. If I claimed to have
+The argument for hiding it is that a reader who suspects AI discounts everything, and
+that is a real cost — I will lose some of you on this page. I say it anyway, and not
+only for honesty's sake. If I claimed to have
 hand-written sixty thousand lines of Ruby in fourteen days, the commit history is
 public and it would take one click to catch me. Every claim on this site would then be
 worth nothing. Saying what was assisted costs me the readers who were going to
@@ -65,6 +63,5 @@ Either the work broke something, or the work deliberately changed something and 
 check is now stale. Getting that wrong in the second direction — deciding a failing
 check is obsolete when it is correct — is how a test suite becomes decorative,
 one reasonable accommodation at a time. It is also the one step where being wrong
-leaves no trace.
-
-That judgement is the job. Everything mechanical got cheap this year. That did not.
+leaves no trace: nothing turns red later to tell you what you let
+through. That call is the part I cannot hand to anything.

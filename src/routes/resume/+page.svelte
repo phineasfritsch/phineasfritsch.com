@@ -153,7 +153,7 @@
 	<div class="prose">
 		<p>
 			<strong>13th Annual Actuarial Case Competition (BAS), Winter 2025.</strong> Evaluated three commercial
-			property insurance structures for a simulated Fortune 500 real estate client, analysing how varying
+			property insurance structures for a simulated Fortune 500 real estate client, analyzing how varying
 			retentions, aggregate limits and co-insurance moved tail risk. Computed TCOR and Risk-Adjusted TCOR
 			to reconcile the CFO's premium constraint with actual exposure, and ran 10,000-iteration Monte Carlo
 			simulations of annual aggregate losses against Lognormal, Gamma and Pareto fits to historical data.
@@ -165,7 +165,7 @@
 	<div class="section-head"><h2>Skills</h2></div>
 	<dl class="meta">
 		<dt>Quantitative</dt>
-		<dd>Monte Carlo simulation, loss distribution fitting, Excel modelling.</dd>
+		<dd>Monte Carlo simulation, loss distribution fitting, Excel modeling.</dd>
 		<dt>Engineering</dt>
 		<dd>
 			Ruby on Rails, PostgreSQL, TypeScript, Swift. Docker, Kamal, Cloudflare Workers and Pages,

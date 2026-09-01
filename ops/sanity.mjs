@@ -381,6 +381,92 @@ if (!skipProd) {
 	);
 }
 
+// ── 9e. Every pointer the homepage makes has to resolve ────────────────────
+// The homepage names four decisions and says they are on the project pages.
+// "why call numbers sort as decimals" was on neither the project page nor
+// anywhere else on the site: the phrase appeared only on the two pages that
+// promised it lived elsewhere. On a portfolio whose whole premise is "check me",
+// a pointer that does not resolve is the worst single defect available, and it
+// is invisible to every other check here because both halves are grammatical
+// English on pages that render fine.
+{
+	const POINTERS = [
+		{ promise: 'sixty connections and not thirty', slug: 'dibs', marker: '60 connections' },
+		{ promise: 'call numbers sort as decimals', slug: 'shelfmark', marker: 'sort as decimals' },
+		{
+			promise: 'three values instead of two',
+			slug: 'nakra',
+			marker: 'yes, no, or maybe'
+		},
+		{ promise: 'mentioning money', slug: 'the-cut-card', marker: 'no claim about money' }
+	];
+	const homeFile = join(REPO, 'build/index.html');
+	const home = existsSync(homeFile) ? normalise(readFileSync(homeFile, 'utf8')) : '';
+	const dangling = [];
+	for (const p of POINTERS) {
+		// Both directions. If the promise is reworded the map goes stale and this
+		// says so, rather than silently guarding a sentence nobody writes any more.
+		if (!home.includes(normalise(p.promise))) {
+			dangling.push(`the homepage no longer says "${p.promise}" — update ops/sanity.mjs`);
+			continue;
+		}
+		const target = join(REPO, `build/work/${p.slug}/index.html`);
+		const body = existsSync(target) ? normalise(readFileSync(target, 'utf8')) : '';
+		if (!body.includes(normalise(p.marker))) {
+			dangling.push(`"${p.promise}" points at /work/${p.slug}/, which does not answer it`);
+		}
+	}
+	add(
+		'build.pointers-resolve',
+		dangling.length === 0,
+		`${dangling.length} promises with no answer`,
+		dangling
+	);
+}
+
+// ── 9f. One English, the reader's ─────────────────────────────────────────
+// /resume/ said "Excel modelling" and "analysing" while the PDF built from the
+// same fact base said "modeling" and "catalog", so a recruiter with both files
+// open watched the same bullet disagree with itself. That split is a language
+// model's default register showing through on a document written by someone in
+// Los Angeles for US employers. Rendered copy only — identifiers in the code
+// (normalise, builtHaystack) are not read by anyone being asked to hire him.
+{
+	const BRITISH = [
+		[/\bmodelling\b/i, 'modeling'],
+		// 'analysis' is the correct American noun; only the VERB changes. The first
+		// draft of this list flagged it and would have taught the next person to
+		// misspell a word to satisfy a guard.
+		[/\banalys(e|ed|es|ing)\b/i, 'analyz-'],
+		[/\benrol\b/i, 'enroll'],
+		[/\bcatalogue\b/i, 'catalog'],
+		[/\bjudgement\b/i, 'judgment'],
+		[/\bcolour\b/i, 'color'],
+		[/\bbehaviour\b/i, 'behavior'],
+		[/\bwhilst\b/i, 'while'],
+		[/\blicence\b/i, 'license'],
+		[/\bdefence\b/i, 'defense'],
+		[/\borganis(e|ed|ing|ation)\b/i, 'organiz-'],
+		[/\boptimis(e|ed|ing|ation)\b/i, 'optimiz-']
+	];
+	const split = [];
+	for (const f of html) {
+		const text = readFileSync(f, 'utf8')
+			.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ')
+			.replace(/<[^>]+>/g, ' ');
+		for (const [re, want] of BRITISH) {
+			const m = text.match(re);
+			if (m) split.push(`${f.replace(REPO + '/', '')}: "${m[0]}" — the PDF says ${want}`);
+		}
+	}
+	add(
+		'build.one-english',
+		split.length === 0,
+		`${split.length} spellings that disagree with the PDF`,
+		split.slice(0, 6)
+	);
+}
+
 // ── 9a. The public resume is present, and is the public one ────────────────
 // It ships from static/ and is linked from /resume/. Two ways this goes wrong
 // silently: the file is missing, so the link 404s on the one page a recruiter
