@@ -11,7 +11,7 @@
  *   node ops/deploy.mjs [--dry-run]
  */
 import { execFileSync, spawnSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { REPO } from './lib.mjs';
 
@@ -176,6 +176,23 @@ if (!dry) {
 const stamp = { commit: sha, branch, builtAt: new Date().toISOString() };
 writeFileSync(join(REPO, 'static/version.json'), JSON.stringify(stamp, null, 2) + '\n');
 if (!dry) execFileSync('npm', ['run', 'build'], { cwd: REPO, stdio: 'inherit' });
+
+// 4b. The artefact must carry a real 404 page and no SPA fallback. Cloudflare
+//     Pages serves /404.html for an unmatched path, and serves 200.html — with a
+//     200 status — for everything if it is present. Getting this wrong is silent:
+//     the site keeps working, and only a mistyped URL reveals it.
+if (!dry) {
+	if (!existsSync(join(REPO, 'build/404.html'))) {
+		die(
+			'build/404.html is missing — ops/postbuild.mjs did not run, and every mistyped\n  URL would answer 200 with the homepage.'
+		);
+	}
+	if (existsSync(join(REPO, 'build/200.html'))) {
+		die(
+			'build/200.html exists — Pages would serve it for every unmatched path with a\n  200 status. Remove the adapter fallback.'
+		);
+	}
+}
 
 // 5. Deploy.
 if (!process.env.CLOUDFLARE_API_TOKEN) {

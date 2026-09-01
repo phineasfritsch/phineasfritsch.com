@@ -75,6 +75,16 @@ if (bodyIdx !== -1) {
 const results = [];
 for (const p of PATHS) results.push(await probe(APEX + p));
 
+// A path that must NOT exist. Every entry in PATHS is a page that does, so no
+// probe here could ever observe a 404 — and for months the site answered every
+// unmatched URL with HTTP 200 and the homepage body while this file reported
+// "serving". A check that can only see the happy case is not a check. The path
+// is randomised so a cached answer cannot fake it.
+const missing = await probe(
+	`${APEX}/__gate-probe-${Date.now()}-${Math.random().toString(36).slice(2)}/`
+);
+const softNotFound = missing.status === 200;
+
 // ── things that are only broken in production ──────────────────────────────
 // Every local check can pass while the edge rewrites the page underneath you.
 // This one is real and was live: Cloudflare's Email Address Obfuscation (Scrape
@@ -104,12 +114,22 @@ const root = results[0];
 // and left the exit code alone. Pointing APEX at example.com returned 200 and
 // VERDICT serving, which is a check passing over a site that is not his.
 const onDomain = !root.final || root.final.startsWith(APEX);
-const serving = root.status >= 200 && root.status < 400 && !root.cfError && onDomain;
+// Every path, not just the first. The verdict used to come from results[0] alone,
+// so the other four statuses were printed and then thrown away: a production site
+// with every page but the homepage gone still read as "serving".
+const allAnswer = results.every(
+	(r) => r.status >= 200 && r.status < 400 && !r.cfError && (!r.final || r.final.startsWith(APEX))
+);
+const serving = root.status >= 200 && root.status < 400 && !root.cfError && onDomain && allAnswer;
 
 if (asJson) {
 	console.log(
 		JSON.stringify(
-			results.map(({ body, ...r }) => r),
+			{
+				serving,
+				softNotFound,
+				pages: results.map(({ body, ...r }) => r)
+			},
 			null,
 			2
 		)
@@ -131,6 +151,10 @@ if (asJson) {
 	if (root.final && !root.final.startsWith(APEX)) {
 		console.log(`  REDIRECT  apex redirects off-domain to ${root.final}`);
 	}
+	if (softNotFound) {
+		console.log('  SOFT 404  a path that does not exist answered 200 — every mistyped link');
+		console.log('            renders as a real page');
+	}
 	if (edgeIssues.length) {
 		console.log('  EDGE      the CDN is rewriting the page on the way out:');
 		for (const e of [...new Set(edgeIssues)]) console.log(`            \u00b7 ${e}`);
@@ -142,4 +166,4 @@ if (asJson) {
 
 // Exit 2 means production answers, but the edge has broken something on the way out.
 // Distinct from 1 (not serving at all) so a loop can tell the two apart.
-process.exit(serving ? (edgeIssues.length ? 2 : 0) : 1);
+process.exit(serving ? (edgeIssues.length || softNotFound ? 2 : 0) : 1);

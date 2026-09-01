@@ -278,6 +278,40 @@ if (!skipProd) {
 			return null;
 		}
 	};
+	// A path that cannot exist must not answer 200. Nothing in this file ever
+	// requested one, so the gate was green for months over a production site that
+	// served the homepage for every mistyped URL — the check could only ever see
+	// pages that were there.
+	const probePath = `/__gate-probe-${Date.now()}-${Math.random().toString(36).slice(2)}/`;
+	let probeStatus = null;
+	try {
+		probeStatus = Number(
+			execFileSync(
+				'curl',
+				[
+					'-sS',
+					'-o',
+					'/dev/null',
+					'-w',
+					'%{http_code}',
+					'--max-time',
+					'20',
+					`https://phineasfritsch.com${probePath}`
+				],
+				{ encoding: 'utf8' }
+			).trim()
+		);
+	} catch {
+		/* left null, reported below */
+	}
+	add(
+		'prod.404-is-404',
+		probeStatus === 404,
+		probeStatus === 404
+			? 'a path that does not exist returns 404'
+			: `a path that does not exist returned ${probeStatus ?? 'nothing readable'}`
+	);
+
 	const head = execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
 		cwd: REPO,
 		encoding: 'utf8'
