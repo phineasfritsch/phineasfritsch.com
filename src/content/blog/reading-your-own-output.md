@@ -53,8 +53,8 @@ hand-written sixty thousand lines of Ruby in fourteen days, the commit history i
 public and it would take one click to catch me. Every claim on this site would then be
 worth nothing. Saying what was assisted costs me the readers who were going to
 discount me anyway, and it buys the rest a reason to believe the specific things I do
-claim: that I decided what to build, that I know why Postgres is configured the way it
-is, and that when it broke at two in the morning I was the one who fixed it.
+claim: that I decided what to build, and that the reason Postgres is configured the way
+it is was mine, is written down in the deploy config, and I can defend it.
 
 ## The part that does not delegate
 

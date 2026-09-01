@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Seo from '$lib/components/Seo.svelte';
+	import { emailLink } from '$lib/data/contact';
 	// This page exists to be copied to build/404.html by ops/postbuild.mjs, which
 	// is what Cloudflare Pages serves — with a real 404 status — for a path that
 	// matches nothing. Before it existed the adapter's 200.html fallback answered
@@ -22,7 +23,7 @@
 	<div class="prose" style="margin-top:0.9rem">
 		<p>
 			Either the link was mistyped or something here moved and I did not redirect it. The second one
-			is my fault; <a href="mailto:contact@phineasfritsch.com">tell me</a> and I will fix it.
+			is my fault; {@html emailLink('tell me')} and I will fix it.
 		</p>
 	</div>
 </section>

@@ -1,6 +1,6 @@
 {
 	"build": 16,
 	"tests": 85,
-	"sanity": 18,
+	"sanity": 19,
 	"real user (browser)": 40
 }

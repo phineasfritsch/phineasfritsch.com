@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Seo from '$lib/components/Seo.svelte';
-	import { servingCount, spell } from '$lib/data/counts';
+	import { runningCount, spell } from '$lib/data/counts';
+	import { emailLink } from '$lib/data/contact';
 	// Every fact on this page comes from ops/panel/EVIDENCE.md. Nothing is inferred.
 	// Dates follow LinkedIn where LinkedIn and the older .docx disagree, because he
 	// confirmed LinkedIn is the current one.
@@ -13,7 +14,7 @@
 <Seo
 	title="Resume — Phineas Fritsch"
 	description="Financial actuarial mathematics at UCLA, June 2027. Actuarial coursework and case competition work, plus {spell(
-		servingCount
+		runningCount
 	)} deployed software projects."
 	path="/resume/"
 />
@@ -26,7 +27,7 @@
 		<p>
 			Financial actuarial mathematics at UCLA, graduating June 2027. Sitting Exam FM in fall 2026;
 			<strong>no exams passed yet</strong>. Reach me at
-			<a href="mailto:contact@phineasfritsch.com">contact@phineasfritsch.com</a>.
+			{@html emailLink()}.
 		</p>
 		<!-- Five of eight reviewers asked for this independently: a recruiter who
 		     wants to forward something to a hiring manager had nothing to attach.

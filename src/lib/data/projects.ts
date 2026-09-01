@@ -19,6 +19,14 @@ export type Project = {
 	name: string;
 	what: string;
 	url?: string;
+	/**
+	 * Who can actually open it. 'public' is a stranger with the link; 'preview' is
+	 * running at a temporary address because the real domain has not been cut over;
+	 * 'internal' is running but deliberately not linked from here. The distinction
+	 * exists because "six of my projects are serving traffic" was true and still
+	 * misleading — two of the six are not things a reader can go and use.
+	 */
+	reach?: 'public' | 'preview' | 'internal';
 	repo?: string;
 	live: boolean;
 	stack: string[];
@@ -34,6 +42,7 @@ export type Project = {
 export const projects: Project[] = [
 	{
 		slug: 'dibs',
+		reach: 'public',
 		name: 'Dibs',
 		what: 'Ranks UCLA general-education courses by real grade history and emails you when a seat opens in one you are watching.',
 		url: 'https://dibs.ge',
@@ -49,6 +58,7 @@ export const projects: Project[] = [
 	},
 	{
 		slug: 'shelfmark',
+		reach: 'public',
 		name: 'Shelfmark',
 		what: 'A replacement for UCLA library search, built on the catalog endpoint the university already publishes. It finds the book, then tells you which shelf face to stand at — which the official search cannot do at all.',
 		url: 'https://shelfmark.phineasfritsch.com',
@@ -56,7 +66,7 @@ export const projects: Project[] = [
 		year: '2026',
 		stack: ['Vanilla JS', 'Alma SRU', 'Cloudflare Workers', 'Tesseract.js'],
 		decision:
-			"UCLA's search will give you a call number and then abandon you: there is no floor, row or side field anywhere in its records. Ours came from walking the building. I photographed and transcribed 453 shelf faces across ten levels into a 26KB file that ships with the page, so a call-number lookup makes zero network requests. The endpoint it searches also returns results in filing-title order with no spelling correction, so ranking, edition grouping and typo recovery are all done in the browser afterwards. Call numbers sort as decimals rather than as strings, because the Cutter digits after the letters are a fraction: sorted as text, W1 AM4733 comes before W1 AM477, and on the shelf it does not. That pair is in the real survey, so getting it wrong sends someone to the wrong end of a range.",
+			"UCLA's search will give you a call number and then abandon you: there is no floor, row or side field anywhere in its records. Ours came from walking the building. I photographed and transcribed 453 shelf-end range labels into a 26KB file that ships with the page, so a call-number lookup makes zero network requests. The endpoint it searches also returns results in filing-title order with no spelling correction, so ranking, edition grouping and typo recovery are all done in the browser afterwards. Call numbers sort as decimals rather than as strings, because the Cutter digits after the letters are a fraction: sorted as text, W1 AM4733 comes before W1 AM477, and on the shelf it does not. That pair is in the real survey, so getting it wrong sends someone to the wrong end of a range.",
 		limit:
 			'The shelf map is the biomedical library only, and a bare call number is currently assumed to be a Biomed one, so a call number that lives in another building can still return a confident shelf face here. Level 4 has not been surveyed. It has no accounts, holds or renewals, and it links out to the official record rather than replacing it.',
 		assisted:
@@ -64,6 +74,7 @@ export const projects: Project[] = [
 	},
 	{
 		slug: 'biomed-schedule',
+		reach: 'internal',
 		name: 'Better Bio Schedule',
 		what: 'One link for every daily staff schedule at the biomedical library, laid out for a phone, with a notification when you are put on something other than the desk.',
 		// The public link is OFF. Its API answers an unauthenticated request with
@@ -90,6 +101,7 @@ export const projects: Project[] = [
 	},
 	{
 		slug: 'the-cut-card',
+		reach: 'public',
 		name: 'The Cut Card',
 		what: 'Blackjack practice that drills you to correct first and fast second: basic strategy, counting, and the arithmetic of how much you can put at risk.',
 		url: 'https://thecutcard.com',
@@ -105,6 +117,7 @@ export const projects: Project[] = [
 	},
 	{
 		slug: 'jellyfin-matcher',
+		reach: 'public',
 		name: 'Jellyfin Matcher',
 		what: 'Everyone swipes the same deck of films on their own phone and the first one you all like wins. No stalemates — that is the whole point.',
 		url: 'https://jellymatch.phinster.net',
@@ -121,6 +134,7 @@ export const projects: Project[] = [
 	},
 	{
 		slug: 'bruinthetachi',
+		reach: 'preview',
 		name: 'bruinthetachi.com',
 		what: "A replacement for my fraternity chapter's WordPress site: a static build the next webmaster can edit without knowing what a build is. It runs, and the domain has not been cut over to it yet.",
 		url: 'https://preview.bruinthetachi.pages.dev',

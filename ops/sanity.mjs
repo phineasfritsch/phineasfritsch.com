@@ -329,8 +329,12 @@ if (!skipProd) {
 {
 	const projectsSrc = readFileSync(join(REPO, 'src/lib/data/projects.ts'), 'utf8');
 	const nProjects = (projectsSrc.match(/^\t\tslug: '/gm) || []).length;
-	const statusJson = JSON.parse(readFileSync(join(REPO, 'src/lib/data/status.json'), 'utf8'));
-	const nServing = Object.values(statusJson.results).filter((r) => r.status === 'up').length;
+	// From the CURATED list, matching what src/lib/data/counts.ts renders. It used
+	// to come from status.json, so a dropped probe moved a public claim by one and
+	// this guard moved with it — agreeing with the wrong number instead of
+	// catching it.
+	const nRunning = (projectsSrc.match(/^\t\tlive: true,$/gm) || []).length;
+	const nOpen = (projectsSrc.match(/^\t\treach: 'public',$/gm) || []).length;
 	const WORDS = [
 		'zero',
 		'one',
@@ -356,21 +360,54 @@ if (!skipProd) {
 		return i >= 0 ? i : Number(w);
 	};
 	const wrong = [];
+	// Body text as well as the description attribute. The first version read only
+	// the meta tag, so /answers/ could say "Six things that are running" in prose
+	// while three descriptions said five, and the guard built to catch exactly that
+	// drift reported zero disagreements over a live self-contradiction.
+	const sources = [];
 	for (const f of html) {
-		const m = readFileSync(f, 'utf8').match(/name="description" content="([^"]*)"/);
-		if (!m) continue;
-		const d = m[1];
+		const src = readFileSync(f, 'utf8');
 		const rel = f.replace(REPO + '/', '');
+		const m = src.match(/name="description" content="([^"]*)"/);
+		if (m) sources.push([rel, m[1]]);
+		sources.push([
+			rel,
+			src
+				.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<head[\s\S]*?<\/head>/gi, ' ')
+				.replace(/<[^>]+>/g, ' ')
+		]);
+	}
+	// And the PDF a recruiter downloads, which is the one document that travels
+	// alone. Its lede carried a count too, and disagreed with the site's.
+	const pdfHtml = join(REPO, 'ops/private/resume/build/resume-general.html');
+	if (existsSync(pdfHtml)) {
+		sources.push([
+			'the public resume',
+			readFileSync(pdfHtml, 'utf8')
+				.replace(/<style[\s\S]*?<\/style>/gi, ' ')
+				.replace(/<[^>]+>/g, ' ')
+		]);
+	}
+	for (const [rel, d] of sources) {
 		for (const [, w] of d.matchAll(new RegExp(`\\b(${NUM}) projects\\b`, 'gi'))) {
 			if (num(w) !== nProjects) wrong.push(`${rel}: says ${w} projects, there are ${nProjects}`);
 		}
 		for (const [, w] of d.matchAll(
 			new RegExp(`\\b(${NUM})(?: of them)? (?:are|is) serving traffic`, 'gi')
 		)) {
-			if (num(w) !== nServing) wrong.push(`${rel}: says ${w} serving, ${nServing} are up`);
+			if (num(w) !== nRunning) wrong.push(`${rel}: says ${w} serving, ${nRunning} are live`);
 		}
 		for (const [, w] of d.matchAll(new RegExp(`\\b(${NUM}) deployed software projects\\b`, 'gi'))) {
-			if (num(w) !== nServing) wrong.push(`${rel}: says ${w} deployed, ${nServing} are up`);
+			if (num(w) !== nRunning) wrong.push(`${rel}: says ${w} deployed, ${nRunning} are live`);
+		}
+		for (const [, w] of d.matchAll(new RegExp(`\\b(${NUM}) things that are running\\b`, 'gi'))) {
+			if (num(w) !== nRunning) wrong.push(`${rel}: says ${w} running, ${nRunning} are live`);
+		}
+		for (const [, w] of d.matchAll(new RegExp(`\\b(${NUM}) of my projects are running`, 'gi'))) {
+			if (num(w) !== nRunning) wrong.push(`${rel}: says ${w} running, ${nRunning} are live`);
+		}
+		for (const [, w] of d.matchAll(new RegExp(`\\b(${NUM}) are open to anyone`, 'gi'))) {
+			if (num(w) !== nOpen) wrong.push(`${rel}: says ${w} open, ${nOpen} are public`);
 		}
 	}
 	add(
@@ -467,6 +504,61 @@ if (!skipProd) {
 	);
 }
 
+// ── 9g. The status figures are measurements, so they must be measured ──────
+// probe-live made one curl attempt per target and wrote 'unknown' on any throw.
+// One dropped connection at deploy time shipped the flagship project — the first
+// row on the homepage — reading "unknown" beside five siblings reading "up ·
+// NNNms", while the service answered 200 on every attempt afterwards. Five of
+// eight reviewers opened the page and drew the obvious conclusion about the
+// measurement apparatus the page brags about. Nothing checked the VALUE: the gate
+// verified when it was measured and that the prose agreed with it, and never that
+// it was right.
+{
+	const statusPath = join(REPO, 'src/lib/data/status.json');
+	const problems = [];
+	if (!existsSync(statusPath)) {
+		problems.push('src/lib/data/status.json is missing');
+	} else {
+		const now = JSON.parse(readFileSync(statusPath, 'utf8')).results;
+		const projectsSrc = readFileSync(join(REPO, 'src/lib/data/projects.ts'), 'utf8');
+		for (const [slug, r] of Object.entries(now)) {
+			if (r.status === 'unknown') {
+				problems.push(`${slug} is "unknown" — a headline figure from an unanswered probe`);
+			}
+		}
+		// A regression is the operator's cue to look, not something to publish
+		// quietly. Compared against the committed file, so it survives this rebuild.
+		let before = null;
+		try {
+			before = JSON.parse(
+				execFileSync('git', ['show', 'HEAD:src/lib/data/status.json'], {
+					cwd: REPO,
+					encoding: 'utf8'
+				})
+			).results;
+		} catch {
+			/* first run, or the file is new */
+		}
+		if (before) {
+			for (const [slug, r] of Object.entries(now)) {
+				if (before[slug]?.status === 'up' && r.status !== 'up') {
+					problems.push(`${slug} went from up to ${r.status} — check it before shipping that`);
+				}
+			}
+		}
+		// Every project the site calls live must have a reading at all.
+		for (const m of projectsSrc.matchAll(/slug: '([^']+)',\n\t\treach: '[^']+',/g)) {
+			if (!now[m[1]]) problems.push(`${m[1]} is reachable in projects.ts but was never probed`);
+		}
+	}
+	add(
+		'build.status-measured',
+		problems.length === 0,
+		problems[0] ?? 'every live target answered',
+		problems.slice(0, 6)
+	);
+}
+
 // ── 9a. The public resume is present, and is the public one ────────────────
 // It ships from static/ and is linked from /resume/. Two ways this goes wrong
 // silently: the file is missing, so the link 404s on the one page a recruiter
@@ -541,8 +633,13 @@ const GENERATED_PATHS = [
 	/^ops\/baseline\.json$/,
 	/^ops\/floors\.json$/,
 	/^ops\/shots\//,
-	/^static\/version\.json$/,
-	/^src\/lib\/data\/status\.json$/
+	/^static\/version\.json$/
+	// NOT src/lib/data/status.json. It was carved out here as "generated", under the
+	// justification that a difference in it is not a difference a visitor can see —
+	// which is false for this one file: it is the sole source of the status badge and
+	// latency on every project row of the homepage and of each /work/ page. With the
+	// carve-out, prod.commit-parity reported "differs only in generated output" while
+	// production was showing a badge HEAD would not have produced.
 ];
 
 // ── 10-11. What the EDGE is serving, not what this directory contains ───────

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Seo from '$lib/components/Seo.svelte';
 	import { orderedProjects } from '$lib/data/projects';
-	import { projectCount, servingCount, spell } from '$lib/data/counts';
+	import { projectCount, runningCount, spell } from '$lib/data/counts';
 </script>
 
 <Seo
@@ -10,8 +10,8 @@
 		spell(projectCount).slice(
 			1
 		)} projects, each with the decision worth asking about, what it does not do, and what an AI wrote. {spell(
-		servingCount
-	)[0].toUpperCase() + spell(servingCount).slice(1)} are serving traffic."
+		runningCount
+	)[0].toUpperCase() + spell(runningCount).slice(1)} are serving traffic."
 	path="/work/"
 />
 

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { emailText } from '$lib/data/contact';
+	import { runningCount, spell } from '$lib/data/counts';
 	import Seo from '$lib/components/Seo.svelte';
 	// Direction chosen by the panel bracket, unanimous, no vetoes: replace topics with
 	// QUESTIONS, phrased the way the person asking would phrase them, each answered in
@@ -24,7 +26,7 @@
 		},
 		{
 			q: 'What have you built?',
-			a: `Six things that are running. Course ranking and seat alerts for UCLA students, a call-number-to-shelf finder for the library I work in, a phone version of my unit's staff schedule, a blackjack practice app, a group film picker for my own media server, and a replacement site for my fraternity chapter. That last one runs but the chapter domain still points at the old WordPress.`
+			a: `${spell(runningCount)[0].toUpperCase() + spell(runningCount).slice(1)} things that are running. Course ranking and seat alerts for UCLA students, a call-number-to-shelf finder for the library I work in, a phone version of my unit's staff schedule, a blackjack practice app, a group film picker for my own media server, and a replacement site for my fraternity chapter. That last one runs but the chapter domain still points at the old WordPress.`
 		},
 		// Position 5 of 14, in the middle third. Pinned in ops/pins.json and checked by a
 		// browser test. Elevated it reads as a confession, buried it reads as evasion.
@@ -67,7 +69,7 @@
 		},
 		{
 			q: 'How do I get in touch?',
-			a: `contact@phineasfritsch.com. If you want to check something on this page before you write, the source is at github.com/phineasfritsch/phineasfritsch.com — the gate, the pinned sentences and the tests are on the working branch rather than main, which is still the framework scaffold.`
+			a: `${emailText()}. If you want to check something on this page before you write, the source is at github.com/phineasfritsch/phineasfritsch.com — the gate, the pinned sentences and the tests are on the working branch rather than main, which is still the framework scaffold.`
 		}
 	];
 </script>
@@ -96,7 +98,10 @@
 					<div class="row-title">
 						<h2 style="font-size:1.05rem;font-weight:600;letter-spacing:-0.01em">{item.q}</h2>
 					</div>
-					<p>{item.a}</p>
+					<!-- @html only so the Cloudflare opt-out markers in the contact answer
+					     survive into the prerendered HTML. Every string here is authored in
+					     this file; none of it comes from a user, a fetch or a parameter. -->
+					<p>{@html item.a}</p>
 				</div>
 			</li>
 		{/each}

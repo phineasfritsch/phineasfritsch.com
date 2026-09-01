@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { emailLink } from '$lib/data/contact';
+
 	import './layout.css';
 	import { page } from '$app/state';
 
@@ -40,7 +42,7 @@
 
 	<footer class="foot">
 		<span>Phineas Fritsch · Los Angeles</span>
-		<span><a href="mailto:contact@phineasfritsch.com">contact@phineasfritsch.com</a></span>
+		<span>{@html emailLink()}</span>
 		<span><a href="https://github.com/phineasfritsch">github.com/phineasfritsch</a></span>
 	</footer>
 </div>
