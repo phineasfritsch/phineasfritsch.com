@@ -617,8 +617,15 @@ if (!skipProd) {
 		} catch {
 			code = 'unreachable';
 		}
-		if (code === '404') {
-			unreadable.push(`${owner}/${name} is linked but not public`);
+		// ONLY 200 counts. This treated 404 as the failure signal, and GitHub's
+		// info/refs never returns 404 for a repository you cannot read — it returns
+		// 401. So the check was structurally incapable of catching the thing it was
+		// written for: an infra reviewer rewrote a Source link in build/ to a
+		// repository that does not exist, ran this file, and got "7 linked
+		// repositories, all readable" and 20/20. Verified the codes by hand:
+		// phineasfritsch/does-not-exist-xyz answers 401, all six real ones answer 200.
+		if (code !== '200') {
+			unreadable.push(`${owner}/${name} is linked but answers ${code}, not 200`);
 			continue;
 		}
 		// info/refs answers for the repository, not for a ref, so a /tree/<branch>
@@ -653,6 +660,51 @@ if (!skipProd) {
 		unreadable.length === 0,
 		unreadable.length ? unreadable[0] : `${repos.length} linked repositories, all readable`,
 		unreadable
+	);
+}
+
+// ── 9i. The migration figures are measured, and recently ──────────────────
+// The same shape as the status figures, for the same reason: this number was typed
+// by hand twice and wrong both times, inside a sentence that said it had been
+// measured. It comes from ops/measure-migration.mjs now, and a stale file is a
+// claim about a site that may have changed since.
+{
+	const f = join(REPO, 'src/lib/data/migration.json');
+	const problems = [];
+	if (!existsSync(f)) {
+		problems.push('src/lib/data/migration.json is missing — run: node ops/measure-migration.mjs');
+	} else {
+		const m = JSON.parse(readFileSync(f, 'utf8'));
+		const days = (Date.now() - new Date(m.checkedAt).getTime()) / 86_400_000;
+		if (!(m.total > 0) || !(m.resolve >= 0) || m.sitemaps < 2) {
+			problems.push('the migration measurement looks malformed');
+		}
+		// Fourteen days, not hours: the old site is a WordPress nobody is editing, and
+		// re-running this is 292 requests. Long enough to be cheap, short enough that a
+		// published figure is never a year old.
+		if (days > 14) problems.push(`measured ${Math.round(days)} days ago — re-run it`);
+		if (!builtHaystack().includes(String(m.total))) {
+			problems.push(`the page does not mention the measured total (${m.total})`);
+		}
+		// And the resume, which is a separate document that a recruiter reads without
+		// the site next to it. It carried the wrong figure both times too.
+		const facts = join(REPO, 'ops/private/resume/resume.data.mjs');
+		if (existsSync(facts)) {
+			const src = readFileSync(facts, 'utf8');
+			const mm = src.match(/redirect map covers (\d+) of the old (\d+) URLs/);
+			if (!mm) problems.push('the resume no longer states the migration figures');
+			else if (Number(mm[1]) !== m.resolve || Number(mm[2]) !== m.total) {
+				problems.push(
+					`the resume says ${mm[1]}/${mm[2]}, the measurement says ${m.resolve}/${m.total}`
+				);
+			}
+		}
+	}
+	add(
+		'build.migration-measured',
+		problems.length === 0,
+		problems[0] ?? `measured against ${JSON.parse(readFileSync(f, 'utf8')).total} URLs`,
+		problems
 	);
 }
 

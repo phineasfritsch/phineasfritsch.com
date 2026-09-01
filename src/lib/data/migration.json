@@ -1,0 +1,19 @@
+{
+	"checkedAt": "2026-09-01T09:02:15.707Z",
+	"sitemaps": 6,
+	"total": 292,
+	"resolve": 60,
+	"missing": 232,
+	"topLevel": 13,
+	"topLevelMissing": 8,
+	"notableMissing": [
+		"/about/",
+		"/brotherhood/",
+		"/social/",
+		"/philanthropy/",
+		"/academics/",
+		"/tree/",
+		"/cpa-review-and-financials/",
+		"/foundation/"
+	]
+}

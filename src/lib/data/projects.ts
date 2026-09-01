@@ -1,3 +1,4 @@
+import migration from './migration.json';
 /**
  * Projects, as data.
  *
@@ -38,6 +39,19 @@ export type Project = {
 	assisted: string;
 	year: string;
 };
+
+/**
+ * The migration figures, from the file ops/measure-migration.mjs writes.
+ *
+ * They are not typed into this sentence because I typed them wrong twice, inside a
+ * claim that boasted about having measured them: first "every old URL still
+ * resolves", when four did, then a count taken from two of the old sitemap's six
+ * sub-sitemaps. Both were caught by a reviewer running one curl. A number a person
+ * types is a number a person can get wrong twice.
+ */
+function migrationLimit(): string {
+	return `The redirect map is incomplete and I would rather say by how much. The old sitemap index names ${migration.sitemaps} sub-sitemaps and ${migration.total} URLs; ${migration.resolve} resolve on the replacement. The ${migration.missing} that do not include ${migration.topLevelMissing} of the ${migration.topLevel} top-level pages, among them ${migration.notableMissing.slice(0, 3).join(', ')}. Measured by ops/measure-migration.mjs rather than counted by hand, because counting it by hand produced a wrong answer twice. The live chapter domain still serves the old WordPress site, and the cutover is mine to schedule.`;
+}
 
 export const projects: Project[] = [
 	{
@@ -154,9 +168,10 @@ export const projects: Project[] = [
 		year: '2026',
 		stack: ['Astro', 'Sveltia CMS', 'Cloudflare Pages'],
 		decision:
-			'The old site is linked from alumni emails going back years, so breaking those links is the real cost of a migration. Of the 123 URLs in the old WordPress sitemap, 52 resolve on the replacement; the 71 that do not are Instagram-caption posts from 2013 to 2018 that I chose not to carry over. Measured, not assumed. The first version of this sentence said every URL still resolved; four of them did. The member family tree is laid out at build time and shipped as plain SVG, so no visitor downloads a graph library to look at a static picture.',
+			'The old site is linked from alumni emails going back years, so breaking those links is the real cost of a migration, and the redirect map is the part of this I care most about getting right. It is not done: see the limit below for what still 404s and by how much. The member family tree is laid out at build time and shipped as plain SVG, so no visitor downloads a graph library to look at a static picture.',
 		limit:
-			'The live chapter domain still serves the old WordPress site; this one is running at a preview URL and the cutover is mine to schedule. Seventy-one old post URLs are not redirected. One chapter, not a product, and not something anyone else should adopt without reading the photo policy first.',
+			migrationLimit() +
+			' One chapter, not a product, and not something anyone else should adopt without reading the photo policy first.',
 		assisted:
 			'Claude wrote most of the code. The migration plan, the redirect map and the content policy are mine.'
 	},
