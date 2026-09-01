@@ -238,6 +238,62 @@ if (!skipProd) {
 	);
 }
 
+// ── 10-11. What the EDGE is serving, not what this directory contains ───────
+// Every content guard above reads build/. Nothing compared the live bytes to
+// this repo, so a scheduled run could report 9/9 over a production site weeks
+// behind or altered on the way out — which is precisely what happened: the site
+// served a permanently-excluded claim for four commits while the gate was green.
+if (!skipProd) {
+	const curl = (url) => {
+		try {
+			return execFileSync('curl', ['-sS', '-L', '--max-time', '20', url], {
+				encoding: 'utf8',
+				maxBuffer: 32 * 1024 * 1024
+			});
+		} catch {
+			return null;
+		}
+	};
+	const head = execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
+		cwd: REPO,
+		encoding: 'utf8'
+	}).trim();
+	let liveCommit = null;
+	try {
+		liveCommit = JSON.parse(curl(`https://phineasfritsch.com/version.json?d=${Date.now()}`)).commit;
+	} catch {
+		/* left null, reported below */
+	}
+	add(
+		'prod.commit-parity',
+		liveCommit === head,
+		liveCommit === head
+			? `production serves ${head}`
+			: `production serves ${liveCommit ?? 'no readable version.json'}, HEAD is ${head}`
+	);
+
+	// The same patterns as build.no-private-data, run over the live bytes. A guard
+	// that only ever reads the local build cannot see a stale or rewritten edge.
+	const liveLeaks = [];
+	for (const p of ['/', '/work/', '/about/', '/blog/', '/resume/']) {
+		const body = curl(`https://phineasfritsch.com${p}?d=${Date.now()}`);
+		if (body === null) {
+			liveLeaks.push(`${p}: could not be read`);
+			continue;
+		}
+		const hay = normalise(body);
+		for (const [re, why] of PRIVATE_PATTERNS) {
+			if (re.test(hay)) liveLeaks.push(`${p}: ${why}`);
+		}
+	}
+	add(
+		'prod.no-private-data',
+		liveLeaks.length === 0,
+		`${liveLeaks.length} private-data leaks in live html`,
+		liveLeaks.slice(0, 6)
+	);
+}
+
 const failed = checks.filter((c) => !c.ok);
 
 if (asJson) {

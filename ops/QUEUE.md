@@ -83,7 +83,7 @@ than starting it a third time. A smaller honest result beats a larger claimed on
 - [x] **Production is no longer stale.** `/version.json` served `625194f`
       while HEAD was four commits ahead, so the live site still carried the claim
       the owner permanently excluded. HEAD is deployed and verified: `grep -ic
-    collab` returns 0 on `/`, `/resume/`, `/work/`, `/work/biomed-schedule/`,
+collab` returns 0 on `/`, `/resume/`, `/work/`, `/work/biomed-schedule/`,
       `/about/` and `/blog/`. This was the single reason all four HOLD votes in
       ship-review round 1 gave.
 

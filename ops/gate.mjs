@@ -13,7 +13,7 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { REPO } from './lib.mjs';
+import { REPO, builtHtmlFiles } from './lib.mjs';
 
 const fast = process.argv.includes('--fast');
 // Pre-deploy: skip the production check. It asks "is the apex serving THIS build",
@@ -23,6 +23,7 @@ const fast = process.argv.includes('--fast');
 const preDeploy = process.argv.includes('--pre-deploy');
 const asJson = process.argv.includes('--json');
 const BASELINE = join(REPO, 'ops/baseline.json');
+const FLOORS = join(REPO, 'ops/floors.json');
 
 const run = (cmd, args) => {
 	// Always pipe. One test failure once dumped 745KB into a context window;
@@ -36,21 +37,38 @@ const gates = [];
 const gate = (n, name, fn) => gates.push({ n, name, fn });
 
 gate(1, 'format', () => {
+	// prettier's success line carries no number at all, so scraping it produced a
+	// permanent null and the README's "every gate prints a count" was falsified by
+	// a file two directories away. --list-different names every file that would
+	// change, which is a count of the thing that matters: 0 is the passing value.
 	const r = run('npx', ['prettier', '--check', '.']);
-	const m = r.out.match(/(\d+) files? (?:use|match)/);
-	return { ...r, count: m ? Number(m[1]) : null, unit: 'files' };
+	const listed = run('npx', ['prettier', '--list-different', '.']);
+	const n = listed.out.split('\n').filter((l) => l.trim() && !l.startsWith('[')).length;
+	return { ...r, count: n, unit: 'files needing format', invert: true };
 });
 
 gate(2, 'typecheck', () => {
 	const r = run('npm', ['run', '--silent', 'check']);
-	const m = r.out.match(/(\d+) errors? and (\d+) warnings?/);
-	return { ...r, count: m ? Number(m[1]) : null, unit: 'errors', invert: true };
+	// svelte-check ends with `COMPLETED 1433 FILES 0 ERRORS 11 WARNINGS`; the old
+	// pattern looked for prose that this version never prints, so the invert guard
+	// below was dead code and 11 warnings could have become 200 unnoticed.
+	const m =
+		r.out.match(/(\d+)\s+ERRORS?\s+(\d+)\s+WARNINGS?/i) ||
+		r.out.match(/(\d+) errors? and (\d+) warnings?/);
+	return {
+		...r,
+		count: m ? Number(m[1]) + Number(m[2]) : null,
+		unit: 'errors + warnings',
+		invert: true
+	};
 });
 
 gate(3, 'build', () => {
 	const r = run('npm', ['run', '--silent', 'build']);
-	const m = r.out.match(/(\d+) html files/) || [];
-	return { ...r, count: m[1] ? Number(m[1]) : null, unit: 'pages' };
+	// The adapter prints `Wrote site to "build"` and no count, so this was null on
+	// every run. Count the artefact instead of parsing a message about it.
+	const n = r.code === 0 ? builtHtmlFiles().length : null;
+	return { ...r, count: n, unit: 'pages' };
 });
 
 gate(4, 'tests', () => {
@@ -64,8 +82,11 @@ gate(5, 'sanity', () => {
 		'node',
 		preDeploy ? [join(REPO, 'ops/sanity.mjs'), '--skip-prod'] : [join(REPO, 'ops/sanity.mjs')]
 	);
+	// Count the checks that EXIST, not the ones that passed. Pass/fail is already
+	// the exit code; what a floor has to protect is a check quietly disappearing,
+	// and a floor on the passed count cannot see a failing check being deleted.
 	const m = r.out.match(/(\d+)\/(\d+) sanity checks passed/);
-	return { ...r, count: m ? Number(m[1]) : null, unit: `of ${m ? m[2] : '?'} checks` };
+	return { ...r, count: m ? Number(m[2]) : null, unit: `checks (${m ? m[1] : '?'} passing)` };
 });
 
 if (!fast) {
@@ -77,14 +98,32 @@ if (!fast) {
 }
 
 const baseline = existsSync(BASELINE) ? JSON.parse(readFileSync(BASELINE, 'utf8')) : {};
+
+// Floors are the half of this that has teeth. Drift only ever PRINTED a falling
+// count, and nothing read it: deleting 37 assertions left the gate green and then
+// rewrote the baseline down to the new number, so the second run reported no
+// drift at all and the deletion was invisible forever. A floor fails the run.
+//
+// It ratchets up on its own after a fully green run, so the floor is always the
+// best number this repo has actually achieved. It never lowers itself. Lowering
+// one is an edit to ops/floors.json inside the commit that earns it — which is
+// the point: a test deleted on purpose is a line in a diff a human can see, and a
+// test deleted by accident is a red gate.
+const floors = existsSync(FLOORS) ? JSON.parse(readFileSync(FLOORS, 'utf8')) : {};
 const results = [];
 
 for (const g of gates) {
 	const r = g.fn();
-	const ok = r.code === 0;
+	// `invert` gates count problems, where lower is better; a floor there would be
+	// backwards, and their exit code already fails on the first one.
+	// Only a FULL run may be measured against a floor. --fast and --pre-deploy
+	// deliberately skip checks, so their counts are legitimately smaller; enforcing
+	// there would have made every deploy fail on a floor it was never meant to meet.
+	const floor =
+		!fast && !preDeploy && !r.invert && typeof floors[g.name] === 'number' ? floors[g.name] : null;
+	const belowFloor = floor !== null && r.count !== null && r.count < floor;
+	const ok = r.code === 0 && !belowFloor;
 	const prev = baseline[g.name]?.count ?? null;
-	// Drift is the signal the count exists for: a gate can stay green while its
-	// number falls, and that is exactly the case nobody notices.
 	const drift = prev !== null && r.count !== null && r.count !== prev ? r.count - prev : 0;
 	results.push({
 		gate: g.n,
@@ -94,7 +133,16 @@ for (const g of gates) {
 		unit: r.unit,
 		prev,
 		drift,
-		tail: ok ? null : r.tail
+		floor,
+		belowFloor,
+		tail: ok
+			? null
+			: belowFloor && r.code === 0
+				? `  ${r.count} ${r.unit}, below the floor of ${floor}.\n` +
+					'  Something that used to be checked is not being checked any more.\n' +
+					`  If the drop is deliberate, lower "${g.name}" in ops/floors.json in the\n` +
+					'  same commit, so the decision is visible in the diff.'
+				: r.tail
 	});
 }
 
@@ -111,7 +159,7 @@ if (asJson) {
 				? '  ='
 				: '';
 		console.log(
-			`  ${String(r.gate).padStart(2)}. ${r.name.padEnd(24)} ${(r.ok ? 'pass' : 'FAIL').padEnd(8)} ${count}${drift}`
+			`  ${String(r.gate).padStart(2)}. ${r.name.padEnd(24)} ${(r.ok ? 'pass' : 'FAIL').padEnd(8)} ${count}${drift}${r.belowFloor ? `  BELOW FLOOR ${r.floor}` : ''}`
 		);
 	}
 	console.log('  ' + '─'.repeat(62));
@@ -128,11 +176,25 @@ if (asJson) {
 	console.log(`\n  ${passed}/${results.length} gates pass\n`);
 }
 
-// Record counts so the next run can report drift. Only ever written on a full run.
-if (!fast && !preDeploy) {
+// Record counts so the next run can report drift. Only ever written on a full run
+// that was fully GREEN: a red run used to overwrite the previous counts, which
+// destroyed the drift signal at exactly the moment it was worth having.
+if (!fast && !preDeploy && results.every((r) => r.ok)) {
 	const next = {};
 	for (const r of results) next[r.name] = { count: r.count, at: new Date().toISOString() };
 	writeFileSync(BASELINE, JSON.stringify(next, null, 2) + '\n');
+
+	// Ratchet: a green run raises any floor its count has cleared, never lowers one.
+	const nextFloors = { ...floors };
+	let raised = false;
+	for (const r of results) {
+		if (r.floor === null || r.count === null) continue;
+		if (r.count > nextFloors[r.name]) {
+			nextFloors[r.name] = r.count;
+			raised = true;
+		}
+	}
+	if (raised) writeFileSync(FLOORS, JSON.stringify(nextFloors, null, 2) + '\n');
 }
 
 process.exit(results.every((r) => r.ok) ? 0 : 1);

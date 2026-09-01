@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { postDate } from '$lib/date';
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
 	// mdsvex hands back a Svelte component as the module default; the load function
@@ -18,7 +19,9 @@
 	<h1 style="font-size:clamp(1.6rem,3.6vw,2.2rem);letter-spacing:-0.02em;font-weight:600">
 		{data.title}
 	</h1>
-	<p class="stack" style="margin-top:0.4rem">{data.date}</p>
+	<p class="stack" style="margin-top:0.4rem">
+		<time datetime={data.date}>{postDate(data.date)}</time>
+	</p>
 	<div class="prose post-body" style="margin-top:1.5rem">
 		<PostContent />
 	</div>

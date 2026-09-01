@@ -99,7 +99,12 @@ for (const r of results) {
 }
 
 const root = results[0];
-const serving = root.status >= 200 && root.status < 400 && !root.cfError;
+// Identity is part of serving. curl follows redirects, so an apex that 301s to a
+// stranger's site used to read as "serving" — the off-domain case printed a line
+// and left the exit code alone. Pointing APEX at example.com returned 200 and
+// VERDICT serving, which is a check passing over a site that is not his.
+const onDomain = !root.final || root.final.startsWith(APEX);
+const serving = root.status >= 200 && root.status < 400 && !root.cfError && onDomain;
 
 if (asJson) {
 	console.log(

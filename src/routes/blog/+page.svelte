@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { postDate } from '$lib/date';
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
 </script>
@@ -37,7 +38,7 @@
 					<div>
 						<div class="row-title">
 							<h3><a href="/blog/{post.slug}/">{post.title}</a></h3>
-							<span class="stack">{post.date}</span>
+							<span class="stack"><time datetime={post.date}>{postDate(post.date)}</time></span>
 						</div>
 						{#if post.excerpt}<p>{post.excerpt}</p>{/if}
 					</div>

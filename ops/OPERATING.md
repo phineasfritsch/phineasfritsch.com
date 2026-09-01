@@ -147,6 +147,24 @@ fixable from here — the API token in these sessions cannot patch zone settings
 so it stays red until the dashboard toggle is flipped, and deploys name it in
 `--override-gate=` rather than pretending it is clean.
 
+**Run `git config core.hooksPath .githooks` after cloning.** The hook runs
+prettier before every commit. It exists because HEAD once shipped with gate 1
+red on a clean checkout: the commit that recorded a deploy round was written
+after the last gate run, so `npm run gate` — the first command the README offers
+— failed on a fresh clone with nothing modified. A reviewer found it in one
+minute. The gate before every deploy was never the whole rule; it is the gate
+before every commit.
+
+**Floors, in `ops/floors.json`, are the half of the count mechanism with teeth.**
+Drift only ever printed a falling number and nothing read it: deleting 37
+assertions left the gate green, and the same run then rewrote the baseline down
+to the new count, so the next run reported no drift and the deletion was
+invisible forever. A count below its floor now fails the run, the baseline is
+written only on a fully green run, and a floor ratchets up on its own but never
+down. Lowering one is an edit inside the commit that earns it — deliberate
+deletion is a line in a diff, accidental deletion is a red gate. Floors are only
+enforced on a full run; `--fast` and `--pre-deploy` skip checks on purpose.
+
 **1. From here, with a token.** `npm run deploy` runs the gate, refuses on a dirty tree,
 pushes before deploying, then reads production back and compares the commit. It needs
 `CLOUDFLARE_API_TOKEN` in the environment. Note that environment variables are injected
