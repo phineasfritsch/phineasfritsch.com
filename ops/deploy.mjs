@@ -38,7 +38,12 @@ const die = (msg) => {
 	process.exit(1);
 };
 
-const sha = sh('git', ['rev-parse', '--short', 'HEAD']);
+// Not const, and read again after the measurement commit below. It was captured
+// here, before that commit existed, so version.json stamped the build with the
+// commit BEFORE the one the artefact was actually built from — and
+// prod.commit-parity then reported production one commit behind HEAD, forever,
+// on a deploy that had done everything right.
+let sha = sh('git', ['rev-parse', '--short', 'HEAD']);
 const branch = sh('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
 console.log(`\n  commit ${sha} on ${branch}`);
 
@@ -97,7 +102,8 @@ if (!dry) {
 			{ cwd: REPO, stdio: 'inherit' }
 		);
 		if (c.status !== 0) die('could not commit the status measurement.');
-		console.log('    committed the measurement');
+		sha = sh('git', ['rev-parse', '--short', 'HEAD']);
+		console.log(`    committed the measurement (${sha})`);
 	}
 }
 
