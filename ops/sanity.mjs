@@ -575,10 +575,22 @@ if (!skipProd) {
 // can accept is worse than no invitation, and nothing here could see it because
 // the claim was prose and the link was absent rather than broken.
 if (!skipProd) {
-	const projectsSrc = readFileSync(join(REPO, 'src/lib/data/projects.ts'), 'utf8');
-	const repos = [...projectsSrc.matchAll(/repo:\s*'https:\/\/github\.com\/([^/']+)\/([^/']+)'/g)];
+	// From the BUILT HTML, not from projects.ts. Reading the data file meant the
+	// /tree/<branch> link carrying the whole "go and check" invitation — on /answers/
+	// and in the essay — was verified by nothing: a reviewer rewrote it in build/ to a
+	// branch that has never existed and the gate stayed green at 20/20. Whatever a
+	// reader can click is what has to resolve.
+	const seen = new Set();
+	for (const f of builtHtmlFiles()) {
+		for (const m of readFileSync(f, 'utf8').matchAll(
+			/href="https:\/\/github\.com\/([^/"]+)\/([^/"]+?)(?:\/tree\/([^"]+))?"/g
+		)) {
+			seen.add([m[1], m[2], m[3] ?? 'HEAD'].join('\u0000'));
+		}
+	}
+	const repos = [...seen].map((k) => [null, ...k.split('\u0000')]);
 	const unreadable = [];
-	for (const [, owner, name] of repos) {
+	for (const [, owner, name, ref] of repos) {
 		// raw.githubusercontent, not github.com: the proxy in this environment 403s
 		// the HTML host for repositories that are perfectly public, and reading a 403
 		// as "private" is the same mistake in the other direction.
@@ -594,14 +606,20 @@ if (!skipProd) {
 					'%{http_code}',
 					'--max-time',
 					'20',
-					`https://raw.githubusercontent.com/${owner}/${name}/HEAD/README.md`
+					`https://raw.githubusercontent.com/${owner}/${name}/${ref}/README.md`
 				],
 				{ encoding: 'utf8' }
 			).trim();
 		} catch {
 			code = 'unreachable';
 		}
-		if (code === '404') unreadable.push(`${owner}/${name} is linked but not public`);
+		if (code === '404') {
+			unreadable.push(
+				ref === 'HEAD'
+					? `${owner}/${name} is linked but not public`
+					: `${owner}/${name} is linked at ref "${ref}", which does not resolve`
+			);
+		}
 	}
 	// And the essay must not tell anyone a private history is public.
 	const hay = builtHaystack();

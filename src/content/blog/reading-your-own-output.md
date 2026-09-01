@@ -1,10 +1,11 @@
 ---
 title: The bottleneck is not building it
 date: 2026-08-31
-excerpt: Everything I have shipped this year was mostly written by an AI. The hard part was never getting code out of it — it was working out when it was lying to me.
+excerpt: The code in everything I have shipped this year was mostly written by an AI. The hard part was never getting code out of it — it was working out when it was lying to me.
 ---
 
-Everything on this site was mostly written by an AI.
+The code behind everything on this site was mostly written by an AI. The writing,
+including this, is mine.
 
 Getting code out of a model is easy now. It is so easy that it stops being the
 constraint. Ask for a feature and you get a feature, with a confident summary of what

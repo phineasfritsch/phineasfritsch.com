@@ -176,12 +176,19 @@ collab` returns 0 on `/`, `/resume/`, `/work/`, `/work/biomed-schedule/`,
       public Alma SRU endpoint, not only a call-number-to-shelf tool, and the current
       copy undersells it. Do not write the comparison from imagination — it must come
       from observed behaviour of both systems.
-- [ ] R10. **Attach `www.phineasfritsch.com` as a Custom Domain**, or decide not to.
-      Only the apex is attached to `personalsite`. This could not be tested from the
-      container — egress policy denied CONNECT to `www.phineasfritsch.com:443`, which
-      is a proxy refusal and NOT evidence about the record either way. Someone on an
-      ordinary network should type `www.phineasfritsch.com` and see what happens before
-      any work is done here. Low stakes now that the apex serves.
+- [ ] R10. **`www.phineasfritsch.com` does not resolve. Add the record.** This entry
+      used to say the failure was a proxy refusal and therefore no evidence either way.
+      That was wrong, and a reviewer showed why: on the same resolver, the apex and
+      `shelfmark.phineasfritsch.com` both resolve while `www` returns NXDOMAIN. A
+      refused CONNECT and a name that does not exist are different failures, and I read
+      one as the other for several rounds rather than testing the distinction.
+
+      Still owner-only, but now for a checked reason rather than an assumed one: the
+      `CLOUDFLARE_API_TOKEN` in these sessions is Pages-scoped and returns
+      `Authentication error` (code 10000) on `GET /zones/<id>/dns_records`, so no agent
+      here can add it. In the dashboard: DNS → add `www` as a CNAME to
+      `phineasfritsch.com`, proxied. Anyone who types the www form today gets nothing —
+      and people do type it.
 
 - [ ] R6. Consider adding the headcount page and the iOS shelf-reading/ILL routing app.
       Both were described by him and neither is currently on the site. Needs evidence
