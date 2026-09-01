@@ -23,6 +23,28 @@ than starting it a third time. A smaller honest result beats a larger claimed on
 
 ## BLOCKED — needs the owner, cannot be resolved by an agent
 
+- [ ] **B9. Merge the working branch into `main`.** The default branch of
+      github.com/phineasfritsch/phineasfritsch.com is still the untouched SvelteKit
+      scaffold: no `ops/`, no `tests/`, no gate, no resume. Confirmed by listing the
+      repository root at the default ref — it returns fifteen entries and none of
+      them is this work.
+
+      That matters more than it sounds. `/answers/` invites a skeptical reader to
+      verify the site against its source, and the one claim the entire page rests on
+      — that the machinery keeping it honest exists — was the one a recruiter taking
+      that invitation could not confirm. A reviewer found it by clicking the link.
+
+      No agent in this session may push to `main`; the standing instruction is to
+      develop and push only to `claude/operator-manual-agent-systems-tmrdiz`. So the
+      interim fix is in the copy: `/answers/` now says the gate, the pins and the
+      tests are on the working branch rather than main. `repo.source-claim` in
+      ops/sanity.mjs holds the two in step in BOTH directions — it fetches
+      `main/ops/gate.mjs` and fails if main lacks it while the page sends readers
+      there, and equally if main has it while the page still says it does not, so
+      the caveat cannot outlive the problem and become its own small lie.
+
+      Merge it and the caveat comes out on the next deploy.
+
 - [ ] **B8. YOUR COWORKERS' DATA IS PUBLIC. Do this before anything else on this
       list.** `GET https://better-bio-schedule.phineas-fritsch.workers.dev/api/schedule`
       needs no authentication of any kind and returns, for every shift: coworker

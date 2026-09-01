@@ -66,7 +66,7 @@
 		},
 		{
 			q: 'How do I get in touch?',
-			a: `contact@phineasfritsch.com. If you want to check something on this page before you write, the source for all of it is at github.com/phineasfritsch/phineasfritsch.com, including the tests that keep it honest.`
+			a: `contact@phineasfritsch.com. If you want to check something on this page before you write, the source is at github.com/phineasfritsch/phineasfritsch.com — the gate, the pinned sentences and the tests are on the working branch rather than main, which is still the framework scaffold.`
 		}
 	];
 </script>

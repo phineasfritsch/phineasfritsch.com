@@ -9,7 +9,7 @@
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { REPO, walk, normalise, builtHtmlFiles } from './lib.mjs';
+import { REPO, walk, normalise, builtHtmlFiles, builtHaystack } from './lib.mjs';
 
 const asJson = process.argv.includes('--json');
 const skipProd = process.argv.includes('--skip-prod');
@@ -238,18 +238,77 @@ if (!skipProd) {
 	);
 }
 
+// ── 9c. The invitation to check the source has to be checkable ─────────────
+// /answers/ tells a skeptical reader to go and verify this site against its
+// repository. The repository's DEFAULT branch is the untouched framework
+// scaffold — no ops/, no tests, no gate — because all of this work lives on a
+// working branch, so a recruiter who took the invitation found nothing and the
+// one claim the whole page rests on was the one they could not confirm. A
+// reviewer found it by clicking the link.
+//
+// So the page says where the machinery actually is, and this check keeps the two
+// in step in BOTH directions: while main lacks ops/, the sentence must name the
+// branch; once main has it, the sentence must stop saying it does not. Otherwise
+// the caveat outlives the problem and becomes its own small lie.
+if (!skipProd) {
+	let mainHasOps = null;
+	try {
+		const code = execFileSync(
+			'curl',
+			[
+				'-sS',
+				'-o',
+				'/dev/null',
+				'-w',
+				'%{http_code}',
+				'--max-time',
+				'20',
+				'https://raw.githubusercontent.com/phineasfritsch/phineasfritsch.com/main/ops/gate.mjs'
+			],
+			{ encoding: 'utf8' }
+		).trim();
+		if (code === '200') mainHasOps = true;
+		else if (code === '404') mainHasOps = false;
+	} catch {
+		/* left null: unreachable, reported as unknown rather than guessed */
+	}
+	const saysBranch = builtHaystack().includes('rather than main');
+	const ok = mainHasOps === null ? true : mainHasOps !== saysBranch;
+	add(
+		'repo.source-claim',
+		ok,
+		mainHasOps === null
+			? 'could not reach raw.githubusercontent.com — claim not checked'
+			: mainHasOps
+				? saysBranch
+					? 'main now carries ops/ — drop the "rather than main" caveat from /answers/'
+					: 'main carries ops/, and the page points at it'
+				: saysBranch
+					? 'main is still the scaffold, and the page says so'
+					: 'main lacks ops/ but /answers/ sends readers there anyway'
+	);
+}
+
 // ── 9a. The public resume is present, and is the public one ────────────────
 // It ships from static/ and is linked from /resume/. Two ways this goes wrong
 // silently: the file is missing, so the link 404s on the one page a recruiter
 // came for; or a rebuild without --public leaves the tailored variant's phone
 // number in a file anyone can download. Both are invisible to every other check.
 {
-	const pdf = join(REPO, 'build/Phineas-Fritsch-resume.pdf');
+	// static/, not build/. The staleness comparison below was against the BUILT
+	// copy, which `npm run build` recreates seconds earlier in the same gate run,
+	// so its mtime was always newer than the fact base and the check was
+	// structurally green every time it ran inside the gate or a deploy — it could
+	// only ever fire standalone. The source file is the one that can be old.
+	const pdf = join(REPO, 'static/Phineas-Fritsch-resume.pdf');
+	const shipped = join(REPO, 'build/Phineas-Fritsch-resume.pdf');
 	const problems = [];
 	if (!existsSync(pdf)) {
 		problems.push(
-			'build/Phineas-Fritsch-resume.pdf is missing — run: node ops/resume-build.mjs --public'
+			'static/Phineas-Fritsch-resume.pdf is missing — run: node ops/resume-build.mjs --public'
 		);
+	} else if (!existsSync(shipped)) {
+		problems.push('the resume is in static/ but did not reach build/ — the link would 404');
 	} else {
 		const bytes = readFileSync(pdf, 'latin1');
 		// PDF text is compressed, so a digit run will not appear literally; the
