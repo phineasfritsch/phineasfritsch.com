@@ -1,0 +1,18 @@
+# Cloudflare Pages redirects.
+#
+# The 2023 site served the SAME 3KB file at every path, so any of these could have
+# been shared, bookmarked or linked. Sending them to a 404 would turn one broken
+# front door into six. Old paths go where their content actually lives now.
+/about/        /answers/   301
+/about         /answers/   301
+/portfolio/    /work/      301
+/portfolio     /work/      301
+/contact/      /answers/   301
+/contact       /answers/   301
+
+# Routes that existed in the repo but were never deployed. Cheap to honour, and it
+# costs nothing to be right if one ever escaped into a link.
+/ucla/         /answers/   301
+/theta-chi/    /answers/   301
+/sailing/      /answers/   301
+/future/       /answers/   301

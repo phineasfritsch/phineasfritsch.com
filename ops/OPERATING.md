@@ -1,0 +1,283 @@
+# Operating manual — phineasfritsch.com
+
+Written for an operator with no memory, because that is what every scheduled run is:
+a fresh clone that knows nothing. Everything needed is here or linked from here.
+
+## The premise
+
+Agents report success on broken work. Routinely, confidently, with a detailed account
+of what they verified. Not sometimes, and not only the bad ones. Everything below
+exists so that a claim can be contradicted before it is believed.
+
+This project has already demonstrated it in both directions. The state sanity check,
+written before any feature work, immediately found a 903KB homepage that renders 53
+characters without JavaScript. The pin hygiene test rejected two pins the author had
+just written. And a subagent's dossier — excellent, mostly correct — still had to be
+re-verified by hand before a single line of it was allowed near a resume.
+
+## Get current
+
+Run all of these. The redundant-looking ones are the point: a bare checkout that
+silently moves backwards has cost real days elsewhere.
+
+    git fetch origin
+    git status                 # expect clean
+    git rev-parse --short HEAD
+    npm ci
+    node ops/read-prod.mjs     # what is actually live, before you touch anything
+
+## The gate
+
+    npm run gate               # everything, numbered, with counts
+    npm run gate:fast          # skips the browser gate
+
+Do not write the expected counts here. This paragraph used to name them, went stale by
+seventy tests and eight sanity checks, and named the wrong check as the expected-red
+one — a reviewer read it, believed it, and had to re-derive the truth from the repo.
+**A number in a runbook has nobody to keep it true.** The counts live in
+`ops/floors.json`, which the gate maintains, and the gate prints them every run.
+
+One check is expected red and it is `prod.edge-intact`: Cloudflare Scrape Shield
+rewrites the contact address on every live page, and only the owner can turn it off in
+the dashboard. Everything else being red is a finding.
+
+`ops/baseline.json` holds the previous run's numbers and the gate prints drift against
+them. `ops/floors.json` holds the minimum each count may take, and a count below its
+floor FAILS the run and cannot be overridden at a deploy. **Green and red are not enough.** A gate can stay green while its count falls,
+and that is exactly the case nobody notices. When a count drops, that is the finding —
+investigate it before doing anything else. Do not adjust a baseline to make a number
+match; the baseline records what happened, it does not decide it.
+
+Two traps, both already hit here:
+
+- **A browser stage that reports no count at all** usually means something is already
+  listening on port 4173. Playwright deliberately refuses to reuse a server it did not
+  start, because a reused one may be serving an older build — a green suite over a
+  stale artefact is precisely what this project exists to prevent.
+- **`npx playwright install` does not work in this image.** Use the CHROMIUM_PATH above.
+
+Individually:
+
+    npm test                   # vitest: pins + hygiene
+    npm run sanity             # artefact + deployment state, machine-readable
+    npm run test:e2e           # real browser, real built artefact
+    npm run prod               # read production, exit 1 if it is not serving
+
+Chromium is pre-installed at `/opt/pw-browsers/chromium-1194/chrome-linux/chrome`.
+The installed `@playwright/test` wants a different build number, so pass that path
+via `CHROMIUM_PATH` rather than running `playwright install`, which will not work here.
+
+## Pinned claims
+
+`ops/pins.json` holds properties that are load-bearing and invisible to ordinary
+tests. Read the `_doc` block in that file before touching it. The rules in short:
+pin by signature not by literal; comments are stripped before searching; search the
+whole app, never one file; a pin must be green the moment it is written.
+
+`active: false` means the property does not exist yet and the pin is a spec. Flip it
+to `true` **in the same commit that writes the property**, never in a later one.
+
+## What this project has already been caught by
+
+Stated as prohibitions, because that is the only form that survives a fresh context.
+
+- **Never claim the site is deployed without reading it back.** `ops/deploy.mjs`
+  fetches `/version.json` and compares the commit. The apex spent an unknown length
+  of time returning a Cloudflare 530 while the repo looked healthy.
+- **Never push after deploying.** Push first, always. Deploying first opens a window
+  where anything reading the repository sees older code and calls it live.
+- **Never `git add -A`.** Stage explicit paths. Something else is usually mid-flight,
+  and a commit that sweeps unrelated half-finished files into history carries a
+  message describing work it does not contain.
+- **Never put a fact on the site or the resume that is not in `ops/private/EVIDENCE.md`.**
+  His major, his graduation year, and his employment history are NOT established.
+  A pre-med signal exists in his code; it is a feature he built, not a fact about him.
+  He has completed zero actuarial exams — Exam FM is an intention, never a credential.
+- **One repository is excluded from the site and the resume by name.** It is named,
+  with the reason, in `ops/private/EVIDENCE.md`, so that nobody re-adds it later
+  believing the omission was an oversight. `ops/sanity.mjs` fails the build if it
+  appears in any page.
+- **Never weaken an assertion to something that would pass on an empty page.** When a
+  check legitimately changes, leave a comment saying what the new form is and why the
+  property is intact, and count the changes. A large count means the work is drifting,
+  not the checks.
+- **Always pipe verbose output.** `| tail`. One test failure elsewhere dumped 745KB
+  into a context window. `ops/gate.mjs` keeps 40 lines and discards the rest.
+- **Never start a preview server by hand.** `ops/shot.mjs` starts and stops its own,
+  and signals the process group when it does — killing `npx` alone leaves the vite
+  child holding the port, which then fails the next gate run with no count at all.
+- **Read the rendered page, not the diff.** Two reversed job chronologies on the
+  resume page — both reading as demotions — were invisible in the diff and obvious on
+  the page. `ops/shot.mjs` exists for this, and it exits non-zero if any page renders
+  under 200 characters, because an earlier version cheerfully screenshotted Chrome's
+  "This site can't be reached" page for every route and exited zero.
+
+## Parallelism
+
+The dividing line is shared mutable state, not task size.
+
+| Work                                      | Shares        | Run                             |
+| ----------------------------------------- | ------------- | ------------------------------- |
+| Research, review, judging, persona panels | nothing       | fan out wide                    |
+| One page per agent, ownership declared    | nothing       | parallel                        |
+| Anything running the suite                | the build dir | serial, always                  |
+| Two agents on one file                    | the file      | never; last write wins silently |
+| Anything committing                       | the index     | one at a time, explicit paths   |
+| Deploying                                 | production    | one, after everything else      |
+
+Port agents never run the suite. One serial verifier runs after the wave. **Never let
+a worker grade its own work**, and treat a missing verification exactly as a failed one.
+
+## Deploying
+
+There are two routes, and **the second one is better**.
+
+**The Pages project is `personalsite`**, and it already holds the phineasfritsch.com
+custom domain. Do not create a second project; a duplicate competing for the same
+custom domain is worse than a slow deploy. Override with `PAGES_PROJECT=` (or
+`CF_PAGES_PROJECT=`, both are accepted because the runbook and the code once disagreed
+and the mismatch surfaced mid-deploy).
+
+**The project's production branch is `main`, and this checkout is not on it.**
+`wrangler pages deploy --branch <anything else>` uploads a PREVIEW: it prints
+"Deployment complete", hands back a working URL, and the custom domain keeps
+serving the old build. That is a success report on a change no visitor can see,
+and it cost one full cycle before deploy.mjs learned to ask the project which
+branch is production rather than assume the checkout's name. `PAGES_PRODUCTION_BRANCH=`
+still overrides if the API cannot be reached.
+
+**The edge can serve something other than what you built.** Cloudflare Scrape
+Shield rewrites the contact address into a `/cdn-cgi/l/email-protection` stub
+that only resolves with JavaScript, on a site whose whole argument is that it
+reads without it. `prod.edge-intact` in the sanity check catches it. It is not
+fixable from here — the API token in these sessions cannot patch zone settings —
+so it stays red until the dashboard toggle is flipped, and deploys name it in
+`--override-gate=` rather than pretending it is clean.
+
+**Run `git config core.hooksPath .githooks` after cloning.** The hook runs
+prettier before every commit. It exists because HEAD once shipped with gate 1
+red on a clean checkout: the commit that recorded a deploy round was written
+after the last gate run, so `npm run gate` — the first command the README offers
+— failed on a fresh clone with nothing modified. A reviewer found it in one
+minute. The gate before every deploy was never the whole rule; it is the gate
+before every commit.
+
+**Floors, in `ops/floors.json`, are the half of the count mechanism with teeth.**
+Drift only ever printed a falling number and nothing read it: deleting 37
+assertions left the gate green, and the same run then rewrote the baseline down
+to the new count, so the next run reported no drift and the deletion was
+invisible forever. A count below its floor now fails the run, the baseline is
+written only on a fully green run, and a floor ratchets up on its own but never
+down. Lowering one is an edit inside the commit that earns it — deliberate
+deletion is a line in a diff, accidental deletion is a red gate. Floors are only
+enforced on a full run; `--fast` and `--pre-deploy` skip checks on purpose.
+
+**1. From here, with a token.** `npm run deploy` runs the gate, refuses on a dirty tree,
+pushes before deploying, then reads production back and compares the commit. It needs
+`CLOUDFLARE_API_TOKEN` in the environment. Note that environment variables are injected
+when a container STARTS, so a session that began before the variable was added will
+never see it however many times it is asked — check with
+
+    node -e "console.log(process.env.CLOUDFLARE_API_TOKEN ? 'present' : 'MISSING')"
+
+before concluding anything about wrangler.
+
+**2. From GitHub, with no token at all.** The repository is public, so Cloudflare Pages
+can build it directly on every push. This is the better answer: nothing to leak, nothing
+to rotate, no session needs a credential, and the nightly fixer's pushes deploy
+themselves. Set it up once in the dashboard — Workers & Pages → Create → Pages → Connect
+to Git — with:
+
+| Setting                | Value                                                        |
+| ---------------------- | ------------------------------------------------------------ |
+| Framework preset       | SvelteKit                                                    |
+| Build command          | `npm run build`                                              |
+| Build output directory | `build`                                                      |
+| Root directory         | `/`                                                          |
+| Node version           | 22 (pinned by `.node-version` and `engines` in package.json) |
+
+**Neither route opens the front door on its own.** phineasfritsch.com 301s to
+phinster.net, a Cloudflare tunnel with no origin (error 1033). That rule is in the
+dashboard — a Redirect Rule, Page Rule, or Bulk Redirect — and it has to be deleted, and
+the custom domain attached to the Pages project, before a visitor typing the domain
+reaches anything. Deploying while it exists changes nothing a visitor can see, so do not
+report a deploy as shipped until `node ops/read-prod.mjs` exits 0.
+
+## Testing production as a real user
+
+`node ops/read-prod.mjs` is the source of truth for what production is serving. It uses
+curl, deliberately.
+
+**Do not build a headless-browser check against the live domain from this environment.**
+It was tried. Chromium cannot reach phineasfritsch.com through the agent proxy and fails
+with `ERR_CONNECTION_RESET`, while curl through the same proxy reaches it fine and
+returns the real answer (HTTP 530, Cloudflare error 1033). A browser check here would
+therefore report "the site is down" for a reason that has nothing to do with the site,
+which is worse than no check at all: it is a confident wrong answer, and it would fire
+every four hours.
+
+Real-browser testing in this repo runs against the local production build via
+`ops/shot.mjs` and the playwright suite. That is a genuine real-user test of the
+artefact that will be deployed. Testing the live domain in a browser has to happen from
+a machine with ordinary network access — which, for now, means Phineas opening it.
+
+## The resume
+
+    CHROMIUM_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome node ops/resume-build.mjs
+
+One fact base, three documents. `ops/private/resume/resume.data.mjs` holds every fact,
+each item optionally tagged with the tracks it belongs to; the builder renders one PDF
+per track into `ops/private/resume/build/`. All of it is under `ops/private/`, which is
+gitignored, because the resume carries a phone number and this repository is public.
+
+**Edit the data, never a rendered file.** The board's ruling was one document per
+target, and its warning was that three hand-edited copies of a one-page file with two
+pixels of headroom diverge inside a month and he stops knowing which one he sent.
+
+The tracks and how they differ:
+
+| Track       | Lede names                                                                    | Includes                                                                                   | Emphasis                                                                  |
+| ----------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| `product`   | product roles                                                                 | The Cut Card                                                                               | 174E leads, the exam blank follows                                        |
+| `rcm`       | revenue cycle roles, and states he has never worked a claim or touched an EHR | the dental practice, family connection first, Dentrix named; Dibs led by the records audit | 174E leads                                                                |
+| `actuarial` | no track; states the exam position outright                                   | The Cut Card                                                                               | **the blank leads** — hiding it from this reader is worse than stating it |
+
+The builder refuses to render, in any variant, a GPA, the Collab Hub claim, an excluded
+project, the accounting minor he dropped, a revenue projection, or any claim that an
+exam was passed. It also fails when a variant runs to two pages, and it measures at the
+true print width of 710px rather than the default viewport, because measuring at 1280px
+reports a two-page document as fitting.
+
+**If a rendered PDF is suddenly much smaller than ~100KB, the fonts 404'd.** They fall
+back to system metrics silently, which reflows the page taller and turns one page into
+two. That has happened twice; the font URLs are absolute for this reason.
+
+## Cost
+
+Fan out reading and judging. Do the writing. Research and review parallelise well and
+a wrong answer is cheap to spot; code fans out badly, because wrong looks exactly like
+right until something reads the page.
+
+Put the facts in the brief. The panels here were handed `ops/panel/FACTS.md` and told
+not to explore, and they did not.
+
+**Batch a verification pass; do not spawn one agent per finding.** The resume panel
+first ran one defender per proposed cut — 36 agents, each reloading the same resume and
+the same evidence file to rule on a single line. Three defenders, each ruling on every
+cut, replaced it. The independence that matters is independence from the PROPOSERS, not
+from each other, and three gives that at a twelfth of the cost. It is also strictly
+better: a defender that sees all the cuts at once can notice when two of them together
+remove the only support for a third claim, which a defender holding one line cannot.
+
+Never convene a panel for something already in context. That is the most expensive
+possible way to think out loud.
+
+## When you cannot finish
+
+Revert per page, not per wave — one bad page should not cost three good ones.
+Quarantine a failed attempt on a branch before reverting it; the next attempt mines it.
+Ship the part that works and say plainly what you did not do and why.
+
+A smaller honest result beats a larger claimed one. This is not a consolation; it is
+the standard, because the alternative is a report nobody can trust and work that has
+to be redone from scratch.

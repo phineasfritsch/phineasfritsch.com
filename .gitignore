@@ -21,3 +21,19 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Playwright output
+test-results/
+playwright-report/
+
+# Generated at deploy time by ops/deploy.mjs
+static/version.json
+
+# Screenshots are regenerated on every run and are working artefacts, not source.
+ops/shots/
+
+# Private working material. Kept OUT of the repository because it is now public.
+# Contains his phone number, his GPA, a candid assessment of his own repositories,
+# and notes he shared in confidence. The operational machinery in ops/ stays public;
+# the facts it operates on do not.
+ops/private/

@@ -4,13 +4,17 @@ export const load: PageLoad = async () => {
 	const modules = import.meta.glob('/src/content/blog/*.md', { eager: true });
 
 	const posts = Object.entries(modules).map(([path, mod]) => {
-		const m = mod as Record<string, unknown>;
+		// mdsvex puts frontmatter on `metadata`, not on the module root. Reading
+		// `mod.title` silently yields undefined and falls back to the slug, which is
+		// why the index rendered "reading-your-own-output" as a post title.
+		const m = mod as { metadata?: Record<string, string> };
+		const meta = m.metadata ?? {};
 		const slug = path.split('/').at(-1)!.replace('.md', '');
 		return {
 			slug,
-			title: (m.title as string) ?? slug,
-			date: (m.date as string) ?? '',
-			excerpt: (m.excerpt as string) ?? ''
+			title: meta.title ?? slug,
+			date: meta.date ?? '',
+			excerpt: meta.excerpt ?? ''
 		};
 	});
 

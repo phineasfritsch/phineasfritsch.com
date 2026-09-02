@@ -1,27 +1,48 @@
 <script lang="ts">
+	import { emailLink } from '$lib/data/contact';
+
 	import './layout.css';
-	import { onNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 
 	let { children } = $props();
 
-	const isHome = $derived(page.url.pathname === '/' || page.url.pathname === '');
+	const nav = [
+		{ href: '/', label: 'index' },
+		{ href: '/work/', label: 'work' },
+		{ href: '/answers/', label: 'questions' },
+		{ href: '/resume/', label: 'resume' },
+		{ href: '/blog/', label: 'writing' }
+	];
 
-	onNavigate((navigation) => {
-		if (!document.startViewTransition) return;
-		return new Promise((resolve) => {
-			document.startViewTransition(async () => {
-				resolve();
-				await navigation.complete;
-			});
-		});
-	});
+	const here = $derived(page.url.pathname);
+	const isCurrent = (href: string) => (href === '/' ? here === '/' : here.startsWith(href));
 </script>
 
-{#if !isHome}
-	<header class="inner-header">
-		<a href="/" class="back-link">← Phineas Fritsch</a>
-	</header>
-{/if}
+<!-- G-a11y: the skip link is the first focusable element on every page and is
+     pinned in ops/pins.json. Without it a keyboard visitor walks the masthead
+     on every navigation. -->
+<a class="skip-link" href="#main">Skip to content</a>
 
-{@render children()}
+<div class="sheet">
+	<header class="masthead">
+		<!-- Written in ordinary case and uppercased in CSS. Some screen readers spell a
+		     literal all-caps string letter by letter, and this one is his name. -->
+		<a class="wordmark" href="/">Phineas Fritsch</a>
+		<nav aria-label="Primary">
+			{#each nav as item (item.href)}
+				<a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a
+				>
+			{/each}
+		</nav>
+	</header>
+
+	<main id="main">
+		{@render children()}
+	</main>
+
+	<footer class="foot">
+		<span>Phineas Fritsch · Los Angeles</span>
+		<span>{@html emailLink()}</span>
+		<span><a href="https://github.com/phineasfritsch">github.com/phineasfritsch</a></span>
+	</footer>
+</div>

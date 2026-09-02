@@ -1,113 +1,68 @@
 <script lang="ts">
+	import Seo from '$lib/components/Seo.svelte';
+	import { postDate } from '$lib/date';
 	import type { PageData } from './$types';
-
 	let { data }: { data: PageData } = $props();
-
-	// Svelte 5: assign to a local var so we can use it as a component tag
-	const PostContent = $derived(data.content as unknown as new () => unknown);
+	// mdsvex hands back a Svelte component as the module default; the load function
+	// types it as unknown because it cannot know that statically.
+	const PostContent = $derived(data.content as unknown as import('svelte').Component);
 </script>
 
-<svelte:head>
-	<title>{data.title} — Phineas Fritsch</title>
-</svelte:head>
+<Seo
+	title="{data.title} — Phineas Fritsch"
+	description={data.excerpt ?? data.title}
+	path="/blog/{data.slug}/"
+/>
 
-<div class="page-wrapper">
-	<article class="content">
-		<header class="post-header">
-			<span class="post-date">{data.date}</span>
-			<h1>{data.title}</h1>
-		</header>
-
-		<div class="prose">
-			<PostContent />
-		</div>
-
-		<footer class="post-footer">
-			<a href="/blog/" class="back">← All posts</a>
-		</footer>
-	</article>
-</div>
+<article class="section" style="margin-top:2.5rem">
+	<p class="stack" style="margin-bottom:0.5rem"><a href="/blog/">← writing</a></p>
+	<!-- The post body is markdown and supplies no h1 of its own; this is the page's
+	     single h1, which ops/sanity.mjs (build.page-metadata) enforces. -->
+	<h1 style="font-size:clamp(1.6rem,3.6vw,2.2rem);letter-spacing:-0.02em;font-weight:600">
+		{data.title}
+	</h1>
+	<p class="stack" style="margin-top:0.4rem">
+		<time datetime={data.date}>{postDate(data.date)}</time>
+	</p>
+	<div class="prose post-body" style="margin-top:1.5rem">
+		<PostContent />
+	</div>
+</article>
 
 <style>
-	.page-wrapper {
-		min-height: 100vh;
-		background: linear-gradient(180deg, #03040c 0%, #060b18 55%, #08101e 100%);
-		display: flex;
-		justify-content: center;
-		padding: 9rem 2rem 6rem;
-	}
-
-	.content {
-		max-width: 640px;
-		width: 100%;
-	}
-
-	.post-header {
-		margin-bottom: 3rem;
-	}
-
-	.post-date {
-		font-size: 0.72rem;
-		letter-spacing: 0.18em;
+	.post-body :global(h2) {
+		font-family: var(--font-mono);
+		font-size: 0.82rem;
+		font-weight: 600;
+		letter-spacing: 0.11em;
 		text-transform: uppercase;
-		color: var(--color-text-muted);
+		margin: 2rem 0 0.7rem;
+		padding-bottom: 0.35rem;
+		border-bottom: 1px solid var(--rule-strong);
+		color: var(--ink);
 	}
-
-	h1 {
-		font-family: var(--font-display);
-		font-size: clamp(2rem, 5vw, 3.5rem);
-		font-weight: 400;
-		color: var(--color-text-primary);
-		margin-top: 0.5rem;
-		line-height: 1.15;
+	.post-body :global(p) {
+		margin-bottom: 0.95rem;
 	}
-
-	.prose {
-		font-size: 1rem;
-		line-height: 1.85;
-		color: rgba(220, 200, 170, 0.75);
+	.post-body :global(ul),
+	.post-body :global(ol) {
+		margin: 0 0 1rem 1.2rem;
+		color: var(--ink-soft);
 	}
-
-	.prose :global(h1),
-	.prose :global(h2),
-	.prose :global(h3) {
-		font-family: var(--font-display);
-		color: var(--color-text-primary);
-		margin: 2rem 0 0.75rem;
+	.post-body :global(li) {
+		margin-bottom: 0.35rem;
 	}
-
-	.prose :global(p) {
-		margin-bottom: 1.25rem;
-	}
-
-	.prose :global(a) {
-		color: var(--color-sunset-gold);
-		text-decoration: underline;
-		text-underline-offset: 3px;
-	}
-
-	.prose :global(code) {
+	.post-body :global(code) {
+		font-family: var(--font-mono);
 		font-size: 0.85em;
-		background: rgba(240, 220, 180, 0.08);
-		padding: 0.15em 0.4em;
-		border-radius: 4px;
+		background: var(--paper-sunk);
+		padding: 0.1em 0.35em;
+		border-radius: 2px;
 	}
-
-	.post-footer {
-		margin-top: 4rem;
-		padding-top: 2rem;
-		border-top: 1px solid rgba(240, 220, 180, 0.08);
-	}
-
-	.back {
-		font-size: 0.8rem;
-		letter-spacing: 0.15em;
-		text-transform: uppercase;
-		color: var(--color-text-muted);
-		transition: color 0.25s;
-	}
-
-	.back:hover {
-		color: var(--color-sunset-gold);
+	.post-body :global(blockquote) {
+		border-left: 2px solid var(--rule-strong);
+		padding-left: 0.9rem;
+		margin: 0 0 1rem;
+		color: var(--ink-faint);
 	}
 </style>

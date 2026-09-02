@@ -10,11 +10,14 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"moduleResolution": "bundler"
-	}
+		"moduleResolution": "bundler",
+		"types": ["node"]
+	},
+	// The ops/ scripts are plain node ESM, run directly and never bundled by vite.
+	// With checkJs on, type-checking them would demand JSDoc annotations for no
+	// benefit: they are exercised end to end by the gate on every run, which is a
+	// stronger check than their types would be.
+	"exclude": ["ops/**/*.mjs", "test-results/**", "build/**"]
 	// Path aliases are handled by https://svelte.dev/docs/kit/configuration#alias
 	// except $lib which is handled by https://svelte.dev/docs/kit/configuration#files
-	//
-	// To make changes to top-level options such as include and exclude, we recommend extending
-	// the generated config; see https://svelte.dev/docs/kit/configuration#typescript
 }

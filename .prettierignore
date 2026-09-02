@@ -7,3 +7,17 @@ bun.lockb
 
 # Miscellaneous
 /static/
+
+# Generated or measured artefacts — never hand-formatted, and reformatting them
+# creates diff noise that hides real changes.
+test-results/
+playwright-report/
+ops/shots/
+src/lib/data/status.json
+ops/baseline.json
+
+# Editor and tool configuration. Reformatting these produces diff noise in every
+# commit that happens to run `prettier --write .`, which buries real changes.
+.vscode/
+.claude/
+.prettierrc

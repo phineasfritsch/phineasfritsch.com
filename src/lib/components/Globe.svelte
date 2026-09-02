@@ -56,7 +56,7 @@
 		`,
 		uniforms: {
 			uLightDir: { value: new THREE.Vector3(-5, 8, 6).normalize() },
-			uCamPos:   { value: new THREE.Vector3(0, 3.5, 12) }
+			uCamPos: { value: new THREE.Vector3(0, 3.5, 12) }
 		}
 	});
 </script>

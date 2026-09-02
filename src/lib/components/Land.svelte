@@ -16,13 +16,20 @@
 	const R = 3;
 	const φ = (lat * Math.PI) / 180;
 	const λ = (lon * Math.PI) / 180;
-	const pos = new THREE.Vector3(R * Math.cos(φ) * Math.cos(λ), R * Math.sin(φ), R * Math.cos(φ) * Math.sin(λ));
-	const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), pos.clone().normalize());
+	const pos = new THREE.Vector3(
+		R * Math.cos(φ) * Math.cos(λ),
+		R * Math.sin(φ),
+		R * Math.cos(φ) * Math.sin(λ)
+	);
+	const quat = new THREE.Quaternion().setFromUnitVectors(
+		new THREE.Vector3(0, 1, 0),
+		pos.clone().normalize()
+	);
 
 	// Low-poly layered materials
-	const beachMat = new THREE.MeshToonMaterial({ color: '#C8A850', flatShading: true });
-	const cliffMat = new THREE.MeshToonMaterial({ color: '#7B5A28', flatShading: true });
-	const grassMat = new THREE.MeshToonMaterial({ color, flatShading: true });
+	const beachMat = new THREE.MeshToonMaterial({ color: '#C8A850' });
+	const cliffMat = new THREE.MeshToonMaterial({ color: '#7B5A28' });
+	const grassMat = new THREE.MeshToonMaterial({ color });
 </script>
 
 <!-- All layers share the same group so Y-axis aligns with sphere normal -->

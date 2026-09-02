@@ -34,10 +34,23 @@
 		bevelSegments: 2
 	});
 
-	const starMat  = new THREE.MeshToonMaterial({ color: '#FFD700', emissive: '#FF8C00', emissiveIntensity: 0.3 });
-	const glowMat  = new THREE.MeshBasicMaterial({ color: '#FFE566', transparent: true, opacity: 0.18, side: THREE.BackSide });
-	const trailMat = new THREE.MeshBasicMaterial({ color: '#FFE566', transparent: true, opacity: 0.12 });
-	const hitMat   = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
+	const starMat = new THREE.MeshToonMaterial({
+		color: '#FFD700',
+		emissive: '#FF8C00',
+		emissiveIntensity: 0.3
+	});
+	const glowMat = new THREE.MeshBasicMaterial({
+		color: '#FFE566',
+		transparent: true,
+		opacity: 0.18,
+		side: THREE.BackSide
+	});
+	const trailMat = new THREE.MeshBasicMaterial({
+		color: '#FFE566',
+		transparent: true,
+		opacity: 0.12
+	});
+	const hitMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
 
 	// Orbit parameters
 	const ORBIT_R = 4.2;
@@ -66,8 +79,14 @@
 	<!-- Invisible hit zone -->
 	<T.Mesh
 		onclick={() => goto('/future/')}
-		onpointerenter={() => { hovered = true; hoveredHotspot.set('Shoot for the Stars →'); }}
-		onpointerleave={() => { hovered = false; hoveredHotspot.set(null); }}
+		onpointerenter={() => {
+			hovered = true;
+			hoveredHotspot.set('Shoot for the Stars →');
+		}}
+		onpointerleave={() => {
+			hovered = false;
+			hoveredHotspot.set(null);
+		}}
 	>
 		<T.SphereGeometry args={[1.6, 16, 16]} />
 		<T is={hitMat} />

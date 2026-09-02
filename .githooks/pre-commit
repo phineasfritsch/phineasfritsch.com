@@ -1,0 +1,13 @@
+#!/bin/sh
+# Gate 1 (format) was red at HEAD once, on a clean checkout, because a commit was
+# made after the last gate run. `npm run gate` is the first command this README
+# offers; shipping a HEAD that fails it undercuts the whole argument. This is the
+# cheap half of the gate — a second or two — run at the only moment that prevents it.
+#
+# Install: git config core.hooksPath .githooks
+if ! npx prettier --check . >/tmp/prettier-precommit 2>&1; then
+	echo "pre-commit: formatting is not clean."
+	grep '^\[warn\]' /tmp/prettier-precommit
+	echo "Run: npx prettier --write ."
+	exit 1
+fi
